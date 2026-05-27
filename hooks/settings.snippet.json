@@ -1,0 +1,19 @@
+{
+  "_comment": "Merge these blocks into your .claude/settings.json (project) or ~/.claude/settings.json (user-global). Adjust the absolute path to context-zone.sh. Thresholds are fixed TOKEN amounts (not percentages of any marketed/API window); they are calibrated on empirical behavior cliffs and apply identically on Codex's current 258.4k effective window, Claude Code 200k models (Sonnet 4.6 / Haiku 4.5), and Opus 4.7's 1M window. Only the percentage that appears in the nudge message is computed against REFERENCE_WINDOW (default 200k), so it matches the percentage-talk people are used to.",
+
+  "hooks": {
+    "Stop": [
+      {
+        "command": "/absolute/path/to/my-workflow/hooks/context-zone.sh"
+      }
+    ]
+  },
+
+  "env": {
+    "CONTEXT_WARN_TOKENS": "80000",
+    "CONTEXT_ASK_TOKENS": "100000",
+    "CONTEXT_DUMB_TOKENS": "120000",
+    "CONTEXT_FORCE_TOKENS": "180000",
+    "CONTEXT_REFERENCE_WINDOW": "200000"
+  }
+}

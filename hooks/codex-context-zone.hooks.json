@@ -1,0 +1,17 @@
+{
+  "description": "Codex project hook registration for the Codex-specific context-zone Stop hook.",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$(git rev-parse --show-toplevel)/.codex/hooks/context-zone.sh\"",
+            "timeout": 30,
+            "statusMessage": "Checking context zone"
+          }
+        ]
+      }
+    ]
+  }
+}
