@@ -23,7 +23,7 @@
                         /handoff               (cross-tool / cross-model standalone packet)
 ```
 
-### Every session begins with `/session-open`. No exceptions.
+### Every session begins with `/session-open`.
 
 It declares the mode, names the next step, then stops.
 

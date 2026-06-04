@@ -10,7 +10,7 @@
 
 ## Workflow rules
 
-1. **Every session starts with `/session-open`.** No exceptions. It reads
+1. **Every session starts with `/session-open`.**. It reads
    `AGENTS.md` → `activeContext.md` → newest `handoff-*.md` → `roadmap.md`,
    declares the mode, and names the next step. Do not pre-read
    `docs/requirements/` or `docs/design/` unless the next step explicitly
@@ -18,10 +18,8 @@
 2. **Inside implementation mode** use `/next-slice` to pick the next code
    change. Implement one atomic slice per cycle.
 3. **After finishing one step** run `/session-close` (STEP mode) — ticks
-   roadmap, appends `progress.md`, refreshes `activeContext.md`, suggests a
-   commit. Same skill in SESSION mode also runs the `/doc-update` sweep and
-   optionally writes a handoff file. Keep `activeContext.md`, the latest
-   handoff, and `roadmap.md` lean: startup context, checklist, not narrative.
+   roadmap, appends `progress.md`, refreshes `activeContext.md` keeping small but essential, suggests a
+   commit. In SESSION mode it also runs `/doc-update` and may write a handoff.
 4. **For durable doc updates** (after non-trivial implementation) use
    `/doc-update`. Apply the decision table; "no updates needed" is a valid
    outcome. Never create internals / implementation specs.
@@ -59,12 +57,12 @@ source doc over copying content, and update the smallest valuable set of files.
 
 ## Skills (auto-dispatch via description)
 
-- `/session-open` — mandatory session entry.
+- `/session-open` — first session entry.
 - `/next-slice` — pick + start one atomic code change.
 - `/planning-capture` — classify planning output into durable docs.
 - `/doc-update` — selective durable-doc update.
 - `/review-triage` — sort review findings.
-- `/session-close` — close one step (STEP mode) OR end the session (SESSION mode). Auto-detects.
+- `/session-close` — close one step or session; keeps `activeContext.md` minimal/high-signal.
 - `/handoff` — cross-tool / cross-model standalone packet (alternative to `/session-close` when handing to a non-Claude tool).
 
 ## Non-obvious gotchas

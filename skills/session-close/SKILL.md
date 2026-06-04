@@ -5,7 +5,8 @@ description: Close a finished step or prepare handoff. Use for /session-close.
 
 # session-close
 
-Close one step or end the session. Two modes, auto-detected.
+Close one step or end the session. Two modes, auto-detected, but bare
+`/session-close` defaults to SESSION mode.
 
 ## When to use
 
@@ -21,7 +22,11 @@ Close one step or end the session. Two modes, auto-detected.
 - User says: "wrap up", "let's stop here", "end the session", "we're done for today".
 - User invokes `/session-close`.
 
-If unclear which mode, ask the user one question: "Closing just this step or the whole session?"
+If the user explicitly invokes `/session-close` with no qualifier, treat it as
+**SESSION mode by default**. Only use **STEP mode** when the user clearly says
+they are closing just one finished step and will continue working afterward.
+Ask a clarifying question only when the user's wording directly conflicts with
+those defaults.
 
 ## Do NOT use when
 
@@ -39,7 +44,10 @@ If unclear which mode, ask the user one question: "Closing just this step or the
 
 ## Steps
 
-1. **Identify mode** (STEP or SESSION) from user intent. Ask if ambiguous.
+1. **Identify mode** (STEP or SESSION) from user intent.
+   Default rule: bare `/session-close` => SESSION.
+   Ask only when the user's wording conflicts with the default and the risk of
+   choosing wrong is material.
 
 2. **STEP actions** (always run):
    - Confirm the step just finished from `activeContext.md` + the current unchecked item in `roadmap.md`. Confirm in one sentence with the user if ambiguous.
