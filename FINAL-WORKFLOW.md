@@ -266,13 +266,66 @@ applies doc-update rules, writes `handoff-*.md` only if needed.
 your workflow). Use `/session-close` by default; reach for `/handoff` when
 the receiver isn't another Claude session in this workflow.
 
-## 7. AGENTS.md template
+## 7. Planning reality today
+
+Planning is not fully formalized here yet. The current documented workflow
+names `/planning-capture`, but larger implementations often begin earlier with
+**context engineering** and long `grill-me` / `grill-with-docs` sessions.
+Those skills are adapted from Matt Pocock's public agent-skills repo:
+[`grill-me`](https://github.com/mattpocock/skills/blob/main/skills/productivity/grill-me/SKILL.md)
+and
+[`grill-with-docs`](https://github.com/mattpocock/skills/blob/main/skills/engineering/grill-with-docs/SKILL.md).
+
+In practice, the flow often starts outside the repo:
+
+- exploratory discussion in ChatGPT, often on the phone during normal daily activity
+- **deep research** and tradeoff clarification before the coding session
+- export of that discussion as a Markdown summary
+- import of the summary into the project as compact planning context
+- a long **grilling session** built from that summary, selected files, and a
+  large typed or dictated prompt
+
+The dictated-prompt path matters in real use. One practical tool for this is
+[Handy](https://github.com/cjpais/handy), an offline speech-to-text app; the
+current working preference described for this workflow is Whisper Large for
+higher-accuracy transcription. The important workflow point is not the tool
+itself, but that planning input may arrive as several minutes of spoken context
+that later gets distilled into Markdown before coding starts.
+
+This means the real planning sequence for large work is often:
+
+`ChatGPT exploration → Markdown summary → grill-me / grill-with-docs session → planning-capture → implementation workflow`
+
+The summary, not the full raw conversation, is the preferred bridge into coding
+context.
+
+## 8. Version-control gap
+
+**Version control** is still under-specified in this workflow and should be
+treated as a future improvement area. That gap matters because agent quality
+depends heavily on clean branch boundaries, understandable commit history, and a
+clear pull-request path.
+
+The likely future direction is:
+
+- short-lived topic branches for non-trivial work
+- small, meaningful commits that map to reviewable slices
+- pushes used as recoverable checkpoints, not only as end-of-task publishing
+- draft pull requests for larger work so review and CI can start early
+- an explicit merge policy, instead of leaving branch integration implicit
+
+GitHub's docs recommend branches to isolate development work and pull requests
+to review and discuss changes before merge. This repo should eventually explain
+how those version-control mechanics fit the AI workflow without making the loop
+too heavy.
+
+## 9. AGENTS.md template
 
 The router lives at `AGENTS.md` in the rel package. It is ~80 lines and
 answers four questions: where am I, what's the workflow, where are docs, what
 gotchas. Copy it into new projects and add per-project gotchas at the bottom.
 
-## 8. Harness hooks
+## 10. Harness hooks
 
 Wire via `/update-config`, or use the bundled hook in `hooks/`:
 

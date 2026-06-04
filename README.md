@@ -32,6 +32,46 @@ history/                     ← earlier design drafts, for traceability
 
 Every session begins with `/session-open`. No exceptions.
 
+## Planning in practice
+
+Planning mode is not fully formalized in this repository yet. In practice,
+larger projects usually start before `/planning-capture` with a longer
+**context engineering** phase.
+
+This section is also a small portfolio note: it shows how I structure
+AI-assisted work before code starts, not only which commands I run.
+
+My current planning flow typically looks like this:
+
+1. During normal daily activity, I often start early exploration in ChatGPT on
+   my phone. That can include **deep research**, tradeoff clarification, and a
+   30-minute back-and-forth before I even sit down at the PC.
+2. At the end of that discussion, I ask ChatGPT to summarize the conversation as
+   a Markdown file. I then download that file and place it in the project so it
+   can be reused as compact planning context.
+3. For larger implementation work, I usually run a long `grill-me` or
+   `grill-with-docs` session. These **grilling sessions** often begin with a
+   large prompt, a set of files, and direct file references inside the prompt.
+   This workflow is adapted from Matt Pocock's public agent-skills repo,
+   especially
+   [`grill-me`](https://github.com/mattpocock/skills/blob/main/skills/productivity/grill-me/SKILL.md)
+   and
+   [`grill-with-docs`](https://github.com/mattpocock/skills/blob/main/skills/engineering/grill-with-docs/SKILL.md).
+4. The prompt itself may be typed or dictated. I often use
+   [Handy](https://github.com/cjpais/handy), an offline speech-to-text tool, with
+   Whisper Large for higher-accuracy transcription.
+5. A serious grilling session can take hours, sometimes close to half a day, and
+   can involve dozens of questions or, in larger cases, well over a hundred.
+
+The practical rule is: big implementations usually begin with **context
+engineering** first, then a long grilling pass, then `/planning-capture`, and
+only after that move into the implementation workflow captured in this
+repository.
+
+Another practical rule is that I do not try to carry the entire raw planning
+conversation into the coding session. I prefer to bring a distilled Markdown
+summary plus the relevant files.
+
 ## Install the skills (user-global)
 
 ```sh
@@ -78,6 +118,33 @@ mkdir -p "$PROJECT/docs/"{requirements,design,adr}
 All skills use the same 6-section structure: When to use, Do NOT use when,
 Inputs (read order), Steps, Output, Stop conditions. Predictable enough to
 follow yourself.
+
+## Version control gap
+
+Git workflow is not yet covered deeply enough in this repository. That is a
+real gap, because good AI-assisted implementation depends on clean **version
+control** boundaries: commits, branches, pushes, and pull requests that make
+work easy to review and recover.
+
+This is the direction the workflow should probably move toward:
+
+- Use short-lived topic branches for non-trivial work instead of piling all
+  changes onto `main`. GitHub documents
+  [branches](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-branches)
+  as a way to isolate development work and
+  [pull requests](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests)
+  as the review and discussion path before merge.
+- Keep commits small and meaningful so an agent can reason about what changed,
+  what should be reverted, and what belongs in a follow-up commit.
+- Open draft pull requests early for larger work so review, checks, and scope
+  discussion can happen before the branch is considered ready.
+- Treat commit history as part of the workflow artifact, not just a transport
+  layer. Good history improves debugging, rollback, review, and future agent
+  context.
+
+This repo should eventually explain how to incorporate branch creation,
+checkpoint commits, pushes, pull requests, and merge strategy into the workflow
+without making the loop heavy.
 
 ## Core rule
 
