@@ -123,6 +123,36 @@ Guardrails:
 
 ### Context windows and working zones
 
+This workflow is built around **context engineering**: controlling what the
+agent sees, when it sees it, and how much of the live transcript stays in play.
+The practical risk is long-context degradation, including lost-in-the-middle
+behavior, context pollution/rot, and hallucination. See "References" below for
+definitions and background; this document keeps only the operating rules.
+
+That is why the workflow uses planning, atomic slices, `/session-open`, and
+`/session-close`:
+
+- Planning turns large, noisy exploration into small durable artifacts.
+- `/session-open` loads the router, current state, handoff, and roadmap instead
+  of the whole project history.
+- `/next-slice` limits the active task so the agent does not need the entire
+  project in working memory.
+- `/session-close` records the next-step state before the live transcript
+  becomes the source of truth.
+- `/compact` / compaction is a continuation tool that summarizes older
+  conversation to free context, but it is lossy. Prefer clean slice boundaries
+  and fresh sessions when the next slice does not need the raw prior transcript.
+
+References:
+
+- [Context engineering for agents](https://docs.langchain.com/oss/python/langchain/context-engineering) — LangChain docs.
+- [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) — Anthropic Engineering.
+- [Context window](https://en.wikipedia.org/wiki/Context_window) — Wikipedia term reference.
+- [Lost in the Middle: How Language Models Use Long Contexts](https://arxiv.org/abs/2307.03172) — original long-context retrieval paper.
+- [Context Rot: How Increasing Input Tokens Impacts LLM Performance](https://www.trychroma.com/research/context-rot) — Chroma Research.
+- [Hallucination (artificial intelligence)](https://en.wikipedia.org/wiki/Hallucination_%28artificial_intelligence%29) — Wikipedia term reference.
+- [Claude Code models, usage, and limits](https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code) — includes `/compact` behavior.
+
 Thresholds are **fixed token amounts**, not fractions of the marketed
 window. They are empirical behavior cliffs anchored on the Claude 200k era,
 where "40% / 50% / 60%" originally meant 80k / 100k / 120k tokens. On a

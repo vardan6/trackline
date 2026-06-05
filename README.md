@@ -32,6 +32,15 @@ history/                     ← earlier design drafts, for traceability
 
 Every session begins with `/session-open`. No exceptions.
 
+## Why this workflow exists
+
+This is a **context-engineering** workflow for keeping AI coding agents inside
+a useful working range: small loaded state, atomic slices, explicit closeout,
+and durable handoff state instead of one ever-growing transcript.
+
+Canonical explanation: `FINAL-WORKFLOW.md` §1, "Context windows and working
+zones". Hook mechanics: `hooks/README.md`.
+
 ## Planning in practice
 
 Planning mode is not fully formalized in this repository yet. In practice,
