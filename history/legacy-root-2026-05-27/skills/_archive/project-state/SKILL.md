@@ -1,63 +1,34 @@
 ---
 name: project-state
-description: Infer current project state from docs, code, and recent activity.
+description: Use when the user asks for current status, where work stands, what was last done, or what should happen next. Keywords: continue, resume, pick up, where were we, current state, status, progress, what's next.
 ---
 
-Determine the real current state of the current project or subproject.
+Infer the real current state of the current project or subproject.
 
-Goals:
-- Maximize accuracy with minimal token usage.
-- Prefer implementation reality over documentation.
-- Build only enough context to determine the best next action.
-- Prepare for likely follow-up: continue implementing the recommendation.
+Keep it lightweight.
 
-Keep inspection lightweight and local first.
+- Prefer code and recent activity over stale docs.
+- Read only enough local context to answer confidently.
+- Aim to identify: current state, recent work, and the next sensible step.
 
-Priority (stop when confidence is sufficient):
+Common trigger phrases:
 
-1. Current local context
-- Current directory/subproject
-- Nearby files
-- Open/recently modified files if available
+- "where are we?"
+- "where were we?"
+- "what's the current state?"
+- "what did we finish?"
+- "what's next?"
+- "continue"
+- "resume"
+- "pick this up"
+- "status"
+- "progress"
 
-2. Implementation signals
-- Existing functionality
-- Partial implementations
-- TODO/FIXME/HACK markers
-- Current branch
-- Uncommitted changes
+Suggested lookup order, stopping early when confidence is high:
 
-3. Recent activity
-- Recent commits
-- Commit messages
-- Recently touched files
+1. Current directory and nearby files
+2. Existing implementation and uncommitted changes
+3. Recent commits or recently touched files
+4. Lightweight roadmap or TODO docs if needed
 
-4. Lightweight project context
-- README / PLAN / ROADMAP / TODO only if needed
-- Treat docs as lower trust than implementation
-
-Infer:
-- What was recently completed
-- What is currently in progress
-- What should logically happen next
-- Best next implementation step
-
-Output concisely:
-
-## State
-One short paragraph of the real current status.
-
-## Recent
-Recent completed work.
-
-## Current
-Current implementation phase. clearly mention what is done vs not done.
-
-## Next
-Single best next step.
-
-## Continue Prompt
-One short instruction for continuing immediately without re-analysis.
-
-## Confidence
-High / Medium / Low
+Reply concisely with the current state, what appears recently completed, and the best next step. Include confidence when uncertain.

@@ -159,8 +159,8 @@ else
 fi
 
 # Emit a systemMessage the agent will see on the next turn.
-# Format per Claude Code Stop-hook contract.
-printf '{"hookSpecificOutput":{"hookEventName":"Stop","zone":"%s","approxTokens":%s,"refPct":%s},"systemMessage":"%s"}\n' \
-  "$zone" "$approx_tokens" "$ref_pct" "$(printf '%s' "$msg" | sed 's/"/\\"/g')"
+# Stop hooks only support top-level fields; hookSpecificOutput is not valid for Stop.
+printf '{"systemMessage":"%s"}\n' \
+  "$(printf '%s' "$msg" | sed 's/"/\\"/g')"
 
 exit 0
