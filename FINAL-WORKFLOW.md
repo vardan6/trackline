@@ -143,6 +143,10 @@ That is why the workflow uses planning, atomic slices, `/session-open`, and
   conversation to free context, but it is lossy. Prefer clean slice boundaries
   and fresh sessions when the next slice does not need the raw prior transcript.
 
+When instructing the agent, use exact identifiers — file names, function names,
+page/widget names, XPaths, unique paths. Precise names help the agent load the
+right context and avoid mixing unrelated parts of the project.
+
 References:
 
 - [Context engineering for agents](https://docs.langchain.com/oss/python/langchain/context-engineering) — LangChain docs.
@@ -282,6 +286,12 @@ Six skills, each at `skills/<name>/SKILL.md`:
 transfer — use when handing off to a non-Claude tool or another model;
 `/session-close` is preferred for in-workflow ending).
 
+**Vendored into this repo (Matt Pocock, MIT):** `grill-me`, `grill-with-docs`,
+and `handoff` are authored by Matt Pocock and copied into `skills/` under the
+MIT License so they travel with the workflow and are properly credited. See
+`CREDITS.md` and `skills/LICENSE-mattpocock`. They keep their upstream format
+rather than the 6-section canonical skeleton.
+
 **Archived (preserved at `~/.agents/skills-archive/`, not loaded):**
 `caveman`, `setup-matt-pocock-skills`, `improve-codebase-architecture`.
 
@@ -343,6 +353,12 @@ The likely future direction is:
 - pushes used as recoverable checkpoints, not only as end-of-task publishing
 - draft pull requests for larger work so review and CI can start early
 - an explicit merge policy, instead of leaving branch integration implicit
+
+A practical trap worth calling out: when asked to review, an agent often
+compares only the uncommitted diff against the last commit, not the whole
+project. Clean, frequent commits keep that implicit review scope correct;
+without them the agent can silently review the wrong slice while you assume it
+looked at everything.
 
 GitHub's docs recommend branches to isolate development work and pull requests
 to review and discuss changes before merge. This repo should eventually explain

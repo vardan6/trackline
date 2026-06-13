@@ -9,9 +9,11 @@ Self-contained: docs + skills + AGENTS.md template + design history.
 README.md                    ← this file
 FINAL-WORKFLOW.md            ← THE wall-chart document. Keep §1 open while you work.
 AGENTS.md                    ← router template to copy into each new project
+CREDITS.md                   ← attribution for vendored third-party skills (Matt Pocock, MIT)
 INITIAL-REQUEST.md           ← the original request that started this design
 SESSION-TRANSCRIPT.md        ← the Opus session that produced the workflow
-skills/                      ← 6 canonical skills (the installable artifacts)
+skills/                      ← 6 canonical skills (authored here) + 3 vendored (Matt Pocock, MIT)
+  skills/LICENSE-mattpocock  ← MIT license covering the vendored skills
 hooks/                       ← context-zone Stop hook (smart / warn / dumb zones)
 history/                     ← earlier design drafts, for traceability
 ```
@@ -92,6 +94,16 @@ done
 
 For project-scoped install, symlink into `<project>/.claude/skills/` instead.
 
+The three vendored Matt Pocock skills (MIT — see `CREDITS.md`) can be installed
+the same way. Skip this if you already have them from upstream
+(`mattpocock/skills`):
+
+```sh
+for s in grill-me grill-with-docs handoff; do
+  ln -sfn "$(pwd)/skills/$s" "$HOME/.claude/skills/$s"
+done
+```
+
 ## Install the context-zone hook (recommended)
 
 Auto-nudges the agent when context climbs into warn / dumb zones, so you
@@ -122,11 +134,22 @@ mkdir -p "$PROJECT/docs/"{requirements,design,adr}
 | `doc-update`       | After non-trivial coding, to refresh durable docs.                       |
 | `review-triage`    | After /review or /security-review.                                       |
 | `session-close`    | STEP mode: after finishing a roadmap step. SESSION mode: end of session, day, or context around 100k tokens: ~39% on Codex 258.4k, 50% on Sonnet 4.6 / Haiku 4.5, 10% on Opus 4.7. Auto-detected. |
-| `handoff` (global) | Cross-tool / cross-model standalone-packet transfer.                     |
 
-All skills use the same 6-section structure: When to use, Do NOT use when,
+All six use the same 6-section structure: When to use, Do NOT use when,
 Inputs (read order), Steps, Output, Stop conditions. Predictable enough to
 follow yourself.
+
+## Vendored skills (Matt Pocock, MIT)
+
+Three skills used by this workflow are authored by Matt Pocock and vendored into
+`skills/` under the MIT License (see `CREDITS.md` and `skills/LICENSE-mattpocock`).
+They follow their upstream format, not the 6-section skeleton above.
+
+| Skill              | When                                                                      |
+|--------------------|---------------------------------------------------------------------------|
+| `grill-me`         | Planning. Get relentlessly interviewed to stress-test a plan/design.      |
+| `grill-with-docs`  | Planning. Same, but challenged against the project's domain model + docs.  |
+| `handoff`          | Cross-tool / cross-model standalone-packet transfer between sessions.     |
 
 ## Version control gap
 
