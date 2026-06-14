@@ -42,10 +42,17 @@ Turn planning output into durable docs. Classify, route, stop.
    - **Implementation note** → durable invariant, protocol, contract, gotcha, navigation hint. Sparse.
    - **Temporary** → do not document; leave in conversation.
 5. Route each point to the correct doc. Edit existing > create new.
-6. Do NOT store current status in requirements or design. Live state belongs in `activeContext.md`; phase/checklist state in `roadmap.md`; completed cycle history in `progress.md`.
-7. Do NOT create an internals or implementation spec.
-8. If a planning decision conflicts with implementation reality or an existing design/ADR, surface the conflict instead of overwriting it silently.
-9. Print the Output.
+6. Shape implementation work in `roadmap.md` as thin vertical slices, not horizontal layer-by-layer phases:
+   - Each slice delivers the smallest meaningful behavior across all relevant layers and is independently verifiable.
+   - Start with a minimal end-to-end path, then add capability through subsequent slices.
+   - Prefer several small slices over a few large ones.
+   - Mark work **AFK** when it can proceed autonomously and **HITL** when it requires a human decision, review, or approval. Prefer AFK where practical, but do not defer necessary HITL decisions.
+   - Keep roadmap items checklist-first. Store requirements and design decisions in their canonical docs rather than duplicating them in roadmap items.
+   - Leave exact file-level scope and selection of the next atomic code change to `/next-slice`.
+7. Do NOT store current status in requirements or design. Live state belongs in `activeContext.md`; phase/checklist state in `roadmap.md`; completed cycle history in `progress.md`.
+8. Do NOT create an internals or implementation spec.
+9. If a planning decision conflicts with implementation reality or an existing design/ADR, surface the conflict instead of overwriting it silently.
+10. Print the Output.
 
 ## Output
 

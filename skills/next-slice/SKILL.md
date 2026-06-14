@@ -30,13 +30,15 @@ Inside implementation mode. Pick one atomic slice and start.
 
 1. Identify candidate next steps from `roadmap.md` and `activeContext.md`.
 2. Pick one slice that satisfies all of:
+   - vertical: the smallest meaningful behavior across all relevant layers; avoid layer-only work unless it is an explicit prerequisite
+   - all dependencies and required HITL decisions, reviews, or approvals are resolved
    - small enough to finish in one session
    - visible in code
    - tied to a roadmap item
    - low ambiguity
    - easy to verify (test, manual check, or command)
    - leaves a clear next step after completion
-3. If several slices qualify, pick the one that unblocks the most immediate roadmap progress with the smallest safe scope.
+3. If several slices qualify, prefer AFK work, then pick the one that unblocks the most immediate roadmap progress with the smallest safe scope.
 4. Print the Output. Wait for user confirmation, then implement.
 5. Prefer implementation reality over documentation when they conflict.
 
@@ -57,4 +59,5 @@ Confidence: high | medium | low
 
 - If confidence is low → ask user one specific question, then stop.
 - If no candidate fits (all are too large or ambiguous) → stop and suggest `/planning-capture` to refine the roadmap.
+- If all viable candidates have unresolved dependencies or HITL gates → stop and surface the required decision, review, or approval instead of implementing.
 - After implementing the slice, do not chain into another slice automatically → `/session-close (STEP mode)`.

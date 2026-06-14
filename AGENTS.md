@@ -16,7 +16,7 @@
    `docs/requirements/` or `docs/design/` unless the next step explicitly
    needs them.
 2. **Inside implementation mode** use `/next-slice` to pick the next code
-   change. Implement one atomic slice per cycle.
+   change. Implement one atomic vertical slice per cycle.
 3. **After finishing one step** run `/session-close` (STEP mode) — ticks
    roadmap, appends `progress.md`, refreshes `activeContext.md` keeping small but essential, suggests a
    commit. In SESSION mode it also runs `/doc-update` and may write a handoff.
@@ -34,6 +34,15 @@
    Don't push past ~120k: ~46% / 60% / 12% respectively.
 8. **Code is the truth.** Re-derive *how* from code. Do not write internals
    docs that mirror code structure.
+
+## Context discipline
+
+- Locate with `rg`/`grep`, then read narrow ranges — don't read whole files
+  when a range works, and don't re-read what's already in context.
+- Keep command output small: scoped diffs (`git diff -- <path>`), single test
+  files, quiet flags. Don't dump full logs or directory trees.
+- Use exact identifiers (file / function / path / widget names) so searches
+  target the right place.
 
 ## Canonical docs (pull on demand)
 

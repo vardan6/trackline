@@ -114,6 +114,46 @@ don't have to watch `/context` yourself. See `hooks/README.md`.
 # and replace /absolute/path/... with the real path to context-zone.sh.
 ```
 
+## Recommended tooling (environment setup)
+
+My environment: **WSL (Ubuntu)**. These CLI tools let a coding agent *locate
+code and slice output* instead of reading whole files or dumping huge logs,
+which keeps context (and tokens) down. The saving comes from the agent using
+them well, not from installing them.
+
+| Tool             | Why it helps                                         | Install (Debian/WSL)         |
+|------------------|------------------------------------------------------|------------------------------|
+| ripgrep (`rg`)   | Fast, gitignore-aware search → locate-before-read    | `sudo apt install ripgrep`   |
+| fd (`fdfind`)    | Find files without walking/printing big trees        | `sudo apt install fd-find`   |
+| jq               | Slice JSON instead of dumping whole responses        | `sudo apt install jq`        |
+| ast-grep (`sg`)  | Structural code search for refactors                 | `npm i -g @ast-grep/cli`     |
+
+Notes:
+
+- **Claude Code bundles its own ripgrep** — this list mainly benefits agents
+  that shell out to system tools (e.g. **Codex**), not Claude Code's built-in
+  search.
+- Install where the **agent runs**: if the agent executes in a sandbox, tools
+  in your interactive shell may not be visible to it.
+- Skipped on purpose: `tree`, `bat`, `fzf` — convenient for humans, no token
+  benefit for an agent (and `tree` tempts whole-tree dumps).
+
+### Optional: RTK (personal output-capping proxy)
+
+Not required by this workflow — a personal optimization I run. RTK
+("Rust Token Killer") is a CLI proxy that caps/filters **shell command output**
+before it reaches the model. Two integration styles, which is why it looks
+different per tool:
+
+- **Claude Code** — wired as a `PreToolUse` Bash hook (`rtk hook claude`), so it
+  rewrites commands *transparently*; you won't see an `rtk` prefix.
+- **Codex** — instruction-based (AGENTS.md says "prefix shell commands with
+  `rtk`"), so the `rtk` prefix is *visible*.
+
+It caps shell output, not native `Read`-tool reads, so the "Context discipline"
+rules in `AGENTS.md` still apply. Left out of the `AGENTS.md` template on purpose
+— that template is portable and shouldn't assume RTK is installed.
+
 ## Bootstrap a new project
 
 ```sh
