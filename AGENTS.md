@@ -1,80 +1,53 @@
 # AGENTS.md
 
-> Router for coding agents in this project. Not a knowledge base.
-> Target ~80 lines. If a line wouldn't change a future decision, delete it.
+> Router for coding agents. Keep only rules that change a future decision.
 
-## Where am I right now?
+## Current state
 
-- Current phase + next step are tracked in `roadmap.md` and `activeContext.md` (repo root).
-- Latest session handoff (if any): newest `handoff-*.md` at repo root.
+- Read `activeContext.md` and `roadmap.md` when project state is needed.
+- Read the newest `handoff-*.md` only when those files reference it or leave
+  state unclear.
 
-## Workflow rules
+## Route the work
 
-1. **Every session starts with `/session-open`.**. It reads
-   `AGENTS.md` → `activeContext.md` → newest `handoff-*.md` → `roadmap.md`,
-   declares the mode, and names the next step. Do not pre-read
-   `docs/requirements/` or `docs/design/` unless the next step explicitly
-   needs them.
-2. **Inside implementation mode** use `/next-slice` to pick the next code
-   change. Implement one atomic vertical slice per cycle.
-3. **After finishing one step** run `/session-close` (STEP mode) — ticks
-   roadmap, appends `progress.md`, refreshes `activeContext.md` keeping small but essential, suggests a
-   commit. In SESSION mode it also runs `/doc-update` and may write a handoff.
-4. **For durable doc updates** (after non-trivial implementation) use
-   `/doc-update`. Apply the decision table; "no updates needed" is a valid
-   outcome. Never create internals / implementation specs.
-5. **For plan or code reviews** use `/review-triage`. Implement only
-   `must_fix_now` by default.
-6. **For planning sessions** use `/planning-capture` after `/grill-me`,
-   `/grill-with-docs`, `/to-prd`, or research.
-7. **At ~100k tokens** suggest `/session-close` (or `/handoff` for
-   cross-tool transfer). Include both k-tokens and the status-line
-   percentage for the active surface: ~39% on Codex's current 258.4k
-   effective window, 50% on Sonnet 4.6 / Haiku 4.5, or 10% on Opus 4.7.
-   Don't push past ~120k: ~46% / 60% / 12% respectively.
-8. **Code is the truth.** Re-derive *how* from code. Do not write internals
-   docs that mirror code structure.
+- Ambiguous continuation ("continue", "where are we?") → `/session-open`.
+- Next implementation change, including at session start → `/next-slice`.
+- Finished step or session → `/session-close` (STEP or SESSION mode).
+- Planning output after research or grilling → `/planning-capture`.
+- Plan or code review → `/review-triage`; implement only `must_fix_now`.
+- Durable documentation check → `/doc-update`.
+- Cross-tool or cross-model transfer → `/handoff`.
 
-## Context discipline
+Direct tasks and explicit skill requests do not require `/session-open` first.
+Implement one atomic vertical slice per cycle.
 
-- Locate with `rg`/`grep`, then read narrow ranges — don't read whole files
-  when a range works, and don't re-read what's already in context.
-- Keep command output small: scoped diffs (`git diff -- <path>`), single test
-  files, quiet flags. Don't dump full logs or directory trees.
-- Use exact identifiers (file / function / path / widget names) so searches
-  target the right place.
+## Working rules
 
-## Canonical docs (pull on demand)
+- Reuse context already loaded; do not reread unchanged files.
+- Locate with `rg`/`grep`, then read narrow ranges and keep command output small.
+- Use exact identifiers so searches target the relevant code.
+- At about 100k tokens, suggest `/session-close` or `/handoff`; do not begin new
+  work around 120k. `hooks/README.md` owns threshold details.
+- Code is current implementation truth. Requirements, design, and ADRs are
+  decision truth; report conflicts and ask before changing a standing decision.
+- Do not create internals documents that mirror code.
 
-Documentation is agent-first and human-readable second: use it to make correct
-development decisions without loading unnecessary context.
+## Canonical documents
 
-Keep one canonical source of truth per fact. Prefer linking or naming the
-source doc over copying content, and update the smallest valuable set of files.
+- `docs/requirements/` — finished behavior, constraints, acceptance criteria,
+  non-goals, and user expectations. Pull when scope or expected behavior is unclear.
+- `docs/design/` — architecture, algorithms, boundaries, protocols, and
+  tradeoffs. Pull before designing across modules.
+- `docs/adr/` — durable decisions and non-obvious rationale. Search when code
+  looks surprising.
+- `docs/implementation-notes.md` — rare invariants, contracts, and gotchas.
+- `activeContext.md`, `roadmap.md`, `progress.md` — live state, planned work,
+  and completed-cycle history.
 
-- `docs/requirements/` — agreed finished-project behavior, constraints,
-  acceptance criteria, non-goals, and user expectations. Read when scope or
-  expected behavior is ambiguous. Do not store current status here.
-- `docs/design/` — implementation approach: technology choices, algorithms,
-  boundaries, protocols, and tradeoffs. Read when designing across modules.
-  Ask before changing a standing design decision. If code and design disagree,
-  report the conflict instead of silently choosing one.
-- `docs/adr/` — recorded decisions and non-obvious mechanics. Search when something looks weird.
-- `docs/implementation-notes.md` — rare durable invariants / contracts / gotchas.
-- `activeContext.md`, `roadmap.md`, `progress.md` — live state, phase/checklist
-  state, and cycle history. Keep status out of requirements and design.
-
-## Skills (auto-dispatch via description)
-
-- `/session-open` — first session entry.
-- `/next-slice` — pick + start one atomic code change.
-- `/planning-capture` — classify planning output into durable docs.
-- `/doc-update` — selective durable-doc update.
-- `/review-triage` — sort review findings.
-- `/session-close` — close one step or session; keeps `activeContext.md` minimal/high-signal.
-- `/handoff` — cross-tool / cross-model standalone packet (alternative to `/session-close` when handing to a non-Claude tool).
+Keep one source of truth per fact. Keep current status out of requirements and
+design, and load durable documents only when the task needs them.
 
 ## Non-obvious gotchas
 
-<!-- Add per-project freezes, hidden invariants, in-progress refactors here.
-     If empty, leave empty. Do not pad. -->
+<!-- Add project-specific freezes, hidden invariants, or in-progress refactors.
+     If empty, leave empty. -->

@@ -1,46 +1,44 @@
 ---
 name: next-slice
-description: Pick and start the next small implementation step. Use for /next-slice.
+description: Pick the next small implementation slice. Use when the user asks what to implement, says let's code, or invokes /next-slice.
 ---
 
 # next-slice
 
-Inside implementation mode. Pick one atomic slice and start.
-
 ## When to use
 
-- After `/session-open` declared mode=implementation and the user is ready to code.
+- Implementation mode is established, or explicit `/next-slice` starts it from minimal state.
 - User says: "what should I implement", "pick the next step", "let's code".
-- User invokes `/next-slice`.
 
 ## Do NOT use when
 
-- At session start before mode is declared → `/session-open`.
+- State indicates another mode and the user has not explicitly redirected it.
 - After finishing a step → `/session-close (STEP mode)`.
 - Plan is unclear → `/planning-capture` or `/grill-me` first.
 
 ## Inputs (read order, stop when confident)
 
-1. `activeContext.md` and `roadmap.md` (already in context from `/session-open` if used).
-2. Recent git state.
+1. `activeContext.md` and `roadmap.md`; reuse them if already read and unchanged.
+2. Recent git state; start small and inspect only relevant diffs when needed.
 3. Relevant requirement / design / ADR — only the ones the slice touches.
 4. Relevant code area.
 
 ## Steps
 
-1. Identify candidate next steps from `roadmap.md` and `activeContext.md`.
-2. Pick one slice that satisfies all of:
-   - vertical: the smallest meaningful behavior across all relevant layers; avoid layer-only work unless it is an explicit prerequisite
+1. If mode is unknown, confirm implementation from inputs 1; otherwise stop.
+2. Identify candidate implementation slices from the current roadmap item.
+3. Pick one slice that satisfies all of:
+   - vertical: smallest meaningful behavior across relevant layers
    - all dependencies and required HITL decisions, reviews, or approvals are resolved
    - small enough to finish in one session
-   - visible in code
+   - produces a concrete, reviewable artifact or behavior
    - tied to a roadmap item
    - low ambiguity
    - easy to verify (test, manual check, or command)
-   - leaves a clear next step after completion
-3. If several slices qualify, prefer AFK work, then pick the one that unblocks the most immediate roadmap progress with the smallest safe scope.
-4. Print the Output. Wait for user confirmation, then implement.
-5. Prefer implementation reality over documentation when they conflict.
+   - leaves either a clear next step or a completed roadmap item
+4. Prefer autonomous work, then the smallest slice that unblocks roadmap progress.
+5. Print the Output. Wait for user confirmation, then implement.
+6. Code is implementation truth; durable docs are decision truth. Surface conflicts.
 
 ## Output
 
@@ -51,7 +49,7 @@ Touches: <files / paths>
 Docs needed: <list or "none">
 Verification: <command or manual check>
 Risk: <one line or "low">
-Continue prompt: <one-line instruction to resume after interruption>
+Continue prompt: <one-line instruction to resume this slice after interruption>
 Confidence: high | medium | low
 ```
 

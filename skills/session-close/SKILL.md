@@ -15,8 +15,7 @@ Close one step or end the session. Two modes, auto-detected, but bare
 - User says: "wrap this step", "close the cycle", "we're done with this step", "tick that off".
 
 **SESSION mode** — ending the session (may also be ending a step at the same time):
-- Context around 100k tokens: about 39% on Codex's current 258.4k effective
-  window, 50% on Sonnet 4.6 / Haiku 4.5, or 10% on Opus 4.7.
+- Context around 100k tokens (`hooks/README.md` owns the per-model percentages).
 - End of day or end of phase.
 - Switching agents.
 - User says: "wrap up", "let's stop here", "end the session", "we're done for today".
@@ -44,10 +43,7 @@ those defaults.
 
 ## Steps
 
-1. **Identify mode** (STEP or SESSION) from user intent.
-   Default rule: bare `/session-close` => SESSION.
-   Ask only when the user's wording conflicts with the default and the risk of
-   choosing wrong is material.
+1. **Identify mode** (STEP or SESSION) using the default rule in "When to use".
 
 2. **STEP actions** (always run):
    - Confirm the step just finished from `activeContext.md` + the current unchecked item in `roadmap.md`. Confirm in one sentence with the user if ambiguous.
@@ -71,7 +67,9 @@ those defaults.
    - Keep the handoff tiny by default. It should bridge the next session, not replay the whole one. Prefer pointers to `activeContext.md`, `roadmap.md`, `progress.md`, commits, or exact files over restating large narratives.
    - If a handoff file is needed, fill the template below.
 
-4. **Always:** suggest a commit message. Do not run `git commit` unless the user confirms.
+4. **Commit boundary:** never commit automatically. If the user requested a
+   commit or a substantial phase/checkpoint just completed, ask whether to
+   commit and suggest a message. Do not make committing the next workflow step.
 
 5. Print the Output.
 
@@ -109,7 +107,7 @@ those defaults.
 <one atomic step>
 
 ## Suggested next skill
-<usually /session-open at next start, then /next-slice>
+<usually /session-open for orientation or /next-slice for implementation>
 ```
 
 ## Output
@@ -124,9 +122,8 @@ Scope/arch changes detected: yes | no — <if yes, recommend /doc-update before 
 docs updated this session: <SESSION only — list or "none">
 docs intentionally not updated: <SESSION only — list with reason>
 handoff file: <SESSION only — handoff-*.md path or "not needed — activeContext.md is enough">
-Suggested commit:
-  chore(cycle): <phase> step <n> — <one-line>
-Suggested next skill: /next-slice (continue) | /session-open (next session)
+Commit: <"not requested" or "ask user — <suggested message>">
+Suggested next skill: /next-slice (implement) | /session-open (orient)
 ```
 
 ## Stop conditions

@@ -1,8 +1,9 @@
-# Final Workflow — v7 (Skill-Driven, Strict, Root-State, 6 Canonical)
+# Final Workflow — v8 (Skill-Driven, Conditional Orientation, Root-State)
 
 > Supersedes v3, v4, v5, v6. Combines all prior drafts plus the v3-doc decision
 > to keep fast-state files at the repo root, plus the v7 consolidation that
-> merges cycle-close into session-close (STEP / SESSION modes).
+> merges cycle-close into session-close (STEP / SESSION modes), plus the v8
+> separation between optional session orientation and implementation selection.
 >
 > **This is the wall-chart document.** §1 is the one-page summary to keep open
 > while you work. Everything below §1 is justification and detail.
@@ -23,14 +24,15 @@
                         /handoff               (cross-tool / cross-model standalone packet)
 ```
 
-### Every session begins with `/session-open`.
+### Use `/session-open` when session state needs orientation.
 
-It declares the mode, names the next step, then stops.
+It declares the mode, names the next workflow action, then stops. Direct tasks
+and explicit skill requests do not require it first.
 
 ### Doc layout (one canonical structure — fast state at root)
 
 ```
-AGENTS.md                  ← router only; ~80 lines
+AGENTS.md                  ← router only; ~50 lines
 activeContext.md           ← cheap session-start file; live agent state
 roadmap.md                 ← phases + checkboxes
 progress.md                ← append-only cycle log
@@ -83,7 +85,8 @@ Guardrails:
 
 ### The five rules
 
-1. **`/session-open` first.** Every session. No coding before it runs.
+1. **Orient only when needed.** Use `/session-open` for ambiguous continuation;
+   honor direct tasks and explicit skill requests without extra ceremony.
 2. **Code is the truth.** Re-derive *how* from code. Don't write internals specs.
 3. **Update inline, not in bulk.** During implementation, only `activeContext.md` moves. Bulk doc updates go through `/doc-update` after the work.
 4. **Context budget.** Thresholds are **fixed token amounts**, not fractions
@@ -100,7 +103,7 @@ Guardrails:
 |-----------------------------------------|----------------------|
 | Start a session, know where I am        | `/session-open`      |
 | Capture a plan / research / grill-me    | `/planning-capture`  |
-| Pick & start the next code change       | `/next-slice`        |
+| Pick the next code change               | `/next-slice`        |
 | Update durable docs after coding        | `/doc-update`        |
 | Sort review findings                    | `/review-triage`     |
 | Finish one roadmap step (continuing)    | `/session-close` (STEP mode) |
@@ -109,8 +112,9 @@ Guardrails:
 
 ### Cycle (the inner loop)
 
-```
-/session-open  →  /next-slice  →  implement  →  /session-close (STEP)  →  (next slice OR /session-close SESSION to stop)
+```text
+ambiguous resume → /session-open → /next-slice → implement → /session-close
+explicit implementation request → /next-slice → implement → /session-close
 ```
 
 ### What never goes in docs
@@ -133,8 +137,8 @@ That is why the workflow uses planning, atomic slices, `/session-open`, and
 `/session-close`:
 
 - Planning turns large, noisy exploration into small durable artifacts.
-- `/session-open` loads the router, current state, handoff, and roadmap instead
-  of the whole project history.
+- `/session-open` reuses loaded instructions, reads current state and roadmap,
+  and loads a handoff only when that state is insufficient.
 - `/next-slice` limits the active task so the agent does not need the entire
   project in working memory.
 - `/session-close` records the next-step state before the live transcript
@@ -163,6 +167,10 @@ where "40% / 50% / 60%" originally meant 80k / 100k / 120k tokens. On a
 larger window the cliff sits at a *smaller* percentage; the absolute token
 count is what actually correlates with degraded behavior. Treat the
 percentage as a status-line readout, not a target.
+
+These thresholds are retained from several months of repeated use and multiple
+research checks. They are practical operating guardrails, not claims that every
+task or model degrades at an identical point.
 
 **Canonical thresholds (read these, not the percentages):**
 
@@ -235,16 +243,13 @@ The skills here ARE the installable artifacts, not just descriptions of them.
 
 ## 3. Strict mode discipline
 
-Mode-awareness is enforced at the entry point:
+Mode-awareness is enforced by the selected entry path:
 
-- `/session-open` is **mandatory** at every session start.
-- It reads minimal context in fixed order and outputs a Mode declaration.
-- After that, the rest of the workflow runs via auto-dispatch from sharp skill
-  descriptions — no router skill, no constant slash-command typing.
-
-If a session somehow proceeds without `/session-open` and the agent is unsure
-of the mode, AGENTS.md instructs it to invoke `/session-open` before any other
-action.
+- `/session-open` handles ambiguous continuation and outputs a Mode declaration.
+- `/next-slice` may be invoked directly and performs minimal orientation when
+  implementation mode is not yet established.
+- Direct tasks use the applicable skill or normal task flow without an
+  unrelated orientation step.
 
 ## 4. Strict skill shape
 
@@ -268,12 +273,12 @@ Six skills, each at `skills/<name>/SKILL.md`:
 
 | Skill              | Mode                  | One-line job                                                |
 |--------------------|-----------------------|-------------------------------------------------------------|
-| `session-open`     | Entry to every session| Read minimal state, declare mode, name next step. Absorbs old `project-state`. |
+| `session-open`     | Orientation when needed | Read minimal state, declare mode, name the next workflow action. |
 | `planning-capture` | Planning              | Classify planning output into requirements / design / ADR / roadmap / risks. |
-| `next-slice`       | Implementation        | Pick + start one atomic code change inside implementation mode. |
+| `next-slice`       | Implementation        | Pick one atomic vertical slice and wait for confirmation. |
 | `doc-update`       | Doc update            | Selective durable-doc update via decision table. Replaces old `doc-update-lite` and loose `doc-update`. |
 | `review-triage`    | Plan / code review    | Sort findings; implement only must-fix-now.                 |
-| `session-close`    | Close (STEP / SESSION)| STEP: tick roadmap + progress.md + activeContext.md + commit suggestion. SESSION: same + `/doc-update` sweep + optional handoff file. Absorbs the old `cycle-close`. |
+| `session-close`    | Close (STEP / SESSION)| STEP: tick roadmap + progress.md + activeContext.md. SESSION: same + `/doc-update` sweep + optional handoff. Commit prompt only at a requested or substantial checkpoint. |
 
 ## 6. Useful global skills
 
@@ -365,9 +370,20 @@ to review and discuss changes before merge. This repo should eventually explain
 how those version-control mechanics fit the AI workflow without making the loop
 too heavy.
 
+Until that fuller policy exists:
+
+- The user requests commits and pushes explicitly; agents never perform them
+  automatically.
+- Prefer meaningful phase or checkpoint boundaries over a commit after every
+  slice.
+- `/session-close` may ask about a commit after substantial phase completion,
+  but committing must not become the automatic next workflow step.
+- Keep Git mechanics out of `AGENTS.md`; the relevant skill or user prompt owns
+  the action.
+
 ## 9. AGENTS.md template
 
-The router lives at `AGENTS.md` in the rel package. It is ~80 lines and
+The router lives at `AGENTS.md` in the rel package. It is about 50 lines and
 answers four questions: where am I, what's the workflow, where are docs, what
 gotchas. Copy it into new projects and add per-project gotchas at the bottom.
 
@@ -393,7 +409,7 @@ Wire via `/update-config`, or use the bundled hook in `hooks/`:
 - **Permission allowlist** — read-only Bash + read-MCP via `/fewer-permission-prompts`.
 - **MCP audit** — per project, disable unused servers. Each adds tool schemas to every turn.
 
-## 9. Bootstrap checklist (per new project)
+## 11. Bootstrap checklist (per new project)
 
 ```
 1. Copy AGENTS.md → <project>/AGENTS.md.
@@ -402,12 +418,21 @@ Wire via `/update-config`, or use the bundled hook in `hooks/`:
 4. Ensure ~/.claude/skills/ contains the 6 canonical skills (symlinked from this repo's `skills/`).
 5. /update-config — wire the Stop + context hooks.
 6. Audit MCP servers; disable unused.
-7. First session: /session-open.
+7. First session: use /session-open to inspect state, or /next-slice for an
+   explicit implementation start.
 ```
 
-## 10. What changed across versions
+## 12. What changed across versions
 
-**v6 → v7 (this version):**
+**v7 → v8 (this version):**
+
+| Change                                              | Reason                                                        |
+|-----------------------------------------------------|---------------------------------------------------------------|
+| `/session-open` changed from mandatory to conditional orientation | Avoid duplicate reads and honor direct tasks or explicit skills. |
+| `/next-slice` can establish implementation mode     | Removes the redundant `/session-open` gate before explicit implementation work. |
+| Handoff reads are conditional                       | `activeContext.md` and `roadmap.md` should normally be sufficient. |
+
+**v6 → v7:**
 
 | Change                                              | Reason                                                        |
 |-----------------------------------------------------|---------------------------------------------------------------|
@@ -425,7 +450,7 @@ Wire via `/update-config`, or use the bundled hook in `hooks/`:
 | `handoff` was archived                              | Restored as cross-tool / cross-model standalone-packet skill  |
 | `INITIAL-REQUEST.md` was opus-only                  | Merged with formal `docs/initial-request.md`; nothing dropped |
 
-## 11. Final operating principle
+## 13. Final operating principle
 
 The goal is not less documentation — it's less *duplicated* documentation,
 fewer ad-hoc prompts, and one predictable place for every recurring action.
@@ -442,7 +467,7 @@ Future agents (and future you) need:
 
 Everything else is discovered from code when needed.
 
-Start every session with `/session-open`. Close every step or session with
+Use `/session-open` when state needs orientation, or invoke the relevant skill
+directly when intent is clear. Close every step or session with
 `/session-close` (STEP or SESSION mode, auto-detected). Use `/handoff` only
-when handing off to a non-Claude tool. Everything in between auto-dispatches
-from sharp skill descriptions.
+when handing off to a non-Claude tool.

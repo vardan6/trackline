@@ -1,250 +1,245 @@
 # My AI Coding Workflow
 
-Complete, installable workflow for long-running AI-assisted coding projects.
-Self-contained: docs + skills + AGENTS.md template + design history.
+A practical workflow for long-running projects built with AI coding agents.
 
-## What's inside
+It keeps each session focused, breaks implementation into small changes, and
+stores the state needed to continue later. The goal is simple: a new session
+should not need the full history of every earlier conversation.
 
-```
-README.md                    ← this file
-FINAL-WORKFLOW.md            ← THE wall-chart document. Keep §1 open while you work.
-AGENTS.md                    ← router template to copy into each new project
-CREDITS.md                   ← attribution for vendored third-party skills (Matt Pocock, MIT)
-INITIAL-REQUEST.md           ← the original request that started this design
-SESSION-TRANSCRIPT.md        ← the Opus session that produced the workflow
-skills/                      ← 6 canonical skills (authored here) + 3 vendored (Matt Pocock, MIT)
-  skills/LICENSE-mattpocock  ← MIT license covering the vendored skills
-hooks/                       ← context-zone Stop hook (smart / warn / dumb zones)
-history/                     ← earlier design drafts, for traceability
-```
+## How it works
 
-## Read order
+The workflow has three parts:
 
-1. **`FINAL-WORKFLOW.md`** — start here. §1 is the one-page wall chart.
-2. `AGENTS.md` — the per-project router you copy into new projects.
-3. `skills/*/SKILL.md` — each canonical skill in the 6-section skeleton.
-4. `INITIAL-REQUEST.md` + `SESSION-TRANSCRIPT.md` — the reasoning behind the design.
-5. `history/` — earlier drafts (v1–v4) preserved for traceability.
+1. **Plan the work.** Turn research and discussion into requirements, design
+   decisions, and a short roadmap.
+2. **Implement one small slice at a time.** Choose the smallest meaningful
+   change, finish it, and verify it.
+3. **Leave the project ready to continue.** Update the roadmap and compact
+   project state before moving to another step or ending the session.
 
-## The workflow in one line
+The implementation loop is:
 
-```
-/session-open  →  /next-slice  →  implement  →  /session-close (STEP)  →  (next slice OR /session-close SESSION to stop)
+```text
+/session-open when orientation is needed
+    -> /next-slice
+    -> implement and verify
+    -> /session-close (STEP)
+    -> repeat, or /session-close (SESSION) when stopping
 ```
 
-Every session begins with `/session-open`. No exceptions.
+If you already know that you want the next implementation slice, start directly
+with `/next-slice`.
 
-## Why this workflow exists
+## Quick start
 
-This is a **context-engineering** workflow for keeping AI coding agents inside
-a useful working range: small loaded state, atomic slices, explicit closeout,
-and durable handoff state instead of one ever-growing transcript.
+### 1. Install the core skills
 
-Canonical explanation: `FINAL-WORKFLOW.md` §1, "Context windows and working
-zones". Hook mechanics: `hooks/README.md`.
-
-## Planning in practice
-
-Planning mode is not fully formalized in this repository yet. In practice,
-larger projects usually start before `/planning-capture` with a longer
-**context engineering** phase.
-
-This section is also a small portfolio note: it shows how I structure
-AI-assisted work before code starts, not only which commands I run.
-
-My current planning flow typically looks like this:
-
-1. During normal daily activity, I often start early exploration in ChatGPT on
-   my phone. That can include **deep research**, tradeoff clarification, and a
-   30-minute back-and-forth before I even sit down at the PC.
-2. At the end of that discussion, I ask ChatGPT to summarize the conversation as
-   a Markdown file. I then download that file and place it in the project so it
-   can be reused as compact planning context.
-3. For larger implementation work, I usually run a long `grill-me` or
-   `grill-with-docs` session. These **grilling sessions** often begin with a
-   large prompt, a set of files, and direct file references inside the prompt.
-   This workflow is adapted from Matt Pocock's public agent-skills repo,
-   especially
-   [`grill-me`](https://github.com/mattpocock/skills/blob/main/skills/productivity/grill-me/SKILL.md)
-   and
-   [`grill-with-docs`](https://github.com/mattpocock/skills/blob/main/skills/engineering/grill-with-docs/SKILL.md).
-4. The prompt itself may be typed or dictated. I often use
-   [Handy](https://github.com/cjpais/handy), an offline speech-to-text tool, with
-   Whisper Large for higher-accuracy transcription.
-5. A serious grilling session can take hours, sometimes close to half a day, and
-   can involve dozens of questions or, in larger cases, well over a hundred.
-
-The practical rule is: big implementations usually begin with **context
-engineering** first, then a long grilling pass, then `/planning-capture`, and
-only after that move into the implementation workflow captured in this
-repository.
-
-Another practical rule is that I do not try to carry the entire raw planning
-conversation into the coding session. I prefer to bring a distilled Markdown
-summary plus the relevant files.
-
-## Install the skills (user-global)
+The following example installs the skills globally for Claude Code:
 
 ```sh
 cd /path/to/my-workflow
-for s in session-open planning-capture next-slice doc-update review-triage session-close; do
-  ln -sfn "$(pwd)/skills/$s" "$HOME/.claude/skills/$s"
+mkdir -p "$HOME/.claude/skills"
+
+for skill in \
+  session-open \
+  planning-capture \
+  next-slice \
+  doc-update \
+  review-triage \
+  session-close
+do
+  ln -sfn "$(pwd)/skills/$skill" "$HOME/.claude/skills/$skill"
 done
 ```
 
-For project-scoped install, symlink into `<project>/.claude/skills/` instead.
+For a project-only installation, use `<project>/.claude/skills/` instead of
+`$HOME/.claude/skills/`.
 
-The three vendored Matt Pocock skills (MIT — see `CREDITS.md`) can be installed
-the same way. Skip this if you already have them from upstream
-(`mattpocock/skills`):
+### 2. Prepare a project
 
-```sh
-for s in grill-me grill-with-docs handoff; do
-  ln -sfn "$(pwd)/skills/$s" "$HOME/.claude/skills/$s"
-done
-```
-
-## Install the context-zone hook (recommended)
-
-Auto-nudges the agent when context climbs into warn / dumb zones, so you
-don't have to watch `/context` yourself. See `hooks/README.md`.
-
-```sh
-# Then merge hooks/settings.snippet.json into ~/.claude/settings.json
-# and replace /absolute/path/... with the real path to context-zone.sh.
-```
-
-## Recommended tooling (environment setup)
-
-My environment: **WSL (Ubuntu)**. These CLI tools let a coding agent *locate
-code and slice output* instead of reading whole files or dumping huge logs,
-which keeps context (and tokens) down. The saving comes from the agent using
-them well, not from installing them.
-
-| Tool             | Why it helps                                         | Install (Debian/WSL)         |
-|------------------|------------------------------------------------------|------------------------------|
-| ripgrep (`rg`)   | Fast, gitignore-aware search → locate-before-read    | `sudo apt install ripgrep`   |
-| fd (`fdfind`)    | Find files without walking/printing big trees        | `sudo apt install fd-find`   |
-| jq               | Slice JSON instead of dumping whole responses        | `sudo apt install jq`        |
-| ast-grep (`sg`)  | Structural code search for refactors                 | `npm i -g @ast-grep/cli`     |
-
-Notes:
-
-- **Claude Code bundles its own ripgrep** — this list mainly benefits agents
-  that shell out to system tools (e.g. **Codex**), not Claude Code's built-in
-  search.
-- Install where the **agent runs**: if the agent executes in a sandbox, tools
-  in your interactive shell may not be visible to it.
-- Skipped on purpose: `tree`, `bat`, `fzf` — convenient for humans, no token
-  benefit for an agent (and `tree` tempts whole-tree dumps).
-
-### Optional: RTK (personal output-capping proxy)
-
-Not required by this workflow — a personal optimization I run. RTK
-("Rust Token Killer") is a CLI proxy that caps/filters **shell command output**
-before it reaches the model. Two integration styles, which is why it looks
-different per tool:
-
-- **Claude Code** — wired as a `PreToolUse` Bash hook (`rtk hook claude`), so it
-  rewrites commands *transparently*; you won't see an `rtk` prefix.
-- **Codex** — instruction-based (AGENTS.md says "prefix shell commands with
-  `rtk`"), so the `rtk` prefix is *visible*.
-
-It caps shell output, not native `Read`-tool reads, so the "Context discipline"
-rules in `AGENTS.md` still apply. Left out of the `AGENTS.md` template on purpose
-— that template is portable and shouldn't assume RTK is installed.
-
-## Bootstrap a new project
+Run this from the workflow repository:
 
 ```sh
 PROJECT=/path/to/your/project
+
 cp AGENTS.md "$PROJECT/AGENTS.md"
 touch "$PROJECT/"{activeContext,roadmap,progress}.md
 mkdir -p "$PROJECT/docs/"{requirements,design,adr}
-# First session in the project: /session-open
 ```
 
-## The 6 canonical skills
+Add at least one unchecked step to `roadmap.md` so the agent has a concrete
+starting point:
 
-| Skill              | When                                                                     |
-|--------------------|--------------------------------------------------------------------------|
-| `session-open`     | Every session start. Mandatory.                                          |
-| `planning-capture` | After /grill-me, /to-prd, research, or brainstorm.                       |
-| `next-slice`       | Inside implementation mode, to pick the next change.                     |
-| `doc-update`       | After non-trivial coding, to refresh durable docs.                       |
-| `review-triage`    | After /review or /security-review.                                       |
-| `session-close`    | STEP mode: after finishing a roadmap step. SESSION mode: end of session, day, or context around 100k tokens: ~39% on Codex 258.4k, 50% on Sonnet 4.6 / Haiku 4.5, 10% on Opus 4.7. Auto-detected. |
+```md
+# Roadmap
 
-All six use the same 6-section structure: When to use, Do NOT use when,
-Inputs (read order), Steps, Output, Stop conditions. Predictable enough to
-follow yourself.
+## Phase 1 - First useful outcome
 
-## Vendored skills (Matt Pocock, MIT)
+- [ ] Describe the first small result to implement.
+```
 
-Three skills used by this workflow are authored by Matt Pocock and vendored into
-`skills/` under the MIT License (see `CREDITS.md` and `skills/LICENSE-mattpocock`).
-They follow their upstream format, not the 6-section skeleton above.
+Then open the project with your coding agent. Use `/session-open` to inspect
+project state:
 
-| Skill              | When                                                                      |
-|--------------------|---------------------------------------------------------------------------|
-| `grill-me`         | Planning. Get relentlessly interviewed to stress-test a plan/design.      |
-| `grill-with-docs`  | Planning. Same, but challenged against the project's domain model + docs.  |
-| `handoff`          | Cross-tool / cross-model standalone-packet transfer between sessions.     |
+```text
+/session-open
+```
 
-## Version control gap
+The agent reads the current project state, identifies the active mode, and
+names the next workflow action. It does not select an implementation slice
+unless you run `/next-slice`.
 
-Git workflow is not yet covered deeply enough in this repository. That is a
-real gap, because good AI-assisted implementation depends on clean **version
-control** boundaries: commits, branches, pushes, and pull requests that make
-work easy to review and recover.
+## A typical session
 
-This is the direction the workflow should probably move toward:
+Suppose the roadmap says the next feature is password reset.
 
-- Use short-lived topic branches for non-trivial work instead of piling all
-  changes onto `main`. GitHub documents
-  [branches](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-branches)
-  as a way to isolate development work and
-  [pull requests](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests)
-  as the review and discussion path before merge.
-- Keep commits small and meaningful so an agent can reason about what changed,
-  what should be reverted, and what belongs in a follow-up commit.
-- Open draft pull requests early for larger work so review, checks, and scope
-  discussion can happen before the branch is considered ready.
-- Treat commit history as part of the workflow artifact, not just a transport
-  layer. Good history improves debugging, rollback, review, and future agent
-  context.
+1. Run `/session-open` when resuming without a specific task.
+2. Confirm that implementation is the correct mode and password reset is next.
+3. Run `/next-slice`.
+4. The agent chooses one small vertical slice, such as letting a user submit
+   their email, recording the reset request, and showing a confirmation.
+5. The agent implements and verifies that slice.
+6. Run `/session-close (STEP)` to record the result and select the next step.
+7. Continue with another slice, or run `/session-close` to end the session.
 
-This repo should eventually explain how to incorporate branch creation,
-checkpoint commits, pushes, pull requests, and merge strategy into the workflow
-without making the loop heavy.
+The next session can restart from `activeContext.md` and `roadmap.md` instead of
+reconstructing the project from a long transcript.
 
-## Core rule
+## Project files
 
-> Requirements define what must be true. Design docs define why the system has
-> its shape. Code defines how implementation works. Low-level notes exist only
-> for durable invariants, contracts, gotchas, and navigation.
+Each file has one job:
 
-The first audience is the coding agent during development; the second audience
-is the human who needs a coherent project picture. Docs should therefore be
-precise, actionable, and cheap to load before they are narrative.
+| File or directory | Purpose |
+|---|---|
+| `AGENTS.md` | Routes the agent to the correct workflow and project documents. |
+| `activeContext.md` | Small snapshot of the current state, next step, and blockers. |
+| `roadmap.md` | Checklist of phases and unfinished work. |
+| `progress.md` | Short history of completed steps. |
+| `docs/requirements/` | What the finished project must do. |
+| `docs/design/` | Important implementation decisions and tradeoffs. |
+| `docs/adr/` | Durable decisions that need a recorded rationale. |
+| `docs/implementation-notes.md` | Rare contracts, invariants, and gotchas that are not obvious from code. |
+| `handoff-*.md` | Optional transfer packet when compact project state is not enough. |
 
-Keep one canonical source of truth per fact. Prefer pointers over repeated
-explanations, and update the smallest set of docs that preserves decision
-quality for future agents.
+The core documentation rule is:
 
-Requirements are the durable agreement layer: the finished-project behavior,
-user expectations, constraints, acceptance criteria, non-goals, and overall
-product picture that came out of discussion, research, UX/model work, and
-planning. Design docs are the durable implementation-decision layer:
-technology choices, algorithms, boundaries, protocols, and tradeoffs. Current
-status stays in `activeContext.md`, `roadmap.md`, and `progress.md`, not in
-requirements or design.
+> Requirements define what must be true. Design explains why the system has
+> its shape. Code defines how it works.
 
-Two guardrails keep this useful: design docs must not duplicate private code
-mechanics, and agents must surface code-vs-design conflicts before changing a
-standing decision.
+Current status belongs in `activeContext.md`, `roadmap.md`, and `progress.md`,
+not in requirements or design documents.
 
-## Version
+## Skills
 
-Root package. Synthesizes prior design drafts plus the grill-me-driven
-finalization. See `history/` for the trail.
+### Core workflow
+
+| Skill | Use it when |
+|---|---|
+| `/session-open` | Recovering state when resuming without a specific task. |
+| `/planning-capture` | Turning research, brainstorming, or a planning session into durable project documents. |
+| `/next-slice` | Choosing the next small implementation change. |
+| `/doc-update` | Checking whether completed work changed requirements, design, ADRs, or durable implementation notes. |
+| `/review-triage` | Sorting review findings by what must be fixed now and what can wait. |
+| `/session-close (STEP)` | Finishing one roadmap step while continuing the session. |
+| `/session-close` | Ending the session and leaving compact state for the next one. |
+
+### Planning and handoff
+
+This repository also vendors three skills by
+[Matt Pocock](https://github.com/mattpocock/skills) under the MIT License:
+
+| Skill | Use it when |
+|---|---|
+| `/grill-me` | Stress-testing a plan through detailed questions. |
+| `/grill-with-docs` | Stress-testing a plan against the project's existing language and documents. |
+| `/handoff` | Transferring work to another tool or model with a standalone context packet. |
+
+Install them the same way if they are not already available:
+
+```sh
+cd /path/to/my-workflow
+mkdir -p "$HOME/.claude/skills"
+
+for skill in grill-me grill-with-docs handoff
+do
+  ln -sfn "$(pwd)/skills/$skill" "$HOME/.claude/skills/$skill"
+done
+```
+
+See [CREDITS.md](CREDITS.md) for attribution and license details.
+
+## Planning larger work
+
+Large features usually need more preparation than the implementation loop:
+
+```text
+research or discussion
+    -> /grill-me or /grill-with-docs
+    -> /planning-capture
+    -> /next-slice
+    -> implementation loop
+```
+
+Keep raw research and long conversations outside the implementation session
+when possible. Bring in a concise Markdown summary and the exact files needed
+for the next decision.
+
+## Optional setup
+
+### Context-zone hook
+
+The optional hook warns the agent when a session is becoming too large. It can
+suggest closing the session or creating a handoff before context quality
+degrades.
+
+Claude Code and Codex use different registration files, so follow the complete
+instructions in [hooks/README.md](hooks/README.md).
+
+### Command-line tools
+
+These tools help agents locate information and keep command output small:
+
+| Tool | Purpose | Debian or WSL install |
+|---|---|---|
+| `rg` | Fast, git-aware text search. | `sudo apt install ripgrep` |
+| `fdfind` | Focused file discovery without printing an entire tree. | `sudo apt install fd-find` |
+| `jq` | Select only the needed fields from JSON output. | `sudo apt install jq` |
+| `sg` | Structural code search for larger refactors. | `npm install -g @ast-grep/cli` |
+
+Install tools in the environment where the agent runs, not only in your
+interactive shell.
+
+### RTK
+
+RTK is an optional command-output proxy. It can reduce noisy shell output
+before that output reaches the model.
+
+RTK is a personal optimization, not a requirement of this workflow. It also
+does not replace the instruction to search first, read narrow ranges, and avoid
+dumping large files or logs.
+
+## Current limitations
+
+- Git branching, pull-request, and merge guidance is not yet formalized.
+- Context thresholds are practical guardrails based on repeated use and prior
+  research, not universal guarantees for every task or model.
+- The workflow is strict by design, but each project still needs judgment about
+  what counts as a useful implementation slice.
+
+Active improvements are tracked in [roadmap.md](roadmap.md).
+
+## Repository guide
+
+| Path | What it contains |
+|---|---|
+| [FINAL-WORKFLOW.md](FINAL-WORKFLOW.md) | Full operating model, rationale, and wall chart. |
+| [AGENTS.md](AGENTS.md) | Router template copied into projects. |
+| [`skills/`](skills/) | Core and vendored skill definitions. |
+| [hooks/README.md](hooks/README.md) | Context hook behavior and installation. |
+| [INITIAL-REQUEST.md](INITIAL-REQUEST.md) | Original problem that led to the workflow. |
+| [SESSION-TRANSCRIPT.md](SESSION-TRANSCRIPT.md) | Planning session that shaped the workflow. |
+| [`history/`](history/) | Earlier design versions retained for traceability. |
+
+For normal use, start with this README and `AGENTS.md`. Read
+`FINAL-WORKFLOW.md` when you need the complete rationale or want to change the
+workflow itself.
