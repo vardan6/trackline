@@ -1,473 +1,498 @@
-# Final Workflow — v8 (Skill-Driven, Conditional Orientation, Root-State)
+# Final Workflow — Operating Manual
 
-> Supersedes v3, v4, v5, v6. Combines all prior drafts plus the v3-doc decision
-> to keep fast-state files at the repo root, plus the v7 consolidation that
-> merges cycle-close into session-close (STEP / SESSION modes), plus the v8
-> separation between optional session orientation and implementation selection.
+> This is the full operating manual for the workflow: the step-by-step model the
+> [README](README.md) summarizes. The README tells you *what* the workflow is and
+> how to install it; this document tells you *how to run it* — every step, what it
+> does, what problem it solves, what comes before it, what comes after it, and the
+> side-steps that interleave with the common path.
 >
-> **This is the wall-chart document.** §1 is the one-page summary to keep open
-> while you work. Everything below §1 is justification and detail.
+> Read the README first. Read this when you want the complete operating model or
+> want to change the workflow itself. The rationale behind each problem lives in
+> [INITIAL-REQUEST.md](INITIAL-REQUEST.md); this document is the procedure.
 
 ---
 
-## 1. ONE-PAGE WALL CHART
+## 1. The generic flow
 
-### Modes (always one of these)
-
-```
-1. Planning           → /planning-capture (after /grill-me, /to-prd, etc.)
-2. Plan review        → /review-triage
-3. Implementation     → /next-slice           (inside an implementation cycle)
-4. Documentation      → /doc-update
-5. Review triage      → /review-triage         (same skill as plan review)
-6. Close              → /session-close         (STEP mode = end of step; SESSION mode = end of session)
-                        /handoff               (cross-tool / cross-model standalone packet)
-```
-
-### Use `/session-open` when session state needs orientation.
-
-It declares the mode, names the next workflow action, then stops. Direct tasks
-and explicit skill requests do not require it first.
-
-### Doc layout (one canonical structure — fast state at root)
-
-```
-AGENTS.md                  ← router only; ~50 lines
-activeContext.md           ← cheap session-start file; live agent state
-roadmap.md                 ← phases + checkboxes
-progress.md                ← append-only cycle log
-handoff-*.md               ← only when activeContext.md isn't enough; newest wins
-docs/
-  requirements/            ← agent-first behavior contract; human-readable product picture
-  design/                  ← agent-first implementation guidance; human-readable rationale
-  adr/                     ← append-only decisions
-  implementation-notes.md  ← rare durable invariants/contracts/gotchas
-```
-
-### What belongs where
-
-Documentation is agent-first, human-readable second. Its primary job is to help
-coding agents make correct development decisions with minimal context; its
-secondary job is to give humans a coherent picture of the project.
-
-Use one canonical home per fact. Prefer pointers over copies, and update the
-smallest set of files that preserves decision quality. Lower token use is a
-workflow goal, but never by omitting information that would change a future
-agent's implementation choice.
-
-`docs/requirements/` describes the finished project from the outside: agreed
-behavior, user expectations, constraints, acceptance criteria, non-goals, and
-the overall product picture. It is the record of what was decided through
-discussion, research, UX/model work, and grill-me style planning. It should not
-describe implementation mechanics or temporary status.
-
-`docs/design/` describes how the project is shaped to satisfy the requirements:
-technology choices, algorithms, boundaries, protocols, data-flow decisions,
-tradeoffs, and approaches for important subfunctions. Coding agents should treat
-design docs and ADRs as standing decisions; if an implementation would overturn
-one, they should stop and ask instead of silently changing direction.
-
-Current status does not belong in requirements or design docs. Keep live state
-in `activeContext.md`, phase/checklist state in `roadmap.md`, and completed
-cycle history in `progress.md`. This avoids updating four documents for every
-implementation cycle.
-
-Guardrails:
-
-- Design docs must not become implementation specs that duplicate code. Keep
-  approach, boundaries, contracts, and tradeoffs; re-derive private mechanics
-  from code.
-- Code is implementation truth, but design/ADR is decision truth. If they
-  disagree, surface the conflict and ask before changing a standing decision.
-- Do not duplicate the same fact across requirements, design, ADRs, roadmap,
-  and active state. Move it to the best home and link or reference it elsewhere
-  only when needed.
-
-### The five rules
-
-1. **Orient only when needed.** Use `/session-open` for ambiguous continuation;
-   honor direct tasks and explicit skill requests without extra ceremony.
-2. **Code is the truth.** Re-derive *how* from code. Don't write internals specs.
-3. **Update inline, not in bulk.** During implementation, only `activeContext.md` moves. Bulk doc updates go through `/doc-update` after the work.
-4. **Context budget.** Thresholds are **fixed token amounts**, not fractions
-   of whatever window the active model advertises. They are empirical
-   behavior cliffs calibrated on the Claude 200k era (where "40% / 50% / 60%"
-   originally meant 80k / 100k / 120k). Use the table below to translate.
-   Warn at ~100k → `/session-close` or `/handoff`. Compact around ~120k,
-   not at "90% of the marketed window."
-5. **The honest test.** Would removing this line / doc / skill cause a future session to make a *different and worse* decision? If no, delete it.
-
-### Skill cheat-table
-
-| You want to…                            | Run                  |
-|-----------------------------------------|----------------------|
-| Start a session, know where I am        | `/session-open`      |
-| Capture a plan / research / grill-me    | `/planning-capture`  |
-| Pick the next code change               | `/next-slice`        |
-| Update durable docs after coding        | `/doc-update`        |
-| Sort review findings                    | `/review-triage`     |
-| Finish one roadmap step (continuing)    | `/session-close` (STEP mode) |
-| End the session for the next agent      | `/session-close` (SESSION mode) |
-| Cross-tool/model standalone transfer    | `/handoff`           |
-
-### Cycle (the inner loop)
+The workflow is not one long pipeline. It is a small set of **self-contained
+cycles** — *plan*, *implement*, and *review* — each opened with `/session-open`
+when orientation is needed and ended with `/session-close`. You close the plan;
+later you open and close implementation; later you open and close a review. They
+are separate units of work, run when each is needed, not stages of a single run.
 
 ```text
-ambiguous resume → /session-open → /next-slice → implement → /session-close
-explicit implementation request → /next-slice → implement → /session-close
+PLAN  (often starts off the coding agent — see §3.1)
+  research / discussion → gather into a Markdown summary
+    → /grill-me  or  /grill-with-docs    stress-test the plan; break it into vertical slices
+    → /planning-capture                  write requirements / design / ADR / sliced roadmap
+    → /session-close                     record the next step, end the planning session
+
+IMPLEMENT  (repeat per slice)
+    → /next-slice                        "find the next slice and implement it"
+    → implement and verify
+    → /doc-update                        when a slice changed durable behavior (as needed)
+    → /session-close                     STEP to continue with another slice, SESSION to stop
+  ↺ take another slice while context stays light; end the session as you near the warn zone (§6)
+
+REVIEW  (its own step — run after a slice or phase, often in a separate session)
+    → hand the diff to a second, stronger, different model → findings file
+    → /review-triage                     validate, sort, fix only must-fix-now
+    → /session-close                     record the outcome
 ```
 
-### What never goes in docs
+Every cycle ends with `/session-close` — the only step that writes the live state
+files (`roadmap.md`, `progress.md`, `activeContext.md`), which is why it is never
+optional. `/handoff` is a separate option for moving work to a *different* tool or
+model; it is not a stage in this flow.
 
-- function-by-function descriptions
-- private call chains
-- temporary implementation plans after the code exists
-- review history copied verbatim
-- session transcripts
+The most-used move is `/next-slice`; in practice the most reliable prompt is
+literally *"please find the next slice and then implement it."* Everything below
+expands these cycles.
 
-### Context windows and working zones
+## 2. Operating principles
 
-This workflow is built around **context engineering**: controlling what the
-agent sees, when it sees it, and how much of the live transcript stays in play.
-The practical risk is long-context degradation, including lost-in-the-middle
-behavior, context pollution/rot, and hallucination. See "References" below for
-definitions and background; this document keeps only the operating rules.
+Five ideas justify the steps. They are summarized here and argued in full in
+[INITIAL-REQUEST.md](INITIAL-REQUEST.md) and the README's Goals.
 
-That is why the workflow uses planning, atomic slices, `/session-open`, and
-`/session-close`:
+- **Engineer the workflow, not just the prompt.** The workflow is a specified,
+  pressure-tested artifact, refined against real work — it matters more than the
+  model.
+- **Context is a budget, not a window.** The reliable *smart zone* is an absolute
+  token count, not a fraction of the advertised window. Keep the agent inside it;
+  see §6 for the thresholds.
+- **Code is the truth; one canonical home per fact.** Re-derive *how* from the
+  code. Never write an internals spec that mirrors code, and never duplicate a
+  fact across docs. Apply the deletion test: if removing a line would not make a
+  future session decide worse, delete it.
+- **Mode discipline.** At any moment the work is in exactly one mode — planning,
+  implementing, reviewing, or closing — and each skill belongs to one mode.
+- **Atomic vertical slices.** Implement one small, end-to-end, independently
+  verifiable change at a time, so the agent never needs the whole project in
+  working memory.
 
-- Planning turns large, noisy exploration into small durable artifacts.
-- `/session-open` reuses loaded instructions, reads current state and roadmap,
-  and loads a handoff only when that state is insufficient.
-- `/next-slice` limits the active task so the agent does not need the entire
-  project in working memory.
-- `/session-close` records the next-step state before the live transcript
-  becomes the source of truth.
-- `/compact` / compaction is a continuation tool that summarizes older
-  conversation to free context, but it is lossy. Prefer clean slice boundaries
-  and fresh sessions when the next slice does not need the raw prior transcript.
+## 3. The steps in detail
 
-When instructing the agent, use exact identifiers — file names, function names,
-page/widget names, XPaths, unique paths. Precise names help the agent load the
-right context and avoid mixing unrelated parts of the project.
+Each step below follows the same shape: **what it does**, **what it solves**,
+**comes after**, **comes before**, and how it is invoked. The skills appear in
+the order a project uses them.
 
-References:
+### 3.1 Research (pre-step — often off the coding agent)
 
-- [Context engineering for agents](https://docs.langchain.com/oss/python/langchain/context-engineering) — LangChain docs.
-- [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) — Anthropic Engineering.
-- [Context window](https://en.wikipedia.org/wiki/Context_window) — Wikipedia term reference.
-- [Lost in the Middle: How Language Models Use Long Contexts](https://arxiv.org/abs/2307.03172) — original long-context retrieval paper.
-- [Context Rot: How Increasing Input Tokens Impacts LLM Performance](https://www.trychroma.com/research/context-rot) — Chroma Research.
-- [Hallucination (artificial intelligence)](https://en.wikipedia.org/wiki/Hallucination_%28artificial_intelligence%29) — Wikipedia term reference.
-- [Claude Code models, usage, and limits](https://support.claude.com/en/articles/14552983-models-usage-and-limits-in-claude-code) — includes `/compact` behavior.
+**What it does.** Gathers the raw thinking a plan needs: exploratory discussion,
+tradeoff clarification, deep research. This frequently happens *outside* the
+coding agent — a conversation in ChatGPT, often on the phone during normal daily
+activity, sometimes several minutes of dictated context.
 
-Thresholds are **fixed token amounts**, not fractions of the marketed
-window. They are empirical behavior cliffs anchored on the Claude 200k era,
-where "40% / 50% / 60%" originally meant 80k / 100k / 120k tokens. On a
-larger window the cliff sits at a *smaller* percentage; the absolute token
-count is what actually correlates with degraded behavior. Treat the
+**What it solves.** Keeps large, noisy exploration out of the coding session,
+where it would burn context budget. The input itself varies in size — sometimes a
+short prompt, but frequently large documents, files, or transcripts you do not
+want to read in full. The deliverable is a compact **Markdown summary** that
+distills them, not the raw material — the summary is the bridge into coding
+context, and the grilling and capture steps below are what turn that bulk into
+something you and the agent do not have to re-read.
+
+**Comes after.** A new idea, feature, or phase that is too big to start coding
+directly.
+
+**Comes before.** A grilling session (`/grill-me` or `/grill-with-docs`), which
+takes that summary as input.
+
+> Dictation note: when the input is spoken, an offline speech-to-text tool such as
+> [Handy](https://github.com/cjpais/handy) (Whisper Large for higher accuracy)
+> turns it into text before it becomes the Markdown summary. The tool is
+> incidental; the point is that planning input is distilled to Markdown before
+> coding starts.
+
+### 3.2 `/grill-me` and `/grill-with-docs` — stress-test the plan
+
+**What they do.** Interview you relentlessly about the plan, one question at a
+time, walking down each branch of the design tree until weak assumptions surface.
+You begin the session with several input documents (the research summary, selected
+project files) and usually a large typed or dictated prompt.
+
+- `/grill-me` — pure plan interrogation.
+- `/grill-with-docs` — additionally challenges the plan against the project's
+  existing domain language, sharpens fuzzy terms, and updates a glossary
+  (`CONTEXT.md`) and ADRs inline as decisions crystallize.
+
+**What they solve.** Planning is not done when the agent understands the task —
+it is done when you can defend the task and its boundaries. Grilling is how you
+get there, and how you stay aware of and aligned with what the agent will build.
+A good grilling session also shapes the work **vertically**: the plan is broken
+into thin vertical slices rather than horizontal layers, so output is visible
+sooner and problems surface in the early stages instead of at the end.
+
+**Comes after.** Research gathered into a Markdown summary (§3.1).
+
+**Comes before.** `/planning-capture`, which writes the agreed decisions into
+durable docs.
+
+> Both skills are vendored from Matt Pocock's public agent-skills repo under the
+> MIT License so they travel with the workflow. See `CREDITS.md`.
+
+### 3.3 `/planning-capture` — write the plan into durable docs
+
+**What it does.** Takes the planning output and classifies each non-trivial point
+into exactly one home: a **requirement**, a **design decision**, an **ADR**, a
+**roadmap** item, an **open question**, a **risk**, a sparse **implementation
+note**, or **temporary** (left in the conversation, not documented). It then
+routes each point to the right doc and shapes `roadmap.md` as thin **vertical
+slices** — each the smallest meaningful behavior across all relevant layers,
+independently verifiable (testable on its own), starting from a minimal
+end-to-end path and preferring several small slices over a few large ones — each
+marked **AFK** (can proceed autonomously) or **HITL** (needs a human decision).
+It leaves the exact file-level scope and the choice of the next atomic change to
+`/next-slice`.
+
+**What it solves.** Turns a one-off planning conversation into durable project
+knowledge with a single source of truth per fact — so the plan survives the
+session that produced it. It deliberately does **not** store status, and does
+**not** create an internals spec.
+
+**Comes after.** A grilling or planning session (§3.2), or any external
+brainstorm/research.
+
+**Comes before.** Either `/next-slice` (start implementing) or, more often,
+`/session-close (SESSION)` to end the planning session — because
+`planning-capture` writes the durable docs and `roadmap.md` but does **not** set
+`activeContext.md`'s next-step pointer. `session-close` does that, which is what
+lets the *next* session open already oriented.
+
+### 3.4 `/session-open` — orient a resumed project
+
+**What it does.** Reads the minimum state needed (`activeContext.md`, then
+`roadmap.md`, and a handoff only if those are insufficient), declares the current
+**mode**, names the single next workflow action, and stops. It does **not** pick
+an implementation slice.
+
+**What it solves.** Lets a fresh session start from a cheap summary instead of
+re-deriving the whole project from a long transcript.
+
+**Comes after.** An ambiguous resume — "continue", "where are we?", a new day.
+
+**Comes before.** Whatever it routes to — usually `/next-slice` for
+implementation.
+
+**When to skip it.** A direct task or an explicit skill request does not need
+`/session-open` first. It is for ambiguous continuation only.
+
+### 3.5 `/next-slice` — pick the next change
+
+**What it does.** Reads `activeContext.md` and `roadmap.md`, identifies candidate
+slices for the current roadmap item, and picks exactly one atomic vertical slice
+that is small, low-ambiguity, dependency-free, and easy to verify. It prints the
+slice and waits for your confirmation before implementing.
+
+**What it solves.** Keeps each task small enough that the agent never needs the
+whole project in working memory, and keeps you reviewing one understandable change
+at a time. This is the workflow's center of gravity — the most-used and most
+reliable step. The natural prompt *"find the next slice and implement it"* bundles
+the pick and the implement.
+
+**Comes after.** Established implementation mode (from `/session-open`,
+`/planning-capture`, or a previous `/session-close`). `/next-slice` can also
+establish implementation mode directly from minimal state.
+
+**Comes before.** Implementation and verification, then `/session-close`.
+
+### 3.6 Implement and verify (not a skill)
+
+**What it does.** The agent writes the slice and verifies it with a test, a manual
+check, or a command. Only `activeContext.md` may move inline during this step —
+all bulk doc updates wait for `/doc-update` or `/session-close`.
+
+**What it solves.** Keeps the change atomic and reviewable, and keeps mid-flight
+edits from scattering status across four documents.
+
+**Comes after.** `/next-slice`.
+
+**Comes before.** `/session-close`, optionally preceded by `/doc-update`.
+
+### 3.7 `/doc-update` — sync durable docs to what changed
+
+**What it does.** Reads the **git diff** of what you actually implemented and,
+through a decision table, updates only the durable docs that the change touched:
+`docs/requirements/` for changed behavior, `docs/design/` or a new ADR for
+changed architecture, `docs/implementation-notes.md` for a new durable invariant,
+and `roadmap.md` / `activeContext.md` for a changed phase or next step. If nothing
+durable changed, it says so — a valid outcome.
+
+**What it solves.** Documentation drift. It keeps the durable docs honest without
+the old anti-pattern of "document everything" after every change. It is **not** a
+bug-fixing step: if testing surfaces a bug you fix it as part of the slice, then
+run `/doc-update` only if that fix changed durable behavior or a contract.
+
+**Comes after.** One or more implemented slices, or applied review fixes — at any
+point in the loop where real change has outrun the docs.
+
+**Comes before.** `/session-close`. (SESSION-mode `session-close` also runs the
+`doc-update` decision table once, so you do not always call it separately.)
+
+### 3.8 Cross-model review and `/review-triage`
+
+**What it does.** This is two parts. First, the **review** itself: hand the
+finished slice or phase to a second, independent, ideally stronger model — always
+different from the implementer — scoped to the diff since the last known-good
+commit. It writes findings into a Markdown file, one entry per finding with a
+severity guess. Second, `/review-triage` takes that file back to the original
+agent, validates every finding against the actual code, and sorts the survivors
+into `must_fix_now`, `should_fix_before_phase_complete`, `backlog`, or `invalid` —
+implementing only `must_fix_now`, and routing durable changes through
+`/doc-update`.
+
+**What it solves.** A structured, low-noise way to review the agent's work and to
+spend leftover usage productively (significant tokens left, little time before the
+limit resets). In practice roughly 70–80% of findings survive validation; two
+independent models agreeing on a finding is signal. The review conversation is
+disposable — only validated findings and the resulting changes are kept.
+
+**Comes after.** A completed slice or, more often, after several slices or a phase.
+
+**Comes before.** Fixing `must_fix_now` items, then `/session-close`.
+
+### 3.9 `/session-close` — the non-optional close
+
+**What it does.** Closes the current unit of work and writes the live state. Two
+modes:
+
+- **STEP mode** — finishing one roadmap step and continuing. Ticks the step's
+  checkbox in `roadmap.md`, appends one dated bullet to `progress.md`, and
+  refreshes `activeContext.md` to point at the next unchecked step. Does **not**
+  touch requirements/design/ADR — if scope or architecture changed it stops and
+  tells you to run `/doc-update` first.
+- **SESSION mode** — ending the session. Does everything STEP does, plus runs the
+  `/doc-update` decision table once, expands `activeContext.md` with blockers,
+  open questions, and discarded dead ends, and writes a `handoff-*.md` only if
+  `activeContext.md` is not enough. A bare `/session-close` defaults to SESSION
+  mode.
+
+**What it solves.** This is the only step that externalizes state, so it is what
+makes session continuity possible — and it must stay cheap and routine, because
+session end is unpredictable and a heavy close gets skipped. It never commits
+automatically; it may *ask* about a commit after a substantial checkpoint.
+
+**Comes after.** A finished step (STEP) or a session winding down / nearing the
+warn zone (SESSION).
+
+**Comes before.** The next `/next-slice` (STEP, same session) or the next
+session's `/session-open` (SESSION).
+
+**Reading the loop.** After each slice, judge remaining context. While you still
+have plenty of headroom — early in the smart zone — take another slice with
+`/next-slice`. As you approach the warn threshold (~100k tokens; see §6, and note
+that the *percentage* depends on the model's window), run `/session-close
+(SESSION)` and stop adding new code. The lived rule of thumb: keep taking slices
+while context is light, close the session once it is no longer.
+
+### 3.10 `/handoff` — cross-tool / cross-model transfer
+
+**What it does.** Compacts the current conversation into a standalone handoff
+document that a *different* tool or model — one that does not know this workflow —
+can pick up from. It references existing artifacts (PRDs, ADRs, commits, diffs) by
+path instead of restating them.
+
+**What it solves.** Transfer across the boundary `session-close` does not cover.
+
+**Comes after.** A decision to move the work to a non-Claude tool or a different
+model.
+
+**Comes before.** That other tool's session.
+
+**`/handoff` vs `/session-close`.** Use `/session-close` by default — it is the
+workflow-native ending and writes the state files. Reach for `/handoff` only when
+the receiver is not another Claude session running this workflow.
+
+## 4. The state files and the docs tree
+
+The workflow separates **status** (changes every session) from **knowledge**
+(changes when a decision changes). Status lives in three small files at the repo
+root; knowledge lives under `docs/`.
+
+### Status / live-state files (the active planning files)
+
+| File | What it is | Written by | Read by |
+|---|---|---|---|
+| `activeContext.md` | Cheap session-start snapshot: mode, phase/slice, one-line state, the exact next step, blockers. Kept tiny. | `/session-close` (and `/doc-update` for the next-step line) | `/session-open`, `/next-slice` at the start of every session |
+| `roadmap.md` | Checklist of phases and unchecked slices, AFK/HITL markers. Checklist-first, never a narrative diary. | `/planning-capture` (creates), `/session-close` (ticks) | every implementation step |
+| `progress.md` | Append-only log of finished steps, one dated bullet each. | `/session-close (STEP)` | history / orientation only |
+
+`activeContext.md` and `roadmap.md` are the two files a resumed session opens
+from. If any of the three grows into a narrative document, that is workflow drift —
+trim it at the next close.
+
+### Knowledge / durable docs
+
+```text
+docs/
+  requirements/            agreed finished behavior, constraints, acceptance, non-goals
+  design/                  architecture, boundaries, protocols, tradeoffs
+  adr/                     append-only durable decisions + rationale
+  implementation-notes.md  rare invariants / contracts / gotchas not recoverable from code
+```
+
+Rules for the tree: documentation is **agent-first, human-second**. Keep one
+canonical home per fact and prefer pointers over copies. **Code is implementation
+truth; design and ADRs are decision truth** — if they disagree, surface the
+conflict and ask before changing a standing decision. Status never enters
+requirements or design. Never write function-by-function descriptions, private
+call chains, post-hoc implementation plans, verbatim review history, or
+transcripts.
+
+## 5. Mode discipline
+
+Mode is enforced by the entry path, so the agent and you always know what kind of
+work is happening:
+
+- `/session-open` resolves ambiguous continuation and declares the mode.
+- `/next-slice` can establish implementation mode directly.
+- Direct tasks and explicit skill requests run their skill without an extra
+  orientation step.
+
+The modes and their skills: **Planning** → `/grill-me`, `/grill-with-docs`,
+`/planning-capture`. **Implementation** → `/next-slice`. **Documentation** →
+`/doc-update`. **Review** → cross-model review + `/review-triage`. **Close** →
+`/session-close` (and `/handoff` for cross-tool transfer).
+
+## 6. Context budget and working zones
+
+This workflow exists to keep the agent inside its reliable **smart zone**. Past
+it, in the **dumb zone**, the agent misses information already in context, confuses
+similar files, hallucinates, and spins without solving the problem. The risk is
+*long-context degradation* — lost-in-the-middle behavior and context rot — which
+research shows begins well before the window is full.
+
+**Thresholds are fixed token amounts, not fractions of the advertised window.**
+They are empirical behavior cliffs calibrated on the Claude 200k era, where
+"40% / 50% / 60%" meant 80k / 100k / 120k tokens. On a larger window the same
+cliff sits at a *smaller* percentage. If you remember one rule: **start closing at
+100k, stop coding at 120k.**
+
+| Threshold | Zone | What to do |
+|---|---|---|
+| `≤ 60k` | calm | full smart zone; do anything |
+| `~ 80k` | smart-cap | last clean working point; finish the current slice |
+| `~ 100k` | warn | run `/session-close (SESSION)` after this step |
+| `~ 120k` | dumb | stop new code; close the session or `/handoff` now |
+| `~ 180k` | force-compact | `/compact` or `/handoff` immediately |
+
+The same thresholds as a percentage of the effective product window — read this
+only to interpret a status-line readout:
+
+| Product surface / model | Effective window | 60k | 80k | 100k | 120k | 180k |
+|---|---:|---:|---:|---:|---:|---:|
+| Codex: GPT-5.2/5.3-Codex, GPT-5.4/5.5 | 258.4k | 23% | 31% | 39% | 46% | 70% |
+| Claude Code: Opus 4.7 | 1,000k | 6% | 8% | 10% | 12% | 18% |
+| Claude Code: Sonnet 4.6 / Haiku 4.5 | 200k | 30% | 40% | 50% | 60% | 90% |
+
+So "46%" on Codex, "12%" on Opus 4.7, and "60%" on Sonnet 4.6 all mean ~120k
+tokens — the dumb zone — even though the percentages look different. When someone
+says "I'm at 50%" they mean the 200k-era 50%, i.e. ~100k tokens. Treat the
 percentage as a status-line readout, not a target.
 
-These thresholds are retained from several months of repeated use and multiple
-research checks. They are practical operating guardrails, not claims that every
-task or model degrades at an identical point.
+Externalized state is itself not free: save and restore also cost tokens, so the
+state files in §4 must stay small and curated, or the waste is only moved.
+`/compact` is a lossy continuation tool — prefer clean slice boundaries and fresh
+sessions over compacting when the next slice does not need the raw prior
+transcript.
 
-**Canonical thresholds (read these, not the percentages):**
+These thresholds are retained from months of repeated use and several research
+checks. They are practical guardrails, not claims that every task or model
+degrades at an identical point.
 
-| Threshold | Behavior label | What to do                                            |
-|-----------|----------------|-------------------------------------------------------|
-| `≤ 60k`   | calm           | full smart zone; do anything                          |
-| `~ 80k`   | smart-cap      | last clean working point; finish the current slice    |
-| `~ 100k`  | warn           | recommend `/session-close` after this step           |
-| `~ 120k`  | dumb           | stop new code changes; close session or handoff now  |
-| `~ 180k`  | force-compact  | `/compact` or `/handoff` immediately                  |
+References: [Effective context engineering](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
+(Anthropic) · [Context engineering for agents](https://docs.langchain.com/oss/python/langchain/context-engineering)
+(LangChain) · [Lost in the Middle](https://arxiv.org/abs/2307.03172) (Liu et al.)
+· [Context Rot](https://www.trychroma.com/research/context-rot) (Chroma Research).
 
-**Same thresholds expressed as a % of the effective product window
-(read only to interpret status-line readouts):**
+## 7. Version control (the least-finished area)
 
-| Product surface / model                          | Effective window for this workflow | 60k (calm) | 80k (smart-cap) | 100k (warn) | 120k (dumb) | 180k (force-compact) |
-|--------------------------------------------------|-----------------------------------:|-----------:|----------------:|------------:|------------:|---------------------:|
-| Codex: GPT-5.2-Codex / GPT-5.3-Codex / GPT-5.4 / GPT-5.5 | 258.4k | 23% | 31% | 39% | 46% | 70% |
-| Claude Code: Opus 4.7                            | 1,000k | 6% | 8% | 10% | 12% | 18% |
-| Claude Code: Sonnet 4.6 / Haiku 4.5              | 200k | 30% | 40% | 50% | 60% | 90% |
+Version control is still under-specified and should be treated as a future
+improvement area. It matters because **agents read history to orient
+themselves** — `git log`, `git diff`, and `git blame` tell them what changed
+recently, why a line exists, and what the last few slices touched. Small,
+meaningful commits that map to reviewable slices make the agent noticeably better
+at picking up where it left off, so clean commit history is *fuel*, not just
+hygiene. The anchoring principle: **conversation provides reasoning, project files
+preserve decisions, and Git preserves change.**
 
-Notes:
+A practical trap: when asked to review, an agent often compares only the
+uncommitted diff against the last commit, not the whole project. Clean, frequent
+commits keep that implicit review scope correct.
 
-- Codex API/model pages may advertise larger raw API windows. For this
-  workflow, use the **effective Codex product window shown by the
-  CLI/status telemetry**. Recent local Codex sessions report
-  `model_context_window: 258400` for `gpt-5.2-codex`, `gpt-5.3-codex`,
-  `gpt-5.4`, and `gpt-5.5`.
-- Re-check the live status line after Codex upgrades. If Codex starts
-  reporting a different `model_context_window`, update this table and the
-  hook docs, but keep the fixed token thresholds unless real behavior says
-  otherwise.
+The likely future direction: short-lived topic branches, small commits mapped to
+slices, pushes used as recoverable checkpoints, draft pull requests so review and
+CI start early, and an explicit merge policy. Until that policy exists: the user
+requests commits and pushes explicitly (agents never commit automatically),
+`/session-close` may *ask* about a commit after a substantial checkpoint, and Git
+mechanics stay out of `AGENTS.md`.
 
-**How to read this:**
+## 8. Setup and meta
 
-- "Compact around 120k" means *120,000 tokens*, full stop — on every
-  model.
-- A status line saying "46%" on Codex's current 258.4k effective window
-  means ~120k tokens used — that is the **dumb zone**.
-- A status line saying "12%" on Opus 4.7's 1M Claude Code window means ~120k tokens
-  used — that is the **dumb zone**, even though the percentage looks
-  small.
-- A status line saying "50%" on Sonnet 4.6 or Haiku 4.5 means ~100k
-  tokens — that is the **warn zone**.
-- People say "I'm at 50%" colloquially; that phrase has always implicitly
-  meant *the 200k-era 50%*, i.e. ~100k tokens. Don't reinterpret it
-  against a 1M window.
-- If you only remember one number: **start closing at 100k, stop coding
-  at 120k.** Everything else is conversion.
+**The meta-project.** This `my-workflow/` directory is the source of truth for
+both the workflow docs and the canonical skills. The skills in `skills/` are the
+installable artifacts, not just descriptions of them.
 
-The `hooks/context-zone.sh` Stop hook compares the live transcript token
-count against these fixed thresholds (not against the model window), so
-sessions on Codex 258.4k, Claude Code 200k, and Opus 4.7 1M get nudged at
-the same actual context size.
+**Skill shape.** Every canonical skill uses the same six-section skeleton —
+*When to use · Do NOT use when · Inputs (read order) · Steps · Output · Stop
+conditions* — budgeted ~40 lines, hard cap 60. The fixed shape is what makes the
+workflow predictable enough to follow yourself.
 
----
+**`AGENTS.md`.** A ~50-line router copied into each project. It answers: where am
+I, what's the workflow, where are the docs, what gotchas. Keep it thin — it loads
+into every session, so every line competes for attention. Add per-project gotchas
+at the bottom; keep workflow detail (this document) and Git mechanics out of it.
 
-## 2. Project shape — meta-project
+**Harness hooks** (`hooks/README.md` owns the detail):
 
-This `my-workflow/` directory is the **source of truth** for the workflow and
-the canonical skill set. Both the docs explaining the workflow AND the skills
-implementing it live here. New projects install the workflow by:
+- **Stop hook — context-zone** (`hooks/context-zone.sh`) compares the live
+  transcript token count against the fixed thresholds in §6 (not the model
+  window) and nudges: silent `<80k`, "consider `/session-close`" at `80k–99k`,
+  "ask the user `/session-close` or `/handoff`" at `100k–119k`, "stop new code" at
+  `≥120k`. Overridable per project via `CONTEXT_{WARN,ASK,DUMB,FORCE}_TOKENS`.
+- **Permission allowlist** — read-only Bash + read-MCP via
+  `/fewer-permission-prompts`.
+- **MCP audit** — disable unused servers per project; each adds tool schemas to
+  every turn.
 
-1. Copying `AGENTS.md` into the project root.
-2. Creating the root fast-state files (`activeContext.md`, `roadmap.md`,
-   `progress.md`) and the `docs/` subdirectories.
-3. Symlinking or copying the canonical skills from `skills/` into
-   `~/.claude/skills/` (or `.claude/skills/` for project-scoped use).
+**Bootstrap a new project:**
 
-The skills here ARE the installable artifacts, not just descriptions of them.
-
-## 3. Strict mode discipline
-
-Mode-awareness is enforced by the selected entry path:
-
-- `/session-open` handles ambiguous continuation and outputs a Mode declaration.
-- `/next-slice` may be invoked directly and performs minimal orientation when
-  implementation mode is not yet established.
-- Direct tasks use the applicable skill or normal task flow without an
-  unrelated orientation step.
-
-## 4. Strict skill shape
-
-Every canonical skill uses the same 6-section skeleton. Budget ~40 lines, hard
-cap 60:
-
-```
-## When to use
-## Do NOT use when           ← names sister skills + boundaries
-## Inputs (read order)       ← fixed file list; auditable
-## Steps                     ← numbered, fixed order; judgment fills slots
-## Output                    ← fixed template
-## Stop conditions           ← prevents skill drift / over-reach
-```
-
-This shape is what makes the workflow predictable enough to follow yourself.
-
-## 5. Canonical skill set
-
-Six skills, each at `skills/<name>/SKILL.md`:
-
-| Skill              | Mode                  | One-line job                                                |
-|--------------------|-----------------------|-------------------------------------------------------------|
-| `session-open`     | Orientation when needed | Read minimal state, declare mode, name the next workflow action. |
-| `planning-capture` | Planning              | Classify planning output into requirements / design / ADR / roadmap / risks. |
-| `next-slice`       | Implementation        | Pick one atomic vertical slice and wait for confirmation. |
-| `doc-update`       | Doc update            | Selective durable-doc update via decision table. Replaces old `doc-update-lite` and loose `doc-update`. |
-| `review-triage`    | Plan / code review    | Sort findings; implement only must-fix-now.                 |
-| `session-close`    | Close (STEP / SESSION)| STEP: tick roadmap + progress.md + activeContext.md. SESSION: same + `/doc-update` sweep + optional handoff. Commit prompt only at a requested or substantial checkpoint. |
-
-## 6. Useful global skills
-
-**Always available (orthogonal, light, useful):** `grill-me`,
-`grill-with-docs`, `to-prd`, `to-issues`, `review`, `security-review`,
-`update-config`, `fewer-permission-prompts`, `tdd`, `diagnose`, `prototype`,
-`simplify`, `init`, `write-a-skill`, `triage` (issue triage — distinct from
-`review-triage`), `zoom-out` (user-only-invokable), `loop`, `schedule`,
-`claude-api`, `keybindings-help`, **`handoff`** (cross-tool standalone
-transfer — use when handing off to a non-Claude tool or another model;
-`/session-close` is preferred for in-workflow ending).
-
-**Vendored into this repo (Matt Pocock, MIT):** `grill-me`, `grill-with-docs`,
-and `handoff` are authored by Matt Pocock and copied into `skills/` under the
-MIT License so they travel with the workflow and are properly credited. See
-`CREDITS.md` and `skills/LICENSE-mattpocock`. They keep their upstream format
-rather than the 6-section canonical skeleton.
-
-**Archived (preserved at `~/.agents/skills-archive/`, not loaded):**
-`caveman`, `setup-matt-pocock-skills`, `improve-codebase-architecture`.
-
-**Naming clarification:** `/triage` is issue triage (Linear/GitHub);
-`/review-triage` is plan/code review triage. Distinct skills, distinct jobs.
-
-**`/handoff` vs `/session-close`:** Both transfer to a next session.
-`/session-close` is the workflow-native ending — updates `activeContext.md`,
-applies doc-update rules, writes `handoff-*.md` only if needed.
-`/handoff` is a standalone packet for cross-tool / cross-model transfer
-(e.g. handing the session to a different agent or tool that doesn't know
-your workflow). Use `/session-close` by default; reach for `/handoff` when
-the receiver isn't another Claude session in this workflow.
-
-## 7. Planning reality today
-
-Planning is not fully formalized here yet. The current documented workflow
-names `/planning-capture`, but larger implementations often begin earlier with
-**context engineering** and long `grill-me` / `grill-with-docs` sessions.
-Those skills are adapted from Matt Pocock's public agent-skills repo:
-[`grill-me`](https://github.com/mattpocock/skills/blob/main/skills/productivity/grill-me/SKILL.md)
-and
-[`grill-with-docs`](https://github.com/mattpocock/skills/blob/main/skills/engineering/grill-with-docs/SKILL.md).
-
-In practice, the flow often starts outside the repo:
-
-- exploratory discussion in ChatGPT, often on the phone during normal daily activity
-- **deep research** and tradeoff clarification before the coding session
-- export of that discussion as a Markdown summary
-- import of the summary into the project as compact planning context
-- a long **grilling session** built from that summary, selected files, and a
-  large typed or dictated prompt
-
-The dictated-prompt path matters in real use. One practical tool for this is
-[Handy](https://github.com/cjpais/handy), an offline speech-to-text app; the
-current working preference described for this workflow is Whisper Large for
-higher-accuracy transcription. The important workflow point is not the tool
-itself, but that planning input may arrive as several minutes of spoken context
-that later gets distilled into Markdown before coding starts.
-
-This means the real planning sequence for large work is often:
-
-`ChatGPT exploration → Markdown summary → grill-me / grill-with-docs session → planning-capture → implementation workflow`
-
-The summary, not the full raw conversation, is the preferred bridge into coding
-context.
-
-## 8. Version-control gap
-
-**Version control** is still under-specified in this workflow and should be
-treated as a future improvement area. That gap matters because agent quality
-depends heavily on clean branch boundaries, understandable commit history, and a
-clear pull-request path.
-
-The likely future direction is:
-
-- short-lived topic branches for non-trivial work
-- small, meaningful commits that map to reviewable slices
-- pushes used as recoverable checkpoints, not only as end-of-task publishing
-- draft pull requests for larger work so review and CI can start early
-- an explicit merge policy, instead of leaving branch integration implicit
-
-A practical trap worth calling out: when asked to review, an agent often
-compares only the uncommitted diff against the last commit, not the whole
-project. Clean, frequent commits keep that implicit review scope correct;
-without them the agent can silently review the wrong slice while you assume it
-looked at everything.
-
-GitHub's docs recommend branches to isolate development work and pull requests
-to review and discuss changes before merge. This repo should eventually explain
-how those version-control mechanics fit the AI workflow without making the loop
-too heavy.
-
-Until that fuller policy exists:
-
-- The user requests commits and pushes explicitly; agents never perform them
-  automatically.
-- Prefer meaningful phase or checkpoint boundaries over a commit after every
-  slice.
-- `/session-close` may ask about a commit after substantial phase completion,
-  but committing must not become the automatic next workflow step.
-- Keep Git mechanics out of `AGENTS.md`; the relevant skill or user prompt owns
-  the action.
-
-## 9. AGENTS.md template
-
-The router lives at `AGENTS.md` in the rel package. It is about 50 lines and
-answers four questions: where am I, what's the workflow, where are docs, what
-gotchas. Copy it into new projects and add per-project gotchas at the bottom.
-
-## 10. Harness hooks
-
-Wire via `/update-config`, or use the bundled hook in `hooks/`:
-
-- **Stop hook — context-zone** (`hooks/context-zone.sh`). Reads the session
-  transcript, prefers a live token count from the hook payload when
-  available, otherwise approximates token usage (`bytes ÷ 4`), and emits a
-  `systemMessage` the agent acts on next turn:
-  - `<80k` smart zone — silent (about 31% on Codex 258.4k; 40% on Sonnet
-    4.6 / Haiku 4.5; 8% on Opus 4.7).
-  - `80k–99k` warn — "consider `/session-close` after this step."
-  - `100k–119k` ask — "ask the user: `/session-close` (SESSION) or `/handoff` now?"
-  - `≥120k` dumb zone — "stop new code changes; close the session now"
-    (120k is about 46% on Codex 258.4k; 60% on Sonnet 4.6 / Haiku 4.5;
-    12% on Opus 4.7).
-  Thresholds overridable per project via env:
-  `CONTEXT_{WARN,ASK,DUMB,FORCE}_TOKENS`. `CONTEXT_REFERENCE_WINDOW` only
-  affects the fallback displayed percentage when the live model window is
-  unavailable. See `hooks/README.md`.
-- **Permission allowlist** — read-only Bash + read-MCP via `/fewer-permission-prompts`.
-- **MCP audit** — per project, disable unused servers. Each adds tool schemas to every turn.
-
-## 11. Bootstrap checklist (per new project)
-
-```
-1. Copy AGENTS.md → <project>/AGENTS.md.
+```text
+1. Copy AGENTS.md → <project>/AGENTS.md
 2. touch <project>/{activeContext,roadmap,progress}.md
 3. mkdir -p <project>/docs/{requirements,design,adr}
-4. Ensure ~/.claude/skills/ contains the 6 canonical skills (symlinked from this repo's `skills/`).
+4. Ensure ~/.claude/skills/ has the 6 canonical skills (symlinked from skills/).
 5. /update-config — wire the Stop + context hooks.
 6. Audit MCP servers; disable unused.
-7. First session: use /session-open to inspect state, or /next-slice for an
-   explicit implementation start.
+7. First session: /session-open to inspect state, or /next-slice to start coding.
 ```
 
-## 12. What changed across versions
+## 9. Skill names and attribution
 
-**v7 → v8 (this version):**
+The six canonical skills live at `skills/<name>/SKILL.md` and are described step
+by step in §3. Three more are vendored from Matt Pocock (MIT — see `CREDITS.md`):
+`grill-me`, `grill-with-docs`, and `handoff`; they keep their upstream format
+rather than the six-section skeleton the canonical skills use.
 
-| Change                                              | Reason                                                        |
-|-----------------------------------------------------|---------------------------------------------------------------|
-| `/session-open` changed from mandatory to conditional orientation | Avoid duplicate reads and honor direct tasks or explicit skills. |
-| `/next-slice` can establish implementation mode     | Removes the redundant `/session-open` gate before explicit implementation work. |
-| Handoff reads are conditional                       | `activeContext.md` and `roadmap.md` should normally be sufficient. |
+Two name clashes are worth keeping straight: `/triage` is issue triage (Linear /
+GitHub), **not** `/review-triage` (plan / code review); and `/handoff` is
+cross-tool transfer, **not** `/session-close` (the workflow-native ending).
 
-**v6 → v7:**
+## 10. Final operating principle
 
-| Change                                              | Reason                                                        |
-|-----------------------------------------------------|---------------------------------------------------------------|
-| `cycle-close` merged into `session-close`           | Initial request named only "session close" and "handoff" — `cycle-close` was a design-time addition. Two close-skills with overlapping behavior was friction. `/session-close` now has STEP and SESSION modes, auto-detected. |
-| Canonical set: 7 → 6 skills                         | Same reason; cleaner cheat-table.                             |
+The goal is not less documentation — it is less *duplicated* documentation, fewer
+ad-hoc prompts, and one predictable place for every recurring action.
 
-**v5 → v6:**
+Everything a future session (or future you) needs has exactly one home:
 
-| Change                                              | Reason                                                        |
-|-----------------------------------------------------|---------------------------------------------------------------|
-| `docs/current-state.md` → root `activeContext.md`   | Match Cline / Memory Bank convention; discoverability; align with originally-written Opus skills |
-| `docs/roadmap.md` → root `roadmap.md`               | Same as above                                                 |
-| `docs/progress.md` → root `progress.md`             | Same as above                                                 |
-| `docs/handoffs/*.md` → root `handoff-*.md`          | Same as above; newest wins                                    |
-| `handoff` was archived                              | Restored as cross-tool / cross-model standalone-packet skill  |
-| `INITIAL-REQUEST.md` was opus-only                  | Merged with formal `docs/initial-request.md`; nothing dropped |
+- **what problem is being solved** → `docs/requirements/`
+- **what behavior must hold** → tests + `docs/requirements/`
+- **what decisions are already made** → `docs/design/`, `docs/adr/`
+- **what phase the project is in** → `roadmap.md`
+- **what the next step is** → `activeContext.md`
+- **where the code lives** → the code itself
+- **what invariants must not break** → `AGENTS.md` gotchas,
+  `docs/implementation-notes.md`, and ADRs
 
-## 13. Final operating principle
-
-The goal is not less documentation — it's less *duplicated* documentation,
-fewer ad-hoc prompts, and one predictable place for every recurring action.
-
-Future agents (and future you) need:
-
-- what problem is being solved (`docs/requirements/`)
-- what behavior must be preserved (tests + `docs/requirements/`)
-- what decisions are already made (`docs/design/`, `docs/adr/`)
-- what phase the project is in (`roadmap.md`)
-- what the next step is (`activeContext.md`)
-- where the relevant code lives (the code itself)
-- what invariants must not be broken (AGENTS.md gotchas + `docs/implementation-notes.md` + ADRs)
-
-Everything else is discovered from code when needed.
-
-Use `/session-open` when state needs orientation, or invoke the relevant skill
-directly when intent is clear. Close every step or session with
-`/session-close` (STEP or SESSION mode, auto-detected). Use `/handoff` only
-when handing off to a non-Claude tool.
+Everything else is discovered from the code when needed. Keep each cycle small,
+close every one with `/session-close`, and let the next session open from the
+state files instead of the transcript.

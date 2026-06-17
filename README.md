@@ -6,6 +6,78 @@ It keeps each session focused, breaks implementation into small changes, and
 stores the state needed to continue later. The goal is simple: a new session
 should not need the full history of every earlier conversation.
 
+## Goals
+
+Each problem this workflow solves, in one sentence. The recurring failures of
+long-running AI-assisted coding were almost never "the AI is not smart enough" —
+they were context, documentation, and orientation problems, and all three turned
+out to be addressable. The list below is in the priority order those pains
+actually surfaced; the full rationale for every goal lives in
+[INITIAL-REQUEST.md](INITIAL-REQUEST.md) and
+[FINAL-WORKFLOW.md](FINAL-WORKFLOW.md).
+
+The framing that holds the rest together:
+
+- **Engineer the workflow, not just the prompt.** Treat the workflow as an
+  engineering problem in its own right — specified, pressure-tested, and refined
+  against real work — because the workflow matters more than the model.
+
+The problems, in priority order:
+
+1. **Stay on track — developer awareness and project alignment.** Avoid drifting
+   from the original problem across a months-long build through planning by being
+   challenged
+   ([grill-me](https://github.com/mattpocock/skills/blob/main/skills/productivity/grill-me/SKILL.md)) —
+   planning is done not when the agent understands the task but when you can
+   defend it — an always-current roadmap/progress/activeContext trio, and mode
+   discipline (planning, implementing, reviewing, or closing).
+2. **Context is a budget, not a window.** Keep the agent inside its reliable
+   *smart zone* and out of the *dumb zone* by treating context as an absolute
+   token budget rather than a fraction of the advertised window — long-context
+   degradation such as [lost in the middle](https://arxiv.org/abs/2307.03172)
+   (Liu et al.) and [context rot](https://www.trychroma.com/research/context-rot)
+   (Chroma Research) starts well before the window is full, so a lean context is
+   a quality decision first and a cost decision second.
+3. **No documentation drift / single source of truth.** Keep *code as the truth*,
+   drop the internals layer that goes stale, give every fact *one canonical home*,
+   and apply the deletion test — would removing this make a future session decide
+   worse? — so stale duplicated docs never become a second source of truth the
+   agent trusts completely.
+4. **Status separate from knowledge.** Keep current status in small live-state
+   files (`activeContext.md`, `roadmap.md`, `progress.md`) so moving the work
+   forward never means editing requirements or design.
+5. **Session continuity through externalized state.** Let each session open
+   already oriented by reading a few small curated files instead of re-deriving
+   the whole project from history — keeping in mind that save and restore also
+   cost tokens, so the state files stay small and the close stays cheap and
+   routine.
+6. **Reusable skills instead of repeated prompts.** Move the prompts you retype
+   every session into named skills that guide the workflow and manage its flow
+   from session-open through session-close.
+7. **Atomic vertical slices.** Implement one small vertical slice at a time so the
+   developer can review and understand each change, and the agent never needs the
+   whole project in working memory.
+8. **Cross-model code review.** Have a second, stronger, and always different
+   model write findings to a Markdown file scoped to the diff since the last
+   known-good commit, let the original agent validate each against the code, and
+   implement only the confirmed ~70–80% (triaged must-fix-now,
+   before-phase-complete, backlog, or invalid).
+9. **Thin instruction files, exact names.** Keep `AGENTS.md` / `CLAUDE.md` as a
+   thin router and name things exactly (page, widget, file, function, path),
+   because everything you load competes for the model's attention. A minimal or
+   even absent file is often best for small, focused tasks, but this workflow
+   deliberately keeps `AGENTS.md` because it is load-bearing — it declares the
+   mode, names the next step, and points at the docs.
+10. **Git history is agent fuel.** Keep small, meaningful commits and clean
+    checkpoints, because the agent reads history (`git log`, `git diff`,
+    `git blame`) to orient itself — conversation provides reasoning, project files
+    preserve decisions, and Git preserves change.
+
+And one supporting capability the loop relies on:
+
+- **Clean handoffs.** Transfer work to another session, tool, or model with a
+  self-contained packet instead of relying on the live transcript.
+
 ## How it works
 
 The workflow has three parts:
@@ -232,13 +304,13 @@ Active improvements are tracked in [roadmap.md](roadmap.md).
 
 | Path | What it contains |
 |---|---|
-| [FINAL-WORKFLOW.md](FINAL-WORKFLOW.md) | Full operating model, rationale, and wall chart. |
+| [FINAL-WORKFLOW.md](FINAL-WORKFLOW.md) | Full operating manual: every step, what it solves, and the generic flow. |
 | [AGENTS.md](AGENTS.md) | Router template copied into projects. |
 | [`skills/`](skills/) | Core and vendored skill definitions. |
+| [CREDITS.md](CREDITS.md) | Attribution and license details for vendored skills. |
 | [hooks/README.md](hooks/README.md) | Context hook behavior and installation. |
-| [INITIAL-REQUEST.md](INITIAL-REQUEST.md) | Original problem that led to the workflow. |
-| [SESSION-TRANSCRIPT.md](SESSION-TRANSCRIPT.md) | Planning session that shaped the workflow. |
-| [`history/`](history/) | Earlier design versions retained for traceability. |
+| [INITIAL-REQUEST.md](INITIAL-REQUEST.md) | Original problems that led to the workflow. |
+| [`history/`](history/) | Earlier design iterations retained for traceability. |
 
 For normal use, start with this README and `AGENTS.md`. Read
 `FINAL-WORKFLOW.md` when you need the complete rationale or want to change the

@@ -28,7 +28,7 @@ When giving instructions, I try to use exact names such as page names, widget na
 
 For AI coding agents, the biggest bottleneck is the active context window. Modern LLMs may support very large context windows, sometimes even millions of tokens, but the effective “smart zone” is usually much smaller.
 
-In practice, the reliable working range is often around 50K–80K tokens. Degradation becomes likely past ~100K tokens, where the agent may enter a less reliable “dumb zone.” Importantly, this collapse can be abrupt rather than gradual: instead of slowly declining, reliability can fall off a cliff once context crosses a critical point, so the transition from "working fine" to "making mistakes" is often sudden. In this zone, problems become more likely, such as:
+In practice the reliable “smart zone” is comfortably under ~50K tokens for most models, though many keep working well up to ~75–100K. The less reliable “dumb zone” — where quality is clearly worse — sits above ~100–150K. These are two different thresholds, not one line: between them is a model-dependent transition band tens of thousands of tokens wide, not a single switch. How that transition behaves also varies — across many models and tasks it is a gradual decline that begins well before the window is full, but for a given model on a given task it can be abrupt, holding up and then falling off sharply once it passes that model’s effective context length. Smaller or weaker models tend to degrade earlier. In the dumb zone, problems become more likely, such as:
 
 * **Common large-context problems**
 

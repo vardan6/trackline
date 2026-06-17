@@ -1,5 +1,4 @@
 {
-  "description": "Codex project hook registration for the context-zone Stop hook.",
   "hooks": {
     "Stop": [
       {

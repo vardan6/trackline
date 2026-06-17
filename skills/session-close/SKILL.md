@@ -66,6 +66,7 @@ those defaults.
      - mid-phase transfer with non-trivial context that doesn't belong in `activeContext.md`.
    - Keep the handoff tiny by default. It should bridge the next session, not replay the whole one. Prefer pointers to `activeContext.md`, `roadmap.md`, `progress.md`, commits, or exact files over restating large narratives.
    - If a handoff file is needed, fill the template below.
+   - **Planning-capture check:** If `/grill-me`, brainstorm, or research ran this session with no following `/planning-capture`, that planning will die with the conversation — ask whether to run `/planning-capture` first (default yes). `/grill-with-docs` captures inline, so it needs no prompt. Otherwise resolve silently. Gate only; do not capture here.
 
 4. **Commit boundary:** never commit automatically. If the user requested a
    commit or a substantial phase/checkpoint just completed, ask whether to
@@ -122,6 +123,7 @@ Scope/arch changes detected: yes | no — <if yes, recommend /doc-update before 
 docs updated this session: <SESSION only — list or "none">
 docs intentionally not updated: <SESSION only — list with reason>
 handoff file: <SESSION only — handoff-*.md path or "not needed — activeContext.md is enough">
+Uncaptured planning: <SESSION only — "none" | "/grill-me ran, not captured — asked">
 Commit: <"not requested" or "ask user — <suggested message>">
 Suggested next skill: /next-slice (implement) | /session-open (orient)
 ```
@@ -130,6 +132,7 @@ Suggested next skill: /next-slice (implement) | /session-open (orient)
 
 - After printing Output, stop. Do not auto-commit, do not chain into the next slice.
 - If mode is STEP but scope/architecture changed → stop and suggest `/doc-update` before `/next-slice`.
+- If SESSION mode finds uncaptured planning (`/grill-me`/brainstorm/research with no following `/planning-capture`) → ask before closing; don't print a clean close. Happy path closes silently.
 - If `activeContext.md` does not exist → SESSION mode creates it with the template content (this is the one creation exception — every project needs this file). STEP mode tells the user to invoke SESSION mode first.
 - If the user has uncommitted changes, mention them in Output but do not commit unless asked.
 - If `activeContext.md`, the latest handoff, or `roadmap.md` have grown into narrative documents, trim them as part of the close-out instead of preserving repeated context.
