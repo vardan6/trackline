@@ -37,21 +37,39 @@ Sort review findings, route accepted ones to durable docs, implement only must-f
    - `invalid_or_not_worth_doing` → incorrect, already handled, too costly for value, out of scope.
 3. Validate every finding against code, not only docs. Reject vague findings without concrete risk.
 4. For accepted findings that change durable behavior, route the change through `/doc-update` after fixing.
-5. Preserve a one-line reason for every rejected or deferred finding.
-6. Print the Output.
-7. If the user asked to fix, implement only `must_fix_now` items. Stop.
+5. Print the Output.
+6. If the user asked to fix, implement only `must_fix_now` items. Stop.
 
 ## Output
 
+A must_fix_now callout first, so blockers are seen before the table:
+
 ```
-Must fix now:
-  - <finding>: <one-line reason>
-Should fix before phase complete:
-  - <finding>: <one-line reason>
-Backlog:
-  - <finding>
-Invalid or not worth doing:
-  - <finding>: <one-line reason>
+Must fix now (N): #<row>, #<row>, ...   (or "none")
+```
+
+Then one canonical table — every finding, never split, sorted by `Priority`
+(must_fix_now first). `Risk` and `Value` sit adjacent because their comparison
+drives triage: high risk + low value leans to `backlog`, not a fix now.
+`Priority` carries the bucket (no re-listing); `Reason` is one line, required for
+every deferred or rejected finding.
+
+Allowed cell values:
+
+- `Risk` / `Value` / `Effort`: `high` | `med` | `low`
+- `Priority`: `must_fix_now` | `should_fix_before_phase_complete` | `backlog` | `invalid`
+
+Example (concrete rows, not a template to copy verbatim):
+
+| # | Finding | Risk | Value | Effort | Priority | Reason |
+|---|---------|------|-------|--------|----------|--------|
+| 1 | Reset token never expires; reusable indefinitely | high | high | low | must_fix_now | security hole, trivial fix |
+| 2 | No rate limit on reset endpoint | high | low | med | backlog | high risk but low value now; revisit before launch |
+| 3 | Duplicated email-format check in two handlers | low | low | low | invalid | cosmetic; not worth the churn |
+
+Then the action summary:
+
+```
 Recommended immediate action: <e.g. fix must_fix_now then /session-close (STEP mode)>
 Docs impact: <which docs the accepted findings will affect, or "none">
 ```

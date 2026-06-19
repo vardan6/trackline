@@ -68,10 +68,12 @@ The problems, in priority order:
    even absent file is often best for small, focused tasks, but this workflow
    deliberately keeps `AGENTS.md` because it is load-bearing — it declares the
    mode, names the next step, and points at the docs.
-10. **Git history is agent fuel.** Keep small, meaningful commits and clean
-    checkpoints, because the agent reads history (`git log`, `git diff`,
-    `git blame`) to orient itself — conversation provides reasoning, project files
-    preserve decisions, and Git preserves change.
+10. **The AI agent is a heavy Git user.** The agent reads history (`git log`,
+    `git diff`) to orient itself — conversation provides reasoning, project files
+    preserve decisions, and Git preserves change. This is a powerful capability
+    worth using deliberately: small, meaningful commits and clean checkpoints give
+    the agent a reliable trail to follow, and that pays off significantly when
+    sessions resume or context needs to be reconstructed.
 
 And one supporting capability the loop relies on:
 
@@ -80,33 +82,52 @@ And one supporting capability the loop relies on:
 
 ## How it works
 
-The workflow has three parts:
+The workflow runs as three self-contained cycles — *plan*, *implement*, and
+*review* — each opened with `/session-open` when orientation is needed and ended
+with `/session-close`. You close the plan; later you open and close
+implementation; later you open and close a review. They are separate units of
+work, run when each is needed.
 
-1. **Plan the work.** Turn research and discussion into requirements, design
-   decisions, and a short roadmap.
-2. **Implement one small slice at a time.** Choose the smallest meaningful
-   change, finish it, and verify it.
-3. **Leave the project ready to continue.** Update the roadmap and compact
-   project state before moving to another step or ending the session.
+**Plan** — Research and discussion turn into requirements, design decisions, and
+a roadmap broken into small vertical slices. A planning session typically builds
+high context, but that is not a problem: `/planning-capture` stores everything
+into documentation before the session closes, so nothing is lost. Closing early
+is safe and expected.
 
-The implementation loop is:
+**Implement** — Work through vertical slices one at a time. Each slice should be
+small — not the smallest possible, but small enough to keep context lean and
+meaningful enough to justify the session overhead of loading and saving state.
+The right balance depends on the model, context size, and the nature of the
+work; good reference numbers are provided in [FINAL-WORKFLOW.md](FINAL-WORKFLOW.md).
+Make sure that ADRs are written, `roadmap.md` reflects the current plan, and
+`activeContext.md` is updated on each session close. Continue implementing the
+next slice until the context feels high and is approaching the Warn Zone, then
+close and open fresh. As a softer guide: if
+context is still light and the next slice description is close to what was just
+worked on — same files, same area — continuing is usually fine; if the next
+slice is clearly different territory, closing first is the better call. The
+Warn Zone is the harder signal to respect, but the earlier judgment is a feel
+that develops with experience and varies by model, coding agent, and project.
 
-```text
-/session-open when orientation is needed
-    -> /next-slice
-    -> implement and verify
-    -> /session-close (STEP)
-    -> repeat, or /session-close (SESSION) when stopping
-```
+**Review** — Run a review at the end of a phase, or any time it feels overdue.
+A second model — ideally from a different provider entirely, e.g. Claude
+reviewing Codex output or vice versa — reads the diff since the last known-good
+commit and writes findings. Feed those findings back to the original provider:
+it typically agrees with 70–80% and handles the rest as a priority or detail
+difference. Findings are collected in a table with risk, effort, and value
+columns so each item can be weighed: how much risk it carries, how much effort
+it takes to fix, and what value the fix delivers.
 
-If you already know that you want the next implementation slice, start directly
-with `/next-slice`.
+Every cycle ends with `/session-close` — the only step that writes the live
+state files (`roadmap.md`, `progress.md`, `activeContext.md`).
 
 ## Quick start
 
-### 1. Install the core skills
+### Install the core skills
 
-The following example installs the skills globally for Claude Code:
+Skills can be installed globally (available in every project) or per-project
+(scoped to one repository). The snippet below is one example — a global
+installation for Claude Code using symbolic links:
 
 ```sh
 cd /path/to/my-workflow
@@ -127,7 +148,11 @@ done
 For a project-only installation, use `<project>/.claude/skills/` instead of
 `$HOME/.claude/skills/`.
 
-### 2. Prepare a project
+This workflow is not specific to Claude Code — it has been tested with Codex as
+well. When using multiple agents, copy the skill definitions to wherever each
+agent looks for them.
+
+### Prepare a project
 
 Run this from the workflow repository:
 
@@ -137,6 +162,15 @@ PROJECT=/path/to/your/project
 cp AGENTS.md "$PROJECT/AGENTS.md"
 touch "$PROJECT/"{activeContext,roadmap,progress}.md
 mkdir -p "$PROJECT/docs/"{requirements,design,adr}
+```
+
+Different agents read different filenames: Claude Code reads `CLAUDE.md`, Codex
+reads `AGENTS.md`. A common pattern is to copy `AGENTS.md` into the project and
+then create a symbolic link so both names point to the same file and stay
+identical without maintenance:
+
+```sh
+ln -s AGENTS.md "$PROJECT/CLAUDE.md"
 ```
 
 Add at least one unchecked step to `roadmap.md` so the agent has a concrete
@@ -170,12 +204,55 @@ Suppose the roadmap says the next feature is password reset.
 3. Run `/next-slice`.
 4. The agent chooses one small vertical slice, such as letting a user submit
    their email, recording the reset request, and showing a confirmation.
-5. The agent implements and verifies that slice.
+5. Ask the agent to implement that slice.
 6. Run `/session-close (STEP)` to record the result and select the next step.
 7. Continue with another slice, or run `/session-close` to end the session.
 
 The next session can restart from `activeContext.md` and `roadmap.md` instead of
 reconstructing the project from a long transcript.
+
+The implementation loop in shorthand:
+
+```text
+/session-open when orientation is needed
+    -> /next-slice
+    -> implement and verify
+    -> /session-close (STEP)
+    -> repeat, or /session-close (SESSION) when stopping
+```
+
+If you are resuming and already know what to work on next, you can skip
+`/session-open` and start directly with `/next-slice`.
+
+## Planning larger work
+
+Large features usually need more preparation before entering the implementation
+loop:
+
+```text
+research or discussion
+    -> /grill-me or /grill-with-docs
+    -> /planning-capture
+    -> /session-close        (planning context is high; close before starting implementation)
+
+implementation loop (new session):
+    -> /next-slice
+    -> implement and verify
+    -> /session-close (STEP)
+    -> repeat
+```
+
+Keep raw research and long conversations outside the implementation session
+when possible. Bring in a concise Markdown summary and the exact files needed
+for the next decision.
+
+## Working outside the loop
+
+Not every change goes through `/next-slice` — sometimes you ask for an ad-hoc
+fix, or a prompt simply falls outside the workflow skills. `/session-close`
+always checks whether documentation needs updating, but you can run
+`/doc-update` directly whenever you know such a change must reach the docs,
+instead of waiting for the close to catch it.
 
 ## Project files
 
@@ -183,7 +260,7 @@ Each file has one job:
 
 | File or directory | Purpose |
 |---|---|
-| `AGENTS.md` | Routes the agent to the correct workflow and project documents. |
+| `AGENTS.md`/`CLAUDE.md` | Routes the agent to the correct workflow and project documents. |
 | `activeContext.md` | Small snapshot of the current state, next step, and blockers. |
 | `roadmap.md` | Checklist of phases and unfinished work. |
 | `progress.md` | Short history of completed steps. |
@@ -226,35 +303,7 @@ This repository also vendors three skills by
 | `/grill-with-docs` | Stress-testing a plan against the project's existing language and documents. |
 | `/handoff` | Transferring work to another tool or model with a standalone context packet. |
 
-Install them the same way if they are not already available:
-
-```sh
-cd /path/to/my-workflow
-mkdir -p "$HOME/.claude/skills"
-
-for skill in grill-me grill-with-docs handoff
-do
-  ln -sfn "$(pwd)/skills/$skill" "$HOME/.claude/skills/$skill"
-done
-```
-
 See [CREDITS.md](CREDITS.md) for attribution and license details.
-
-## Planning larger work
-
-Large features usually need more preparation than the implementation loop:
-
-```text
-research or discussion
-    -> /grill-me or /grill-with-docs
-    -> /planning-capture
-    -> /next-slice
-    -> implementation loop
-```
-
-Keep raw research and long conversations outside the implementation session
-when possible. Bring in a concise Markdown summary and the exact files needed
-for the next decision.
 
 ## Optional setup
 
