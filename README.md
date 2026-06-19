@@ -9,9 +9,9 @@ should not need the full history of every earlier conversation.
 ## Goals
 
 Each problem this workflow solves, in one sentence. The recurring failures of
-long-running AI-assisted coding were almost never "the AI is not smart enough" —
-they were context, documentation, and orientation problems, and all three turned
-out to be addressable. The list below is in the priority order those pains
+long-running AI-assisted coding were context, documentation, and orientation
+problems, and all three turned out to be addressable. The list below is in the
+priority order those pains
 actually surfaced; the full rationale for every goal lives in
 [INITIAL-REQUEST.md](INITIAL-REQUEST.md) and
 [FINAL-WORKFLOW.md](FINAL-WORKFLOW.md).

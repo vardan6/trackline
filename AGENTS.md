@@ -41,8 +41,7 @@ Implement one atomic vertical slice per cycle.
 - `docs/adr/` — durable decisions and non-obvious rationale. Search when code
   looks surprising.
 - `docs/implementation-notes.md` — rare invariants, contracts, and gotchas.
-- `activeContext.md`, `roadmap.md`, `progress.md` — live state, planned work,
-  and completed-cycle history.
+- `activeContext.md`, `roadmap.md` — live state and planned work.
 
 Keep one source of truth per fact. Keep current status out of requirements and
 design, and load durable documents only when the task needs them.
