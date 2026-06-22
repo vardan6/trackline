@@ -11,24 +11,24 @@ should not need the full history of every earlier conversation.
 Each problem this workflow solves, in one sentence. The recurring failures of
 long-running AI-assisted coding were context, documentation, and orientation
 problems, and all three turned out to be addressable. The list below is in the
-priority order those pains
-actually surfaced; the full rationale for every goal lives in
+priority order those pains actually surfaced; the full rationale for every goal
+lives in
 [INITIAL-REQUEST.md](INITIAL-REQUEST.md) and
 [FINAL-WORKFLOW.md](FINAL-WORKFLOW.md).
 
 The framing that holds the rest together:
 
-- **Engineer the workflow, not just the prompt.** Treat the workflow as an
-  engineering problem in its own right — specified, pressure-tested, and refined
-  against real work — because the workflow matters more than the model.
+**Engineer the workflow, not just the prompt.** Treat the workflow as an
+engineering problem in its own right — specified, pressure-tested, and refined
+against real work — because the workflow matters more than the model.
 
 The problems, in priority order:
 
 1. **Stay on track — developer awareness and project alignment.** Avoid drifting
-   from the original problem across a months-long build through planning by being
-   challenged
-   ([grill-me](https://github.com/mattpocock/skills/blob/main/skills/productivity/grill-me/SKILL.md)) —
-   planning is done not when the agent understands the task but when you can
+   from the original problem across a months-long build through planning by
+   being challenged
+   ([grill-me](https://github.com/mattpocock/skills/blob/main/skills/productivity/grill-me/SKILL.md))
+   — planning is done not when the agent understands the task but when you can
    defend it — an always-current roadmap/progress/activeContext trio, and mode
    discipline (planning, implementing, reviewing, or closing).
 2. **Context is a budget, not a window.** Keep the agent inside its reliable
@@ -50,7 +50,9 @@ The problems, in priority order:
    already oriented by reading a few small curated files instead of re-deriving
    the whole project from history — keeping in mind that save and restore also
    cost tokens, so the state files stay small and the close stays cheap and
-   routine.
+   routine. When work needs to move between sessions, tools, or models, use a
+   clean handoff: a self-contained packet instead of relying on the live
+   transcript.
 6. **Reusable skills instead of repeated prompts.** Move the prompts you retype
    every session into named skills that guide the workflow and manage its flow
    from session-open through session-close.
@@ -75,11 +77,6 @@ The problems, in priority order:
     the agent a reliable trail to follow, and that pays off significantly when
     sessions resume or context needs to be reconstructed.
 
-And one supporting capability the loop relies on:
-
-- **Clean handoffs.** Transfer work to another session, tool, or model with a
-  self-contained packet instead of relying on the live transcript.
-
 ## How it works
 
 The workflow runs as three self-contained cycles — *plan*, *implement*, and
@@ -89,10 +86,10 @@ implementation; later you open and close a review. They are separate units of
 work, run when each is needed.
 
 **Plan** — Research and discussion turn into requirements, design decisions, and
-a roadmap broken into small vertical slices. A planning session typically builds
-high context, but that is not a problem: `/planning-capture` stores everything
-into documentation before the session closes, so nothing is lost. Closing early
-is safe and expected.
+a roadmap broken into small vertical slices. Use `/grill-me` to stress-test the
+plan, or `/grill-with-docs` to stress-test it against the project's existing
+docs, then let `/planning-capture` store the result in documentation before the
+session closes.
 
 **Implement** — Work through vertical slices one at a time. Each slice should be
 small — not the smallest possible, but small enough to keep context lean and
@@ -102,12 +99,12 @@ work; good reference numbers are provided in [FINAL-WORKFLOW.md](FINAL-WORKFLOW.
 Make sure that ADRs are written, `roadmap.md` reflects the current plan, and
 `activeContext.md` is updated on each session close. Continue implementing the
 next slice until the context feels high and is approaching the Warn Zone, then
-close and open fresh. As a softer guide: if
-context is still light and the next slice description is close to what was just
-worked on — same files, same area — continuing is usually fine; if the next
-slice is clearly different territory, closing first is the better call. The
-Warn Zone is the harder signal to respect, but the earlier judgment is a feel
-that develops with experience and varies by model, coding agent, and project.
+close and open fresh. As a softer guide: if context is still light and the next
+slice description is close to what was just worked on — same files, same area —
+continuing is usually fine; if the next slice is clearly different territory,
+closing first is the better call. The Warn Zone is the harder signal to
+respect, but the earlier judgment is a feel that develops with experience and
+varies by model, coding agent, and project.
 
 **Review** — Run a review at the end of a phase, or any time it feels overdue.
 A second model — ideally from a different provider entirely, e.g. Claude
@@ -259,7 +256,7 @@ instead of waiting for the close to catch it.
 Each file has one job:
 
 | File or directory | Purpose |
-|---|---|
+| --- | --- |
 | `AGENTS.md`/`CLAUDE.md` | Routes the agent to the correct workflow and project documents. |
 | `activeContext.md` | Small snapshot of the current state, next step, and blockers. |
 | `roadmap.md` | Checklist of phases and unfinished work. |
@@ -283,7 +280,7 @@ not in requirements or design documents.
 ### Core workflow
 
 | Skill | Use it when |
-|---|---|
+| --- | --- |
 | `/session-open` | Recovering state when resuming without a specific task. |
 | `/planning-capture` | Turning research, brainstorming, or a planning session into durable project documents. |
 | `/next-slice` | Choosing the next small implementation change. |
@@ -298,7 +295,7 @@ This repository also vendors three skills by
 [Matt Pocock](https://github.com/mattpocock/skills) under the MIT License:
 
 | Skill | Use it when |
-|---|---|
+| --- | --- |
 | `/grill-me` | Stress-testing a plan through detailed questions. |
 | `/grill-with-docs` | Stress-testing a plan against the project's existing language and documents. |
 | `/handoff` | Transferring work to another tool or model with a standalone context packet. |
@@ -321,7 +318,7 @@ instructions in [hooks/README.md](hooks/README.md).
 These tools help agents locate information and keep command output small:
 
 | Tool | Purpose | Debian or WSL install |
-|---|---|---|
+| --- | --- | --- |
 | `rg` | Fast, git-aware text search. | `sudo apt install ripgrep` |
 | `fdfind` | Focused file discovery without printing an entire tree. | `sudo apt install fd-find` |
 | `jq` | Select only the needed fields from JSON output. | `sudo apt install jq` |
@@ -352,7 +349,7 @@ Active improvements are tracked in [roadmap.md](roadmap.md).
 ## Repository guide
 
 | Path | What it contains |
-|---|---|
+| --- | --- |
 | [FINAL-WORKFLOW.md](FINAL-WORKFLOW.md) | Full operating manual: every step, what it solves, and the generic flow. |
 | [AGENTS.md](AGENTS.md) | Router template copied into projects. |
 | [`skills/`](skills/) | Core and vendored skill definitions. |
