@@ -327,8 +327,15 @@ docs/
   requirements/            agreed finished behavior, constraints, acceptance, non-goals
   design/                  architecture, boundaries, protocols, tradeoffs
   adr/                     append-only durable decisions + rationale
+  reviews/                 cross-model review reports (input to /review-triage)
+  research/                pre-step research notes and findings (see §3.1)
+  archive/                 superseded docs moved out of the active tree
   implementation-notes.md  rare invariants / contracts / gotchas not recoverable from code
 ```
+
+`install-workflow.sh` scaffolds the six subdirectories (create-if-missing); the
+directory list lives in one `DOCS_DIRS` array in that script, so it stays in sync
+as the tree grows.
 
 Rules for the tree: documentation is **agent-first, human-second**. Keep one
 canonical home per fact and prefer pointers over copies. **Code is implementation
@@ -437,10 +444,29 @@ installable artifacts, not just descriptions of them.
 conditions* — budgeted ~40 lines, hard cap 60. The fixed shape is what makes the
 workflow predictable enough to follow yourself.
 
-**`AGENTS.md`.** A ~50-line router copied into each project. It answers: where am
-I, what's the workflow, where are the docs, what gotchas. Keep it thin — it loads
-into every session, so every line competes for attention. Add per-project gotchas
-at the bottom; keep workflow detail (this document) and Git mechanics out of it.
+**`AGENTS.md`.** A ~50-line router symlinked into each project (with `CLAUDE.md →
+AGENTS.md` so both names resolve to it). It answers: where am I, what's the
+workflow, where are the docs, what gotchas. Keep it thin — it loads into every
+session, so every line competes for attention. Add per-project gotchas at the
+bottom; keep workflow detail (this document) and Git mechanics out of it.
+
+**Supported coding agents.** Tested on **Claude Code and Codex** (primary), with
+**limited testing on OpenCode and Qwen Code**. All four read the `SKILL.md`
+standard; OpenCode and Qwen also read project `.agents/skills`. The context-zone
+hook is exercised on Claude Code and Codex only. Each agent looks for skills in a
+different directory, which the installer handles (below).
+
+**Single source of truth — link, never copy.** `my-workflow/` lives in one common
+location and holds the only real copy of every artifact — each skill, the hook
+script, `AGENTS.md`, the docs conventions. A real development project never
+contains its own copy: it **symlinks each skill and each shared file back into
+that common `my-workflow`**, so an edit made once in `my-workflow` is instantly
+live in every project that links it. The only things a project holds of its own
+are those symlinks plus the minimum per-tool registration each agent forces (and
+its own `docs/` content). There is no "Codex version" vs "Claude version" of
+anything: one `context-zone.sh` serves both, invoked by an identical command
+string. `install-workflow.sh` is simply the tool that creates and maintains those
+links.
 
 **Harness hooks** (`hooks/README.md` owns the detail):
 
@@ -448,23 +474,50 @@ at the bottom; keep workflow detail (this document) and Git mechanics out of it.
   transcript token count against the fixed thresholds in §6 (not the model
   window) and nudges: silent `<80k`, "consider `/session-close`" at `80k–99k`,
   "ask the user `/session-close` or `/handoff`" at `100k–119k`, "stop new code" at
-  `≥120k`. Overridable per project via `CONTEXT_{WARN,ASK,DUMB,FORCE}_TOKENS`.
+  `≥120k`. Overridable per project via `CONTEXT_{WARN,ASK,DUMB,FORCE}_TOKENS`. One
+  script serves both agents; both register it via the same command,
+  `bash "$(git rev-parse --show-toplevel)/.agents/hooks/context-zone.sh"` — Claude
+  Code from `.claude/settings.json`, Codex from `.codex/hooks.json`. The
+  git-toplevel form resolves the project root from any subdirectory the hook is
+  launched in.
 - **Permission allowlist** — read-only Bash + read-MCP via
   `/fewer-permission-prompts`.
 - **MCP audit** — disable unused servers per project; each adds tool schemas to
   every turn.
 
-**Bootstrap a new project:**
+**Bootstrap a new project — `./install-workflow.sh <project>`.** One idempotent
+command wires everything; re-run it any time to reconcile a project (repair
+drifted or broken links) after the canonical set changes. It:
 
-```text
-1. Copy AGENTS.md → <project>/AGENTS.md
-2. touch <project>/{activeContext,roadmap,progress}.md
-3. mkdir -p <project>/docs/{requirements,design,adr}
-4. Ensure ~/.claude/skills/ has the 6 canonical skills (symlinked from skills/).
-5. /update-config — wire the Stop + context hooks.
-6. Audit MCP servers; disable unused.
-7. First session: /session-open to inspect state, or /next-slice to start coding.
-```
+- links `AGENTS.md → my-workflow/AGENTS.md` and `CLAUDE.md → AGENTS.md`;
+- installs skills through a **funnel**: `.agents/skills/<s> → my-workflow/skills/<s>`
+  is the one real link, and `.claude/skills` + `.codex/skills` redirect into
+  `.agents/skills` (mirrors the user-scope layout; OpenCode reads `.agents/skills`
+  directly);
+- registers the context-zone hook for both agents (merges the Stop block into
+  `.claude/settings.json` without clobbering other keys; symlinks
+  `.codex/hooks.json`);
+- scaffolds `docs/{requirements,design,adr,reviews,research,archive}/`
+  (create-if-missing);
+- leaves state files to the workflow — `/session-close` creates `activeContext.md`;
+  you seed one unchecked step in `roadmap.md` to start.
+
+The skill lists and docs dirs are declared arrays at the top of the script, so the
+list of what to install changes freely while the mechanism stays fixed. Flags:
+`-n` preview, `-f` repair drifted links, `--with-external` pin the third-party
+skills per-project instead of relying on user scope.
+
+**Third-party skills stay in user scope by default.** `grill-me`,
+`grill-with-docs`, and `handoff` are vendored from Matt Pocock and typically
+already installed globally (`~/.agents/skills/`). Installing them per-project too
+would be a second copy — the anti-pattern this workflow exists to avoid — so the
+installer detects them in user scope and **skips** them, printing a notice.
+`--with-external` overrides this for a project that must pin its own copy.
+(Whether `/handoff` stays vendored or gets rewritten to the six-section skeleton
+is still open.)
+
+After bootstrap: audit MCP servers and disable unused ones; run `/session-open` to
+inspect state, or `/next-slice` to start coding.
 
 ## 9. Skill names and attribution
 

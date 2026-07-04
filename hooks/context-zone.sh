@@ -8,14 +8,12 @@
 # Same absolute token counts apply on Codex 258.4k, Claude Code 200k
 # (Sonnet 4.6 / Haiku 4.5), and Opus 4.7 1M windows.
 #
-# Wire via .claude/settings.json:
-#   {
-#     "hooks": {
-#       "Stop": [
-#         { "command": "/abs/path/to/my-workflow/hooks/context-zone.sh" }
-#       ]
-#     }
-#   }
+# ONE script serves both Claude Code and Codex. Each tool registers it via
+# its own file, but both point at the same in-project link with an identical
+# command string:
+#   bash "$(git rev-parse --show-toplevel)/.agents/hooks/context-zone.sh"
+# where .agents/hooks/context-zone.sh -> this file. The git-toplevel form
+# resolves the project root from any subdirectory the hook is launched in.
 #
 # The hook reads the JSON payload Claude Code provides on stdin:
 #   { "session_id": "...", "transcript_path": "/path/to/session.jsonl", ... }
@@ -160,7 +158,13 @@ fi
 
 # Emit a systemMessage the agent will see on the next turn.
 # Stop hooks only support top-level fields; hookSpecificOutput is not valid for Stop.
-printf '{"systemMessage":"%s"}\n' \
-  "$(printf '%s' "$msg" | sed 's/"/\\"/g')"
+# Prefer jq for correct JSON escaping; fall back to sed when jq is absent.
+# This single emitter works for both Claude Code and Codex.
+if command -v jq >/dev/null 2>&1; then
+  printf '{"systemMessage":%s}\n' "$(jq -Rn --arg s "$msg" '$s')"
+else
+  escaped="$(printf '%s' "$msg" | sed 's/\\/\\\\/g; s/"/\\"/g')"
+  printf '{"systemMessage":"%s"}\n' "$escaped"
+fi
 
 exit 0

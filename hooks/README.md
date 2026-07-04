@@ -64,32 +64,34 @@ on the next turn. In the `ask` zone the agent confirms with you before
 closing. In the `dumb` and `force-compact` zones it should refuse new code
 work and close first.
 
-### Install for Claude Code
+### Install (both tools — use the installer)
 
-1. Edit the absolute path inside `settings.snippet.json` to point at your
-   checkout of `context-zone.sh`.
-2. Merge the `hooks` and `env` blocks into `.claude/settings.json`
-   (project-scoped) or `~/.claude/settings.json` (user-global).
-3. Restart Claude Code so it picks up the hook registration.
-
-### Install for Codex
-
-Codex uses the same hook event shape for this Stop hook, but reads project
-hook registration from `<project>/.codex/hooks.json`.
-
-1. Create `<project>/.codex/hooks/` if it does not exist yet.
-2. Copy or symlink `codex.hooks.json` to `<project>/.codex/hooks.json`.
-3. Symlink or copy the Codex-specific script to that stable path:
+`install-workflow.sh` wires this up for you: it creates the single in-project
+link `.agents/hooks/context-zone.sh -> my-workflow/hooks/context-zone.sh`,
+merges the Stop block into `.claude/settings.json`, and symlinks
+`.codex/hooks.json`. Both tools then run the **same** script via the **same**
+command string:
 
 ```sh
-ln -sfn /abs/path/to/my-workflow/hooks/context-zone-codex.sh \
-  <project>/.codex/hooks/context-zone.sh
+bash "$(git rev-parse --show-toplevel)/.agents/hooks/context-zone.sh"
 ```
 
-4. Start Codex from the project root or any subdirectory inside the same git
-   worktree. The command resolves the hook path from `git rev-parse
-   --show-toplevel`.
-5. If Codex asks to trust the project hook, approve it once.
+The git-toplevel form resolves the project root from any subdirectory the hook
+is launched in — this is what makes it robust across both tools.
+
+**Manual Claude Code:** merge the `hooks` block from `settings.snippet.json`
+into `.claude/settings.json` (project) or `~/.claude/settings.json` (global),
+then restart Claude Code.
+
+**Manual Codex:** symlink `codex.hooks.json` to `<project>/.codex/hooks.json`
+and create the `.agents/hooks/context-zone.sh` link. Start Codex from anywhere
+in the git worktree; approve the project hook once if prompted.
+
+### Tested on
+
+Claude Code and Codex (primary). Limited testing on OpenCode and Qwen Code —
+both read `.agents/skills` and the `SKILL.md` standard, so the skills wire up,
+but the context-zone hook has not been exercised there.
 
 ### Env-var overrides
 

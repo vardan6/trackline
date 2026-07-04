@@ -142,36 +142,36 @@ do
 done
 ```
 
-For a project-only installation, use `<project>/.claude/skills/` instead of
-`$HOME/.claude/skills/`.
+For a project-only installation, use the installer described in
+[Prepare a project](#prepare-a-project) rather than linking by hand — it wires
+the skills into `.agents/`, `.claude/`, and `.codex/` in one step.
 
-This workflow is not specific to Claude Code — it has been tested with Codex as
-well. When using multiple agents, copy the skill definitions to wherever each
-agent looks for them.
+This workflow is not specific to Claude Code. It has been tested on **Claude
+Code and Codex** (primary), with **limited testing on OpenCode and Qwen Code** —
+both read `.agents/skills` and the `SKILL.md` standard, so skills wire up there,
+but the context-zone hook has not been exercised on them. When using multiple
+agents, link the skill definitions to wherever each agent looks for them (the
+installer does this for `.agents`, `.claude`, and `.codex`).
 
 ### Prepare a project
 
-Run this from the workflow repository:
+Run the installer from the workflow repository. It is idempotent, so you can
+re-run it any time to reconcile a project to the current layout:
 
 ```sh
-PROJECT=/path/to/your/project
-
-cp AGENTS.md "$PROJECT/AGENTS.md"
-touch "$PROJECT/"{activeContext,roadmap,progress}.md
-mkdir -p "$PROJECT/docs/"{requirements,design,adr}
+./install-workflow.sh /path/to/your/project
 ```
 
-Different agents read different filenames: Claude Code reads `CLAUDE.md`, Codex
-reads `AGENTS.md`. A common pattern is to copy `AGENTS.md` into the project and
-then create a symbolic link so both names point to the same file and stay
-identical without maintenance:
+This links `AGENTS.md` into the project (and `CLAUDE.md` → `AGENTS.md`, since
+Claude Code reads `CLAUDE.md` while Codex reads `AGENTS.md`), wires the skills
+into `.agents/`, `.claude/`, and `.codex/`, registers the context-zone hook for
+both tools, and scaffolds `docs/{requirements,design,adr,reviews,archive,research}/`.
+Use `-n` to preview, `-f` to repair drifted links, and `--with-external` to pin
+the third-party skills per-project instead of relying on user scope.
 
-```sh
-ln -s AGENTS.md "$PROJECT/CLAUDE.md"
-```
-
-Add at least one unchecked step to `roadmap.md` so the agent has a concrete
-starting point:
+State files are created on demand — `/session-close` creates `activeContext.md`
+— so the only content you seed by hand is at least one unchecked step in
+`roadmap.md`, giving the agent a concrete starting point:
 
 ```md
 # Roadmap
@@ -310,8 +310,8 @@ The optional hook warns the agent when a session is becoming too large. It can
 suggest closing the session or creating a handoff before context quality
 degrades.
 
-Claude Code and Codex use different registration files, so follow the complete
-instructions in [hooks/README.md](hooks/README.md).
+One script serves both tools. `install-workflow.sh` wires it up automatically;
+for manual setup or details see [hooks/README.md](hooks/README.md).
 
 ### Command-line tools
 
