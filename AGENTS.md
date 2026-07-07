@@ -14,7 +14,8 @@
 - Next implementation change, including at session start → `/next-slice`.
 - Finished step or session → `/session-close` (STEP or SESSION mode).
 - Planning output after research or grilling → `/planning-capture`.
-- Plan or code review → `/review-triage`; implement only `must_fix_now`.
+- Review a plan → `/plan-review`; review code → `/cross-review`; triage
+  findings → `/review-triage`.
 - Durable documentation check → `/doc-update`.
 - Cross-tool or cross-model transfer → `/handoff`.
 

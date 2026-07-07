@@ -43,7 +43,7 @@ reviewing, or closing.
 advertise huge windows, but the reliable "smart zone" is much smaller. Past it,
 in the "dumb zone," the agent misses information already in context, loses focus
 on the original goal, confuses similar files and functions, hallucinates details,
-makes unnecessary changes, and spins 20–30 minutes without solving the problem —
+makes unnecessary changes, and spins anywhere from 20 to 60 minutes without solving the problem —
 burning a large part of the usage limit and sometimes breaking the project. I
 also tried to cap context as a percentage of the window, but the percentage is
 misleading: the same degradation threshold is a much smaller percentage on a
@@ -174,10 +174,12 @@ agent uses to orient itself.
 meaningful step, and keep small commits that map to reviewable slices with
 meaningful messages. The agent reads history (`git log`, `git diff`, `git blame`)
 to understand what changed and why, so clean history is fuel, not just hygiene; it
-also keeps review scope honest and lets me roll back to known-good states. This is
-still the least-finished area of the workflow — the direction is short-lived topic
-branches, checkpoint commits as recoverable save points, draft pull requests so
-review starts early, and an explicit merge policy. The anchoring principle:
+also keeps review scope honest and lets me roll back to known-good states. What
+began as the least-finished area has since settled into a practiced flow —
+short-lived topic branches when work switches to a larger topic, commits a few
+times a day as recoverable save points, a cross-model review before each pull
+request, then merge (the operating detail lives in
+[FINAL-WORKFLOW.md](FINAL-WORKFLOW.md) §7). The anchoring principle:
 conversation provides reasoning, project files preserve decisions, and Git
 preserves change.
 

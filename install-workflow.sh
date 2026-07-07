@@ -24,7 +24,7 @@ set -euo pipefail
 WORKFLOW="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # My skills — always installed into a project.
-SKILLS=(doc-update next-slice planning-capture review-triage session-close session-open)
+SKILLS=(cross-review doc-update next-slice plan-review planning-capture review-triage session-close session-open)
 # Third-party skills — live in user scope by default; not installed per-project
 # unless --with-external is given.
 EXTERNAL_SKILLS=(grill-me grill-with-docs handoff)

@@ -88,8 +88,10 @@ work, run when each is needed.
 **Plan** — Research and discussion turn into requirements, design decisions, and
 a roadmap broken into small vertical slices. Use `/grill-me` to stress-test the
 plan, or `/grill-with-docs` to stress-test it against the project's existing
-docs, then let `/planning-capture` store the result in documentation before the
-session closes.
+docs, then let `/planning-capture` store the result in documentation. Before the
+session closes, have the plan reviewed by the other provider's strongest model —
+the same findings-with-risk/effort/value loop as code review, one stage earlier
+and far cheaper — and commit the reviewed plan as a known-good checkpoint.
 
 **Implement** — Work through vertical slices one at a time. Each slice should be
 small — not the smallest possible, but small enough to keep context lean and
@@ -133,8 +135,10 @@ mkdir -p "$HOME/.claude/skills"
 for skill in \
   session-open \
   planning-capture \
+  plan-review \
   next-slice \
   doc-update \
+  cross-review \
   review-triage \
   session-close
 do
@@ -230,6 +234,7 @@ loop:
 research or discussion
     -> /grill-me or /grill-with-docs
     -> /planning-capture
+    -> plan review by the other provider, then commit
     -> /session-close        (planning context is high; close before starting implementation)
 
 implementation loop (new session):
@@ -264,6 +269,8 @@ Each file has one job:
 | `docs/requirements/` | What the finished project must do. |
 | `docs/design/` | Important implementation decisions and tradeoffs. |
 | `docs/adr/` | Durable decisions that need a recorded rationale. |
+| `docs/research/` | Distilled research summaries that feed planning. |
+| `docs/reviews/` | Cross-model review findings, for plans and for code. |
 | `docs/implementation-notes.md` | Rare contracts, invariants, and gotchas that are not obvious from code. |
 | `handoff-*.md` | Optional transfer packet when compact project state is not enough. |
 
@@ -283,8 +290,10 @@ not in requirements or design documents.
 | --- | --- |
 | `/session-open` | Recovering state when resuming without a specific task. |
 | `/planning-capture` | Turning research, brainstorming, or a planning session into durable project documents. |
+| `/plan-review` | Reviewing a captured plan as the second-provider model; findings go to `docs/reviews/`. |
 | `/next-slice` | Choosing the next small implementation change. |
 | `/doc-update` | Checking whether completed work changed requirements, design, ADRs, or durable implementation notes. |
+| `/cross-review` | Reviewing implemented work against the docs as the second-provider model; findings go to `docs/reviews/`. |
 | `/review-triage` | Sorting review findings by what must be fixed now and what can wait. |
 | `/session-close (STEP)` | Finishing one roadmap step while continuing the session. |
 | `/session-close` | Ending the session and leaving compact state for the next one. |
@@ -338,7 +347,9 @@ dumping large files or logs.
 
 ## Current limitations
 
-- Git branching, pull-request, and merge guidance is not yet formalized.
+- The Git branch, pull-request, and review flow described in
+  [FINAL-WORKFLOW.md](FINAL-WORKFLOW.md) §7 stabilized in practice only recently;
+  expect it to keep evolving.
 - Context thresholds are practical guardrails based on repeated use and prior
   research, not universal guarantees for every task or model.
 - The workflow is strict by design, but each project still needs judgment about

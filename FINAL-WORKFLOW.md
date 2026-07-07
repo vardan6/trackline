@@ -25,6 +25,7 @@ PLAN  (often starts off the coding agent — see §3.1)
   research / discussion → gather into a Markdown summary
     → /grill-me  or  /grill-with-docs    stress-test the plan; break it into vertical slices
     → /planning-capture                  write requirements / design / ADR / sliced roadmap
+    → /plan-review (cross-model)         second provider reviews the plan; planner validates; commit
     → /session-close                     record the next step, end the planning session
 
 IMPLEMENT  (repeat per slice)
@@ -35,7 +36,7 @@ IMPLEMENT  (repeat per slice)
   ↺ take another slice while context stays light; end the session as you near the warn zone (§6)
 
 REVIEW  (its own step — run after a slice or phase, often in a separate session)
-    → hand the diff to a second, stronger, different model → findings file
+    → /cross-review on a second, stronger, different model → findings file
     → /review-triage                     validate, sort, fix only must-fix-now
     → /session-close                     record the outcome
 ```
@@ -81,7 +82,12 @@ the order a project uses them.
 **What it does.** Gathers the raw thinking a plan needs: exploratory discussion,
 tradeoff clarification, deep research. This frequently happens *outside* the
 coding agent — a conversation in ChatGPT, often on the phone during normal daily
-activity, sometimes several minutes of dictated context.
+activity, sometimes several minutes of dictated context. Several iterations are
+normal — a voice chat in transport, another at home, a desk session with the
+coding agent itself — and each iteration is captured as its own Markdown file
+under `docs/research/`. Relevant pre-existing material (docs inherited from
+older projects, manually collected references) is placed alongside those files,
+so the grilling step that follows can be fed the whole set.
 
 **What it solves.** Keeps large, noisy exploration out of the coding session,
 where it would burn context budget. The input itself varies in size — sometimes a
@@ -120,7 +126,13 @@ it is done when you can defend the task and its boundaries. Grilling is how you
 get there, and how you stay aware of and aligned with what the agent will build.
 A good grilling session also shapes the work **vertically**: the plan is broken
 into thin vertical slices rather than horizontal layers, so output is visible
-sooner and problems surface in the early stages instead of at the end.
+sooner and problems surface in the early stages instead of at the end. This
+matters because, left alone, coding agents tend to plan bottom-up in horizontal
+layers — database, then infrastructure, then API, then UI — and real testing
+only becomes convenient once the UI finally appears, hours or days (and a great
+many tokens) after work started. A vertical slice is the antidote: the smallest
+piece of complete, meaningful functionality, crossing every layer of the stack
+from infrastructure or database through the middle layers to UI/UX.
 
 **Comes after.** Research gathered into a Markdown summary (§3.1).
 
@@ -149,16 +161,53 @@ knowledge with a single source of truth per fact — so the plan survives the
 session that produced it. It deliberately does **not** store status, and does
 **not** create an internals spec.
 
+Planning is the most **human-in-the-loop** stage of the whole workflow, and its
+context tends to run on the larger side of the budget — so use the strongest
+model available. The economics justify it: planning consumes few tokens
+compared to implementation but carries the highest leverage per token.
+
+> **Experimental (under test).** Instead of one sequential slice list, ask
+> planning to shape the roadmap as a first wave of prerequisites followed by up
+> to **three independent threads** of slices — no dependencies or file conflicts
+> between threads, slices sequential within each — so the threads can be
+> implemented in parallel.
+
 **Comes after.** A grilling or planning session (§3.2), or any external
 brainstorm/research.
 
-**Comes before.** Either `/next-slice` (start implementing) or, more often,
+**Comes before.** A cross-model **plan review** (§3.4), then
 `/session-close (SESSION)` to end the planning session — because
 `planning-capture` writes the durable docs and `roadmap.md` but does **not** set
 `activeContext.md`'s next-step pointer. `session-close` does that, which is what
 lets the *next* session open already oriented.
 
-### 3.4 `/session-open` — orient a resumed project
+### 3.4 `/plan-review` — cross-model review of the plan
+
+**What it does.** Hands the freshly captured plan to the strongest model of a
+*different* provider (e.g. Opus plans → the top GPT model reviews, or vice
+versa). Run `/plan-review` in the *reviewer's* session: it cross-validates the
+docs the plan touched against each other (requirements ↔ design ↔ ADRs ↔
+roadmap) — hunting gaps, missing items, incorrect or inconsistent logic, wrong
+assumptions, and terminology drift, and also proposing what could be done even
+better — then writes its findings into a Markdown file under `docs/reviews/`.
+The original planning agent then reviews the review (`/review-triage`) —
+validates, clarifies, or justifies each finding; in practice it agrees with
+nearly all of them — and revisits the plan accordingly. Each finding carries
+three ratings — **effort, risk, value** — which cleanly decide what gets fixed
+and when; usually everything does. The findings file is one table: the finding
+description first, the ratings in the adjacent columns, so triage can reuse
+them directly.
+
+**What it solves.** The same blind-spot problem as code review (§3.9), one
+stage earlier and far cheaper: a flaw caught in the plan costs a rating and an
+edit, while the same flaw caught in code costs a re-implementation.
+
+**Comes after.** `/planning-capture`.
+
+**Comes before.** A **commit** — the reviewed plan is a known-good checkpoint
+worth preserving — then `/session-close (SESSION)` to end the planning cycle.
+
+### 3.5 `/session-open` — orient a resumed project
 
 **What it does.** Reads the minimum state needed (`activeContext.md`, then
 `roadmap.md`, and a handoff only if those are insufficient), declares the current
@@ -176,7 +225,7 @@ implementation.
 **When to skip it.** A direct task or an explicit skill request does not need
 `/session-open` first. It is for ambiguous continuation only.
 
-### 3.5 `/next-slice` — pick the next change
+### 3.6 `/next-slice` — pick the next change
 
 **What it does.** Reads `activeContext.md` and `roadmap.md`, identifies candidate
 slices for the current roadmap item, and picks exactly one atomic vertical slice
@@ -195,7 +244,7 @@ establish implementation mode directly from minimal state.
 
 **Comes before.** Implementation and verification, then `/session-close`.
 
-### 3.6 Implement and verify (not a skill)
+### 3.7 Implement and verify (not a skill)
 
 **What it does.** The agent writes the slice and verifies it with a test, a manual
 check, or a command. Only `activeContext.md` may move inline during this step —
@@ -208,7 +257,7 @@ edits from scattering status across four documents.
 
 **Comes before.** `/session-close`, optionally preceded by `/doc-update`.
 
-### 3.7 `/doc-update` — sync durable docs to what changed
+### 3.8 `/doc-update` — sync durable docs to what changed
 
 **What it does.** Reads the **git diff** of what you actually implemented and,
 through a decision table, updates only the durable docs that the change touched:
@@ -228,17 +277,26 @@ point in the loop where real change has outrun the docs.
 **Comes before.** `/session-close`. (SESSION-mode `session-close` also runs the
 `doc-update` decision table once, so you do not always call it separately.)
 
-### 3.8 Cross-model review and `/review-triage`
+### 3.9 `/cross-review` and `/review-triage` — cross-model code review
 
 **What it does.** This is two parts. First, the **review** itself: hand the
-finished slice or phase to a second, independent, ideally stronger model — always
-different from the implementer — scoped to the diff since the last known-good
-commit. It writes findings into a Markdown file, one entry per finding with a
-severity guess. Second, `/review-triage` takes that file back to the original
-agent, validates every finding against the actual code, and sorts the survivors
-into `must_fix_now`, `should_fix_before_phase_complete`, `backlog`, or `invalid` —
+finished slice or phase — often one complete slice sequence from the roadmap —
+to a second, independent, ideally stronger model — always different from the
+implementer — scoped to the diff since the last known-good commit. Run
+`/cross-review` in the *reviewer's* session: it reads the implementation
+**against the documentation**, hunting
+misimplementation, missing implementation, bugs, gaps, incorrect logic, and
+things that could simply be done better, and writes findings into a Markdown
+file under `docs/reviews/`, one entry per finding with a severity guess.
+Second, `/review-triage` takes that file back to the original agent, validates
+every finding against the actual code, and sorts the survivors into
+`must_fix_now`, `should_fix_before_phase_complete`, `backlog`, or `invalid` —
 implementing only `must_fix_now`, and routing durable changes through
-`/doc-update`.
+`/doc-update`. Findings carry the same **effort / risk / value** ratings as
+plan review (§3.4), recorded as table columns next to each finding description
+so triage can reuse them; in practice the usual routing is simply to fold the
+surviving findings **into `roadmap.md`** as a review-items sequence and
+implement them as ordinary slices.
 
 **What it solves.** A structured, low-noise way to review the agent's work and to
 spend leftover usage productively (significant tokens left, little time before the
@@ -250,7 +308,7 @@ disposable — only validated findings and the resulting changes are kept.
 
 **Comes before.** Fixing `must_fix_now` items, then `/session-close`.
 
-### 3.9 `/session-close` — the non-optional close
+### 3.10 `/session-close` — the non-optional close
 
 **What it does.** Closes the current unit of work and writes the live state. Two
 modes:
@@ -282,9 +340,13 @@ have plenty of headroom — early in the smart zone — take another slice with
 `/next-slice`. As you approach the warn threshold (~100k tokens; see §6, and note
 that the *percentage* depends on the model's window), run `/session-close
 (SESSION)` and stop adding new code. The lived rule of thumb: keep taking slices
-while context is light, close the session once it is no longer.
+while context is light, close the session once it is no longer. In lived
+numbers: implementing one slice typically moves the context from roughly
+20–30k tokens to 40–60k (200k-era readout: ~10–15% → ~20–30%), only rarely
+toward 80k — which is why two, three, even four slices per session are common
+before the warn zone approaches.
 
-### 3.10 `/handoff` — cross-tool / cross-model transfer
+### 3.11 `/handoff` — cross-tool / cross-model transfer
 
 **What it does.** Compacts the current conversation into a standalone handoff
 document that a *different* tool or model — one that does not know this workflow —
@@ -356,8 +418,9 @@ work is happening:
   orientation step.
 
 The modes and their skills: **Planning** → `/grill-me`, `/grill-with-docs`,
-`/planning-capture`. **Implementation** → `/next-slice`. **Documentation** →
-`/doc-update`. **Review** → cross-model review + `/review-triage`. **Close** →
+`/planning-capture`, `/plan-review` (§3.4). **Implementation** → `/next-slice`.
+**Documentation** → `/doc-update`. **Review** → `/cross-review` +
+`/review-triage`. **Close** →
 `/session-close` (and `/handoff` for cross-tool transfer).
 
 ## 6. Context budget and working zones
@@ -411,10 +474,11 @@ References: [Effective context engineering](https://www.anthropic.com/engineerin
 (LangChain) · [Lost in the Middle](https://arxiv.org/abs/2307.03172) (Liu et al.)
 · [Context Rot](https://www.trychroma.com/research/context-rot) (Chroma Research).
 
-## 7. Version control (the least-finished area)
+## 7. Version control
 
-Version control is still under-specified and should be treated as a future
-improvement area. It matters because **agents read history to orient
+Version control was the last area of the workflow to settle — the branch and
+pull-request flow below stabilized in practice before it was written down here.
+It matters because **agents read history to orient
 themselves** — `git log`, `git diff`, and `git blame` tell them what changed
 recently, why a line exists, and what the last few slices touched. Small,
 meaningful commits that map to reviewable slices make the agent noticeably better
@@ -426,12 +490,22 @@ A practical trap: when asked to review, an agent often compares only the
 uncommitted diff against the last commit, not the whole project. Clean, frequent
 commits keep that implicit review scope correct.
 
-The likely future direction: short-lived topic branches, small commits mapped to
-slices, pushes used as recoverable checkpoints, draft pull requests so review and
-CI start early, and an explicit merge policy. Until that policy exists: the user
-requests commits and pushes explicitly (agents never commit automatically),
-`/session-close` may *ask* about a commit after a substantial checkpoint, and Git
-mechanics stay out of `AGENTS.md`.
+**The branch/PR flow as practiced.** When work switches to a larger topic —
+different functionality, different files or folders — create a short-lived topic
+branch. Implement and commit several times on the branch: commit working states
+you do not want to lose, and remember that the agent reads diffs to make
+assumptions and load context, so commit boundaries are also *context
+boundaries* — sometimes slightly longer periods per commit, but always a few
+times a day. Before the pull request, run the cross-model review (§3.9); a
+typical review yields around ten findings, roughly half of them important, and
+usually all get implemented through a review-items roadmap. Then open the PR and
+merge. This flow is young relative to the rest of the workflow and will keep
+evolving.
+
+Standing rules regardless of branch state: the user requests commits and pushes
+explicitly (agents never commit automatically), `/session-close` may *ask* about
+a commit after a substantial checkpoint, and Git mechanics stay out of
+`AGENTS.md`.
 
 ## 8. Setup and meta
 
@@ -521,7 +595,7 @@ inspect state, or `/next-slice` to start coding.
 
 ## 9. Skill names and attribution
 
-The six canonical skills live at `skills/<name>/SKILL.md` and are described step
+The eight canonical skills live at `skills/<name>/SKILL.md` and are described step
 by step in §3. Three more are vendored from Matt Pocock (MIT — see `CREDITS.md`):
 `grill-me`, `grill-with-docs`, and `handoff`; they keep their upstream format
 rather than the six-section skeleton the canonical skills use.

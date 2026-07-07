@@ -9,6 +9,7 @@ Sort review findings, route accepted ones to durable docs, implement only must-f
 
 ## When to use
 
+- After `/plan-review` or `/cross-review` produced a findings file.
 - After `/review` or `/security-review` produced a findings file.
 - After another agent reviewed a plan or implementation.
 - User pastes review notes.
@@ -35,7 +36,7 @@ Sort review findings, route accepted ones to durable docs, implement only must-f
    - `should_fix_before_phase_complete` → valid issue but not blocking the current slice.
    - `backlog` → useful improvement, not needed this phase.
    - `invalid_or_not_worth_doing` → incorrect, already handled, too costly for value, out of scope.
-3. Validate every finding against code, not only docs. Reject vague findings without concrete risk.
+3. Validate every finding against code, not only docs. Reject vague findings without concrete risk. Reuse the review table's `Risk` / `Value` / `Effort` ratings where they hold; adjust with a one-line reason when they don't.
 4. For accepted findings that change durable behavior, route the change through `/doc-update` after fixing.
 5. Print the Output.
 6. If the user asked to fix, implement only `must_fix_now` items. Stop.

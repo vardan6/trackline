@@ -10,7 +10,25 @@ For planning, I often start with a voice chat, for example with ChatGPT. I ask q
 
 A common approach is to start with a large initial prompt, explore the topic through questions, and continue clarifying until the project details become clear enough for implementation planning. A structured questioning approach, such as using the grill-me skill, can be useful because it helps challenge assumptions, identify missing requirements, and uncover technical details that might otherwise be overlooked before implementation begins.
 
+Research usually takes several iterations. Some happen as voice chats in transport or at home, some as desk sessions with the coding agent itself. Each iteration is captured as a Markdown file under the `docs/research/` directory — one, two, or more research documents per topic. Related pre-existing material, such as documents from older projects or manually collected references, is placed alongside them. The grilling session that follows is fed all of this material.
+
 Any subsequent smaller planning tasks can also start with a grill-me session when the planning prompt is prepared or provided through the grill-me skill. A grill-me session is a major factor in keeping the developer actively involved in both design and implementation details, because it is possible to spend hours answering dozens or sometimes around a hundred structured questions that are then documented as ADRs or other project documentation. When needed, lower-level technical questions can be delegated to an AI agent, which typically suggests an answer based on best practices, while the developer remains focused on the higher-level decisions.
+
+## Planning Capture and Plan Review
+
+After the grilling session, planning capture distributes the knowledge from that large session into the corresponding documentation and project files: requirements, design specs, ADRs, the roadmap, and the active context. This is the most human-in-the-loop step of the workflow. I recommend using the highest available model here — the context can be on the larger side of the allowed sizes, and although the model is the strongest, token usage is still small compared to implementation, which costs much more.
+
+When the ADRs and the roadmap are created, I do a plan review before starting implementation. The plan review is done by the other coding-agent provider. For example, if the planning was done with Anthropic Opus, the review is done with the highest OpenAI Codex GPT model. The reviewer writes its review into a Markdown document. Then I ask the original planning agent, with the highest model, to review the review — validate, clarify, and justify each finding. Usually it agrees with basically all the findings and revisits the planning based on them. For each finding I ask for ratings of effort, risk, and value. After the plan review, there is definitely a commit.
+
+## Vertical Slices and the Horizontal Trap
+
+We plan for vertical slices, and this must be stated clearly, because coding agents tend to plan implementation layer by layer from the bottom up: first the database layer, then the infrastructure layer, then the API layer, then the UI layer. Most of the time, comprehensive testing only becomes convenient after the UI has appeared. With that approach you can lose hours or days, and millions of tokens, before you have a testable version.
+
+So we adopt vertical slicing. A vertical slice covers all layers of the implementation stack — from infrastructure or the database, through the API and intermediate layers, to the UI/UX layer. It is the smallest slice that has meaning and delivers some complete functionality.
+
+The economics work out well: implementing one slice usually raises the context from about 10–15% to 20–30%, very rarely toward 40%. Because context stays small and convenient, we often implement two, three, or four slices in one session.
+
+I am also testing a new idea: asking planning to produce not one sequential slice list, but a first wave of prerequisites followed by three threads of slice sequences that can be implemented in parallel. The threads must not be related and must not have dependencies or conflicts with each other; inside each thread the slices are done in sequence, but the three threads run in parallel.
 
 ## Context Engineering
 
@@ -71,7 +89,7 @@ In practice the reliable “smart zone” is comfortably under ~50K tokens for m
 
 The purpose of this workflow is to keep the coding agent inside the smart zone. The goal is not only to reduce token usage, but also to get cleaner, more precise, and more reliable behavior.
 
-In my experience, when the active context became too large, the agent could spend 20–30 minutes without solving the problem, consume a large part of the usage limit, and sometimes even break the project.
+In my experience, when the active context became too large, the agent could spend anywhere from 20 to 60 minutes without solving the problem — sometimes a full hour — consume a large part of the usage limit, and sometimes even break the project. All of these durations are real cases, not one typical value.
 
 After I started keeping the active context smaller and slicing tasks better, I rarely noticed this strange behavior. The agent became more precise, more reliable, and usually stopped after completing a clean, well-defined task.
 
@@ -125,6 +143,8 @@ The review process can work like this:
 3. Give that review document back to the original coding agent.
 4. Ask the original agent to evaluate whether the review findings are valid and worth implementing.
 5. Implement the confirmed review items.
+
+The code review is done against the documentation, looking for misimplementation, missing implementation, bugs, gaps, holes, incorrect logic, and what could be done even better. The findings are stored in a Markdown file under the `docs/reviews/` directory, and the review is then validated by the original agent through the review-triage skill. As with plan review, each finding gets ratings for effort, risk, and value — and usually the routing is simple: I ask to include the implementation of these findings in the roadmap.
 
 In my experience, around 70–80% of the review findings are usually useful. Some are high or critical priority, some are medium priority, and a few may be lower quality or unnecessary.
 
