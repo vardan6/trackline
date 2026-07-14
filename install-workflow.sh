@@ -16,7 +16,7 @@ set -euo pipefail
 #   .codex/skills/<s>             -> ../../.agents/skills/<s>  (relative; funnels)
 #   .agents/hooks/context-zone.sh -> <workflow>/hooks/context-zone.sh
 #   .codex/hooks.json             -> <workflow>/hooks/codex.hooks.json
-#   .claude/settings.json          : Stop hook merged in (other keys preserved)
+#   .claude/settings.json          : Stop hook appended (existing hooks/keys preserved)
 #
 # Both tools run the SAME hook script via the SAME command string:
 #   bash "$(git rev-parse --show-toplevel)/.agents/hooks/context-zone.sh"
@@ -85,6 +85,10 @@ echo "Target:   $TARGET"
 echo ""
 
 created=0 updated=0 skipped=0 conflict=0
+# Items the workflow wanted to write but skipped because something else is
+# already there and doesn't match. Collected and reported verbatim at the end
+# so nothing has to be hunted for in the log. Nothing here is ever overwritten.
+ATTENTION=()
 
 # link <target-of-link> <link-path> : ensure <link-path> is a symlink to <target>.
 link() {
@@ -99,10 +103,12 @@ link() {
       $DRY_RUN || { rm -f "$dst"; ln -s "$src" "$dst"; }
       printf "  repair  %s -> %s (was %s)\n" "$rel" "$src" "$cur"; ((updated++)) || true; return
     fi
-    printf "  DIFFER  %s -> %s (want %s; use --force)\n" "$rel" "$cur" "$src"; ((conflict++)) || true; return
+    printf "  DIFFER  %s -> %s (want %s; use --force)\n" "$rel" "$cur" "$src"; ((conflict++)) || true
+    ATTENTION+=("DIFFER  $rel — symlink points to '$cur'; workflow wants '$src' (kept yours; --force to repair)"); return
   fi
   if [[ -e "$dst" ]]; then
-    printf "  EXISTS  %s (real file/dir, not touched)\n" "$rel"; ((conflict++)) || true; return
+    printf "  EXISTS  %s (real file/dir, not touched)\n" "$rel"; ((conflict++)) || true
+    ATTENTION+=("EXISTS  $rel — real file/dir already here; workflow wanted a symlink to '$src' (kept yours)"); return
   fi
   $DRY_RUN || { mkdir -p "$(dirname "$dst")"; ln -s "$src" "$dst"; }
   printf "  create  %s -> %s\n" "$rel" "$src"; ((created++)) || true
@@ -149,23 +155,32 @@ if [[ -L "$TARGET/.codex/hooks/context-zone.sh" ]]; then
   $DRY_RUN || rmdir "$TARGET/.codex/hooks" 2>/dev/null || true
 fi
 
-# Claude Stop hook: merge into settings.json without clobbering other keys.
+# Claude Stop hook: add ours without clobbering existing hooks. We append our
+# entry to .hooks.Stop rather than replacing it, so any Stop hooks the project
+# already defined are preserved. Re-running is a no-op once ours is present.
 settings="$TARGET/.claude/settings.json"
 if ! command -v jq >/dev/null 2>&1; then
   printf "  WARN    .claude/settings.json — jq not found; add the Stop hook manually (see hooks/settings.snippet.json)\n"
   ((conflict++)) || true
+  ATTENTION+=("WARN    .claude/settings.json — jq not found; Stop hook NOT added (add manually from hooks/settings.snippet.json)")
 else
-  stop_json="$(jq -cn --arg cmd "$HOOK_CMD" '[{hooks:[{type:"command",command:$cmd}]}]')"
+  entry_json="$(jq -cn --arg cmd "$HOOK_CMD" '{hooks:[{type:"command",command:$cmd}]}')"
   mkdir -p "$TARGET/.claude"
   if [[ -f "$settings" ]]; then
-    if [[ "$(jq -c '.hooks.Stop // empty' "$settings")" == "$stop_json" ]]; then
+    if jq -e --arg cmd "$HOOK_CMD" 'any(.hooks.Stop[]?.hooks[]?; .command == $cmd)' "$settings" >/dev/null; then
       printf "  ok      .claude/settings.json (Stop hook present)\n"; ((skipped++)) || true
     else
-      $DRY_RUN || { tmp=$(mktemp); jq --argjson stop "$stop_json" '.hooks.Stop = $stop' "$settings" > "$tmp" && mv "$tmp" "$settings"; }
-      printf "  merge   .claude/settings.json (set Stop hook)\n"; ((updated++)) || true
+      had=$(jq -r '(.hooks.Stop // []) | length' "$settings")
+      $DRY_RUN || { tmp=$(mktemp); jq --argjson entry "$entry_json" '.hooks.Stop = ((.hooks.Stop // []) + [$entry])' "$settings" > "$tmp" && mv "$tmp" "$settings"; }
+      if [[ "$had" == "0" ]]; then
+        printf "  add     .claude/settings.json (set Stop hook)\n"
+      else
+        printf "  merge   .claude/settings.json (appended Stop hook; existing preserved)\n"
+      fi
+      ((updated++)) || true
     fi
   else
-    $DRY_RUN || jq -n --argjson stop "$stop_json" '{hooks:{Stop:$stop}}' > "$settings"
+    $DRY_RUN || jq -n --argjson entry "$entry_json" '{hooks:{Stop:[$entry]}}' > "$settings"
     printf "  create  .claude/settings.json (with Stop hook)\n"; ((created++)) || true
   fi
 fi
@@ -184,6 +199,13 @@ done
 
 echo ""
 echo "Done: $created created, $updated updated, $skipped ok/skipped, $conflict need attention."
-if [[ $conflict -gt 0 ]] && ! $FORCE; then
-  echo "Re-run with --force to repair items marked DIFFER."
+if [[ ${#ATTENTION[@]} -gt 0 ]]; then
+  echo ""
+  echo "Needs attention — present already and left untouched (nothing above was overwritten):"
+  for a in "${ATTENTION[@]}"; do
+    printf "  - %s\n" "$a"
+  done
+  echo ""
+  echo "Reconcile each by hand, or re-run with --force to repair the DIFFER symlinks"
+  echo "(--force still never touches real files marked EXISTS)."
 fi
