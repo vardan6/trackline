@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 250" font-family="'Segoe UI','DejaVu Sans',Helvetica,Arial,sans-serif">
+<defs>
+<marker id="ar-sec" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#52514e"/></marker>
+<marker id="ar-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2a78d6"/></marker>
+<marker id="ar-mut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#898781"/></marker>
+<marker id="ar-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1c5cab"/></marker>
+<marker id="ar-crit" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d03b3b"/></marker>
+</defs>
+<rect x="16" y="60" width="218" height="96" rx="10" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="125.0" y="94.0" font-size="21" fill="#1c5cab" text-anchor="middle" font-weight="700">Planner</text>
+<text x="125.0" y="120" font-size="15.5" fill="#52514e" text-anchor="middle">provider A,</text>
+<text x="125.0" y="139" font-size="15.5" fill="#52514e" text-anchor="middle">strongest model</text>
+<rect x="274" y="60" width="218" height="96" rx="10" fill="#eaf2fc" stroke="#4a3aa7" stroke-width="2"/>
+<text x="383.0" y="94.0" font-size="21" fill="#4a3aa7" text-anchor="middle" font-weight="700">Plan review</text>
+<text x="383.0" y="120" font-size="15.5" fill="#52514e" text-anchor="middle">provider B,</text>
+<text x="383.0" y="139" font-size="15.5" fill="#52514e" text-anchor="middle">strongest model</text>
+<rect x="532" y="60" width="218" height="96" rx="10" fill="#ffffff" stroke="#52514e" stroke-width="2"/>
+<text x="641.0" y="90.0" font-size="20" fill="#0b0b0b" text-anchor="middle" font-weight="700">Findings doc</text>
+<text x="641.0" y="114" font-size="15" fill="#52514e" text-anchor="middle">docs/reviews/*.md</text>
+<text x="641.0" y="133" font-size="15" fill="#52514e" text-anchor="middle">what · effort · value · risk</text>
+<rect x="810" y="68" width="176" height="80" rx="40" fill="#eaf7ea" stroke="#0ca30c" stroke-width="2.5"/>
+<text x="898" y="102.0" font-size="21" fill="#006300" text-anchor="middle" font-weight="700">commit ✓</text>
+<text x="898" y="126.0" font-size="13.5" fill="#006300" text-anchor="middle">known-good checkpoint</text>
+<text x="886" y="172" font-size="14.5" fill="#4a3aa7" text-anchor="middle" font-weight="700">then session-close</text>
+<text x="886" y="191" font-size="13" fill="#898781" text-anchor="middle" font-style="italic">implementation starts fresh</text>
+<line x1="240" y1="108.0" x2="268" y2="108.0" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<text x="254.0" y="96.0" font-size="15" fill="#898781" text-anchor="middle">plan</text>
+<line x1="498" y1="108.0" x2="526" y2="108.0" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<line x1="756" y1="108.0" x2="804" y2="108.0" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<path d="M641.0,164 Q380,235 155.0,164" fill="none" stroke="#1c5cab" stroke-width="2.5" marker-end="url(#ar-dark)"/>
+<text x="390" y="218" font-size="16" fill="#1c5cab" text-anchor="middle">planner validates &amp; revisits — usually all findings fixed</text>
+</svg>

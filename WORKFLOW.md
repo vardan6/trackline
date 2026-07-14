@@ -1,4 +1,4 @@
-# Final Workflow — Operating Manual
+# Workflow — Operating Manual
 
 > This is the full operating manual for the workflow: the step-by-step model the
 > [README](README.md) summarizes. The README tells you *what* the workflow is and
@@ -8,14 +8,15 @@
 >
 > Read the README first. Read this when you want the complete operating model or
 > want to change the workflow itself. The rationale behind each problem lives in
-> [INITIAL-REQUEST.md](INITIAL-REQUEST.md); this document is the procedure.
+> [docs/PROBLEMS-AND-SOLUTIONS.md](docs/PROBLEMS-AND-SOLUTIONS.md); this document is the procedure.
 
 ---
 
 ## 1. The generic flow
 
 The workflow is not one long pipeline. It is a small set of **self-contained
-cycles** — *plan*, *implement*, and *review* — each opened with `/session-open`
+cycles** — *plan* (with its own cross-model review as a second session),
+*implement*, and *review* — each opened with `/session-open`
 when orientation is needed and ended with `/session-close`. You close the plan;
 later you open and close implementation; later you open and close a review. They
 are separate units of work, run when each is needed, not stages of a single run.
@@ -23,20 +24,26 @@ are separate units of work, run when each is needed, not stages of a single run.
 ```text
 PLAN  (often starts off the coding agent — see §3.1)
   research / discussion → gather into a Markdown summary
-    → /grill-me  or  /grill-with-docs    stress-test the plan; break it into vertical slices
-    → /planning-capture                  write requirements / design / ADR / sliced roadmap
-    → /plan-review (cross-model)         second provider reviews the plan; planner validates; commit
+    → /grill-me  or  /grill-with-docs    plan by being challenged
+    → /planning-capture                  break the work into vertical slices → requirements / design / ADR / sliced roadmap
     → /session-close                     record the next step, end the planning session
+    → commit                             the captured plan is a good checkpoint (often a separate, lighter-model session)
+
+PLAN REVIEW  (its own session — the other provider's strongest model; see §3.4)
+    → /plan-review                       reviewer cross-validates the captured docs → findings file
+    → /review-triage                     planner validates each finding, revisits the plan
+    → /session-close                     end the plan-review cycle
+    → commit                             the reviewed plan is a known-good checkpoint; implementation opens fresh
 
 IMPLEMENT  (repeat per slice)
     → /next-slice                        "find the next slice and implement it"
     → implement and verify
-    → /doc-update                        when a slice changed durable behavior (as needed)
+    → /doc-update                        as needed — only when the slice changed durable behavior
     → /session-close                     STEP to continue with another slice, SESSION to stop
-  ↺ take another slice while context stays light; end the session as you near the warn zone (§6)
+  ↺ take another slice while context stays light; end the session as you near the Warn Zone (§6)
 
 REVIEW  (its own step — run after a slice or phase, often in a separate session)
-    → /cross-review on a second, stronger, different model → findings file
+    → /cross-review                      the other provider's strongest model reads the diff → findings file
     → /review-triage                     validate, sort, fix only must-fix-now
     → /session-close                     record the outcome
 ```
@@ -50,17 +57,124 @@ The most-used move is `/next-slice`; in practice the most reliable prompt is
 literally *"please find the next slice and then implement it."* Everything below
 expands these cycles.
 
+### 1.1 The workflow graph
+
+The same flow as a graph: nodes are skills (each labeled with its § below),
+diamonds are decisions, edge labels are the conditions that move work between
+nodes. The per-node contracts — inputs, checks, outputs — follow in the table,
+because a graph stays readable only when nodes stay small.
+
+```mermaid
+flowchart TD
+    classDef skill fill:#eaf2fc,stroke:#2a78d6,color:#1c5cab
+    classDef artifact fill:#f2f1ee,stroke:#898781,color:#52514e
+    classDef decision fill:#fff7e6,stroke:#d08b1d,color:#8a5a00
+    classDef guard fill:#fdeaea,stroke:#d03b3b,color:#8f2323
+
+    START(["new idea / feature / phase<br/>too big to code directly"]):::artifact
+
+    subgraph PLAN["PLAN — planner session, strongest available model"]
+        RS[/"research summaries<br/>docs/research/*.md (§3.1)"/]:::artifact
+        GR["/grill-me · /grill-with-docs (§3.2)<br/>plan by being challenged<br/>-with-docs updates: CONTEXT.md · docs/adr/"]:::skill
+        PC["/planning-capture (§3.3)<br/>breaks the work into vertical slices<br/>writes: docs/requirements/ · docs/design/ ·<br/>docs/adr/ · roadmap.md"]:::skill
+        SC1["/session-close SESSION (§3.10)<br/>writes: activeContext.md · roadmap.md · progress.md"]:::skill
+        C1(["commit — captured plan<br/>(often a separate, lighter-model session)"]):::artifact
+    end
+
+    subgraph PREV["PLAN REVIEW — other provider's strongest model, own session"]
+        PR["/plan-review (§3.4)<br/>cross-validates req ↔ design ↔ ADR ↔ roadmap<br/>writes: docs/reviews/*.md"]:::skill
+        RT1["/review-triage (§3.9)<br/>planner validates each finding<br/>updates: the plan docs per accepted finding"]:::skill
+        SC2["/session-close SESSION<br/>writes: activeContext.md · roadmap.md · progress.md"]:::skill
+        C2(["commit — reviewed plan,<br/>known-good checkpoint"]):::artifact
+    end
+
+    subgraph IMPL["IMPLEMENT — fresh session, repeat per slice"]
+        SO["optional: /session-open (§3.5)<br/>ambiguous resume only — usually skipped<br/>reads: activeContext.md · roadmap.md"]:::skill
+        NS["/next-slice (§3.6)<br/>picks one atomic slice from roadmap.md<br/>cross-checks: activeContext.md · git state ·<br/>the relevant code"]:::skill
+        IV["implement + verify (§3.7)<br/>writes: code + tests<br/>(only activeContext.md may move inline)"]
+        DQ{"durable behavior<br/>changed?"}:::decision
+        DU["/doc-update (§3.8)<br/>updates: docs/requirements/ · docs/design/ ·<br/>docs/adr/ · docs/implementation-notes.md"]:::skill
+        SCS["/session-close STEP<br/>ticks roadmap.md · appends progress.md ·<br/>refreshes activeContext.md"]:::skill
+        ZQ{"context light AND<br/>same territory?"}:::decision
+        SC3["/session-close SESSION<br/>writes: activeContext.md · roadmap.md · progress.md"]:::skill
+    end
+
+    subgraph REV["REVIEW — other provider's strongest model"]
+        CR["/cross-review (§3.9)<br/>diff since known-good commit, read against docs<br/>writes: docs/reviews/*.md"]:::skill
+        RT2["/review-triage (§3.9)<br/>implementer validates findings<br/>folds accepted ones into roadmap.md"]:::skill
+        SC4["/session-close SESSION<br/>writes: activeContext.md · roadmap.md · progress.md"]:::skill
+    end
+
+    MERGE(["open PR → merge (§7)"]):::artifact
+    HOOK["context-zone hook (§8)<br/>fires after every turn"]:::guard
+    HAND["/handoff (§3.11)<br/>writes: handoff-*.md — standalone packet<br/>for another tool/model"]:::skill
+
+    START --> RS --> GR
+    GR -- "plan defensible" --> PC
+    PC --> SC1 --> C1
+    C1 -- "fresh session" --> PR
+    PR -- "findings file" --> RT1
+    RT1 -- "plan revised" --> SC2 --> C2
+    C2 -- "fresh session —<br/>usually straight to" --> NS
+    SO -. "when disoriented" .-> NS
+    NS -- "you confirm the slice" --> IV
+    IV --> DQ
+    DQ -- "yes" --> DU --> SCS
+    DQ -- "no" --> SCS
+    SCS --> ZQ
+    ZQ -- "yes — take<br/>another slice" --> NS
+    ZQ -- "no — Warn Zone ~100k<br/>or different territory" --> SC3
+    SC3 -- "phase done /<br/>before PR" --> CR
+    SC3 -- "work remains —<br/>next session" --> NS
+    CR -- "findings file" --> RT2
+    RT2 -- "accepted findings →<br/>roadmap.md review items" --> NS
+    RT2 --> SC4
+    SC4 -- "all must-fix-now done" --> MERGE
+    HOOK -. "nudges at 80k / 100k / 120k" .-> ZQ
+    IV -. "interrupted — cannot<br/>close properly" .-> HAND
+```
+
+### 1.2 Node contracts
+
+What each node consumes, checks, and produces, and what moves the work on.
+Full detail lives in the § each row points to — this table is the index, not a
+second copy.
+
+| Node | Session / model | Inputs | Checks / decides | Output | Moves on — when |
+|---|---|---|---|---|---|
+| Research (§3.1) | often off the coding agent | idea, transcripts, inherited docs | too big to code directly? | `docs/research/*.md` summaries | grilling — when the summary is ready |
+| `/grill-me` · `/grill-with-docs` (§3.2) | planner, strongest model | research summaries, selected project files, a large prompt | can you defend every branch? is the work sliced vertically? | agreed decisions (`-with-docs`: glossary + inline ADRs) | `/planning-capture` — when the plan is defensible |
+| `/planning-capture` (§3.3) | same planning session | grilling output | one home per fact; breaks the work into vertical slices; AFK/HITL per slice | `docs/requirements\|design\|adr/`, vertically sliced `roadmap.md` | `/session-close`, then commit — always |
+| `/plan-review` (§3.4) | other provider's strongest model, own session | the captured docs | gaps, contradictions, wrong assumptions, terminology drift | findings table (effort/risk/value) in `docs/reviews/` | `/review-triage` — always |
+| `/review-triage` on the plan (§3.4, §3.9) | planner | findings file + the docs | validate / clarify / justify each finding | revised plan docs | `/session-close`, then commit; implementation opens fresh |
+| `/session-open` (§3.5) | optional — ambiguous resume only, usually skipped | `activeContext.md`, `roadmap.md` (handoff only if unclear) | which mode? what single next action? | declared mode + named next action | that action — usually `/next-slice`; skipped for direct tasks |
+| `/next-slice` (§3.6) | implementer | `activeContext.md`, `roadmap.md`, recent git state, the relevant code | smallest meaningful, dependency-free, verifiable slice | one proposed slice | implement — after your confirmation |
+| implement + verify (§3.7) | implementer | the confirmed slice | test / manual check / inspectable diff passes | working, verified change | `/doc-update` if durable behavior changed; else `/session-close (STEP)` |
+| `/doc-update` (§3.8) | implementer | git diff of the change | decision table: which durable doc did this touch? | updated docs — or "nothing durable changed" | `/session-close` |
+| `/session-close` STEP (§3.10) | implementer | the finished step | step really finished? scope changed → `/doc-update` first | ticked `roadmap.md`, dated `progress.md`, refreshed `activeContext.md` | `/next-slice` — context light and same territory; SESSION close otherwise |
+| `/session-close` SESSION (§3.10) | any cycle | session state | doc-update table once; blockers, open questions, dead ends | state files (+ `handoff-*.md` only if needed) | next session's `/session-open` |
+| `/cross-review` (§3.9) | other provider's strongest model | diff since last known-good commit + the docs | misimplementation, gaps, bugs, better options | findings file in `docs/reviews/` | `/review-triage` — always |
+| `/review-triage` on code (§3.9) | implementer | findings + the actual code | validate each; sort must-fix-now / before-phase / backlog / invalid | review items folded into `roadmap.md` | `/next-slice` for fixes; PR when clean |
+| `/handoff` (§3.11) | any cycle, interrupted | the live conversation | receiver does not know this workflow? | standalone, pointer-based handoff doc | the other tool's session |
+| context-zone hook (§8) | guard — after every turn | transcript token count | fixed 80k / 100k / 120k / 180k thresholds | `systemMessage` nudge | escalates toward `/session-close (SESSION)` |
+
 ## 2. Operating principles
 
 Five ideas justify the steps. They are summarized here and argued in full in
-[INITIAL-REQUEST.md](INITIAL-REQUEST.md) and the README's Goals.
+[docs/PROBLEMS-AND-SOLUTIONS.md](docs/PROBLEMS-AND-SOLUTIONS.md) and the README's Goals.
 
 - **Engineer the workflow, not just the prompt.** The workflow is a specified,
   pressure-tested artifact, refined against real work — it matters more than the
   model.
-- **Context is a budget, not a window.** The reliable *smart zone* is an absolute
-  token count, not a fraction of the advertised window. Keep the agent inside it;
-  see §6 for the thresholds.
+- **Context is a budget, not a window.** The reliable **smart zone** is an
+  absolute token count, not a fraction of the advertised window; past it lies
+  the **dumb zone**, where the agent misses information already in context,
+  confuses files, and spins. Avoiding the dumb zone is the reason the
+  session-close / session-open loop exists at all. Context size is also a
+  token-usage multiplier: every iteration of the agentic loop re-sends the
+  loaded context, so a lean context is cheaper as well as smarter — while a few
+  slices that share the same context can still run in one session. See §6 for
+  the thresholds.
 - **Code is the truth; one canonical home per fact.** Re-derive *how* from the
   code. Never write an internals spec that mirrors code, and never duplicate a
   fact across docs. Apply the deletion test: if removing a line would not make a
@@ -109,10 +223,12 @@ takes that summary as input.
 > incidental; the point is that planning input is distilled to Markdown before
 > coding starts.
 
-### 3.2 `/grill-me` and `/grill-with-docs` — stress-test the plan
+### 3.2 `/grill-me` and `/grill-with-docs` — plan by being challenged
 
-**What they do.** Interview you relentlessly about the plan, one question at a
-time, walking down each branch of the design tree until weak assumptions surface.
+**What they do.** This *is* the planning session — the plan is built by being
+challenged, not stress-tested after the fact. The agent interviews you
+relentlessly, one question at a time, walking down each branch of the design
+tree until weak assumptions surface and the plan takes shape.
 You begin the session with several input documents (the research summary, selected
 project files) and usually a large typed or dictated prompt.
 
@@ -124,10 +240,11 @@ project files) and usually a large typed or dictated prompt.
 **What they solve.** Planning is not done when the agent understands the task —
 it is done when you can defend the task and its boundaries. Grilling is how you
 get there, and how you stay aware of and aligned with what the agent will build.
-A good grilling session also shapes the work **vertically**: the plan is broken
-into thin vertical slices rather than horizontal layers, so output is visible
-sooner and problems surface in the early stages instead of at the end. This
-matters because, left alone, coding agents tend to plan bottom-up in horizontal
+A good grilling session also surfaces the boundaries that let the work be cut
+**vertically** — the actual breaking into thin vertical slices happens in
+`/planning-capture` (§3.3), which shapes `roadmap.md` that way — so output is
+visible sooner and problems surface in the early stages instead of at the end.
+This matters because, left alone, coding agents tend to plan bottom-up in horizontal
 layers — database, then infrastructure, then API, then UI — and real testing
 only becomes convenient once the UI finally appears, hours or days (and a great
 many tokens) after work started. A vertical slice is the antidote: the smallest
@@ -175,11 +292,13 @@ compared to implementation but carries the highest leverage per token.
 **Comes after.** A grilling or planning session (§3.2), or any external
 brainstorm/research.
 
-**Comes before.** A cross-model **plan review** (§3.4), then
-`/session-close (SESSION)` to end the planning session — because
-`planning-capture` writes the durable docs and `roadmap.md` but does **not** set
-`activeContext.md`'s next-step pointer. `session-close` does that, which is what
-lets the *next* session open already oriented.
+**Comes before.** `/session-close (SESSION)` to end the planning session —
+because `planning-capture` writes the durable docs and `roadmap.md` but does
+**not** set `activeContext.md`'s next-step pointer; `session-close` does that,
+which is what lets the *next* session open already oriented. Then a **commit**:
+the captured plan is a good checkpoint, and committing often happens as a
+separate, lighter-model session so planning tokens are not spent on it. The
+cross-model **plan review** (§3.4) then runs as its own session.
 
 ### 3.4 `/plan-review` — cross-model review of the plan
 
@@ -202,10 +321,12 @@ them directly.
 stage earlier and far cheaper: a flaw caught in the plan costs a rating and an
 edit, while the same flaw caught in code costs a re-implementation.
 
-**Comes after.** `/planning-capture`.
+**Comes after.** `/planning-capture`, once the planning session has committed
+and closed.
 
-**Comes before.** A **commit** — the reviewed plan is a known-good checkpoint
-worth preserving — then `/session-close (SESSION)` to end the planning cycle.
+**Comes before.** `/session-close (SESSION)` to end the plan-review cycle,
+then a **commit** — the reviewed plan is a known-good checkpoint worth
+preserving; implementation opens in a fresh session.
 
 ### 3.5 `/session-open` — orient a resumed project
 
@@ -330,21 +451,21 @@ session end is unpredictable and a heavy close gets skipped. It never commits
 automatically; it may *ask* about a commit after a substantial checkpoint.
 
 **Comes after.** A finished step (STEP) or a session winding down / nearing the
-warn zone (SESSION).
+Warn Zone (SESSION).
 
 **Comes before.** The next `/next-slice` (STEP, same session) or the next
 session's `/session-open` (SESSION).
 
 **Reading the loop.** After each slice, judge remaining context. While you still
 have plenty of headroom — early in the smart zone — take another slice with
-`/next-slice`. As you approach the warn threshold (~100k tokens; see §6, and note
+`/next-slice`. As you approach the Warn Zone threshold (~100k tokens; see §6, and note
 that the *percentage* depends on the model's window), run `/session-close
 (SESSION)` and stop adding new code. The lived rule of thumb: keep taking slices
 while context is light, close the session once it is no longer. In lived
 numbers: implementing one slice typically moves the context from roughly
 20–30k tokens to 40–60k (200k-era readout: ~10–15% → ~20–30%), only rarely
 toward 80k — which is why two, three, even four slices per session are common
-before the warn zone approaches.
+before the Warn Zone approaches.
 
 ### 3.11 `/handoff` — cross-tool / cross-model transfer
 
@@ -498,7 +619,7 @@ assumptions and load context, so commit boundaries are also *context
 boundaries* — sometimes slightly longer periods per commit, but always a few
 times a day. Before the pull request, run the cross-model review (§3.9); a
 typical review yields around ten findings, roughly half of them important, and
-usually all get implemented through a review-items roadmap. Then open the PR and
+usually all the validated ones get implemented through a review-items roadmap. Then open the PR and
 merge. This flow is young relative to the rest of the workflow and will keep
 evolving.
 

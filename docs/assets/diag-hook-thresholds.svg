@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 250" font-family="'Segoe UI','DejaVu Sans',Helvetica,Arial,sans-serif">
+<defs>
+<marker id="ar-sec" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#52514e"/></marker>
+<marker id="ar-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2a78d6"/></marker>
+<marker id="ar-mut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#898781"/></marker>
+<marker id="ar-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1c5cab"/></marker>
+<marker id="ar-crit" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d03b3b"/></marker>
+</defs>
+<rect x="50" y="120" width="360" height="44" fill="#0ca30c" stroke="#fcfcfb" stroke-width="2"/>
+<rect x="410" y="120" width="90" height="44" fill="#fab219" stroke="#fcfcfb" stroke-width="2"/>
+<rect x="500" y="120" width="90" height="44" fill="#ec835a" stroke="#fcfcfb" stroke-width="2"/>
+<rect x="590" y="120" width="270" height="44" fill="#d03b3b" stroke="#fcfcfb" stroke-width="2"/>
+<rect x="860" y="120" width="90" height="44" fill="#8f1f1f" stroke="#fcfcfb" stroke-width="2"/>
+<line x1="410" y1="106" x2="410" y2="164" stroke="#0b0b0b" stroke-width="2.5"/>
+<text x="410.0" y="76" font-size="21" fill="#0b0b0b" text-anchor="middle" font-weight="700">80k</text>
+<text x="410.0" y="98" font-size="16" fill="#52514e" text-anchor="middle">finish the slice</text>
+<line x1="500" y1="120" x2="500" y2="178" stroke="#0b0b0b" stroke-width="2.5"/>
+<text x="500.0" y="202" font-size="21" fill="#0b0b0b" text-anchor="middle" font-weight="700">100k</text>
+<text x="500.0" y="224" font-size="16" fill="#52514e" text-anchor="middle">close after this step</text>
+<line x1="590" y1="106" x2="590" y2="164" stroke="#0b0b0b" stroke-width="2.5"/>
+<text x="590.0" y="76" font-size="21" fill="#0b0b0b" text-anchor="middle" font-weight="700">120k</text>
+<text x="590.0" y="98" font-size="16" fill="#52514e" text-anchor="middle">stop new code</text>
+<line x1="860" y1="120" x2="860" y2="178" stroke="#0b0b0b" stroke-width="2.5"/>
+<text x="860.0" y="202" font-size="21" fill="#0b0b0b" text-anchor="middle" font-weight="700">180k</text>
+<text x="860.0" y="224" font-size="16" fill="#52514e" text-anchor="middle">/compact or /handoff now</text>
+<text x="50" y="202" font-size="17" fill="#898781" text-anchor="start">0</text>
+<text x="950" y="98" font-size="16" fill="#898781" text-anchor="end">tokens</text>
+</svg>

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 260" font-family="'Segoe UI','DejaVu Sans',Helvetica,Arial,sans-serif">
+<defs>
+<marker id="ar-sec" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#52514e"/></marker>
+<marker id="ar-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2a78d6"/></marker>
+<marker id="ar-mut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#898781"/></marker>
+<marker id="ar-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1c5cab"/></marker>
+<marker id="ar-crit" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d03b3b"/></marker>
+</defs>
+<path d="M102.0,150.0 A88,88 0 0 1 278.0,150.0 L252.0,150.0 A62,62 0 0 0 128.0,150.0 Z" fill="#f2f1ee" stroke="#fcfcfb" stroke-width="2"/>
+<path d="M102.0,150.0 A88,88 0 0 1 179.0,62.7 L182.2,88.5 A62,62 0 0 0 128.0,150.0 Z" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text x="190" y="40" font-size="19" fill="#52514e" text-anchor="middle" font-weight="600">Codex</text>
+<text x="190" y="145" font-size="34" fill="#0b0b0b" text-anchor="middle" font-weight="700">46%</text>
+<text x="190" y="185" font-size="14" fill="#898781" text-anchor="middle">of the effective window</text>
+<rect x="98" y="200" width="184" height="38" rx="19" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="190" y="225" font-size="19" fill="#1c5cab" text-anchor="middle" font-weight="700">≈ 120k tokens</text>
+<path d="M412.0,150.0 A88,88 0 0 1 588.0,150.0 L562.0,150.0 A62,62 0 0 0 438.0,150.0 Z" fill="#f2f1ee" stroke="#fcfcfb" stroke-width="2"/>
+<path d="M412.0,150.0 A88,88 0 0 1 418.2,117.6 L442.4,127.2 A62,62 0 0 0 438.0,150.0 Z" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text x="500" y="40" font-size="19" fill="#52514e" text-anchor="middle" font-weight="600">1M-window Claude</text>
+<text x="500" y="145" font-size="34" fill="#0b0b0b" text-anchor="middle" font-weight="700">12%</text>
+<text x="500" y="185" font-size="14" fill="#898781" text-anchor="middle">of the advertised window</text>
+<rect x="408" y="200" width="184" height="38" rx="19" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="500" y="225" font-size="19" fill="#1c5cab" text-anchor="middle" font-weight="700">≈ 120k tokens</text>
+<path d="M722.0,150.0 A88,88 0 0 1 898.0,150.0 L872.0,150.0 A62,62 0 0 0 748.0,150.0 Z" fill="#f2f1ee" stroke="#fcfcfb" stroke-width="2"/>
+<path d="M722.0,150.0 A88,88 0 0 1 837.2,66.3 L829.2,91.0 A62,62 0 0 0 748.0,150.0 Z" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text x="810" y="40" font-size="19" fill="#52514e" text-anchor="middle" font-weight="600">200k model</text>
+<text x="810" y="145" font-size="34" fill="#0b0b0b" text-anchor="middle" font-weight="700">60%</text>
+<text x="810" y="185" font-size="14" fill="#898781" text-anchor="middle">of the advertised window</text>
+<rect x="718" y="200" width="184" height="38" rx="19" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="810" y="225" font-size="19" fill="#1c5cab" text-anchor="middle" font-weight="700">≈ 120k tokens</text>
+<text x="345" y="222" font-size="26" fill="#898781" text-anchor="middle" font-weight="700">=</text>
+<text x="655" y="222" font-size="26" fill="#898781" text-anchor="middle" font-weight="700">=</text>
+</svg>

@@ -33,7 +33,7 @@ FUNNEL_DIRS=(.claude/skills .codex/skills)
 # Docs subdirectories to scaffold (created if missing; content files are left
 # to the workflow — activeContext.md is auto-created by /session-close, and
 # roadmap.md is seeded by you).
-DOCS_DIRS=(requirements design adr reviews archive research)
+DOCS_DIRS=(requirements design adr reviews research archive)
 
 HOOK_CMD='bash "$(git rev-parse --show-toplevel)/.agents/hooks/context-zone.sh"'
 

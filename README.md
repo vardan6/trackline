@@ -11,10 +11,11 @@ should not need the full history of every earlier conversation.
 Each problem this workflow solves, in one sentence. The recurring failures of
 long-running AI-assisted coding were context, documentation, and orientation
 problems, and all three turned out to be addressable. The list below is in the
-priority order those pains actually surfaced; the full rationale for every goal
-lives in
-[INITIAL-REQUEST.md](INITIAL-REQUEST.md) and
-[FINAL-WORKFLOW.md](FINAL-WORKFLOW.md).
+priority order those pains actually surfaced; the full rationale for every
+goal — each problem, its symptoms, why it happens, and the mechanism that
+answers it, with diagrams — lives in
+[docs/PROBLEMS-AND-SOLUTIONS.md](docs/PROBLEMS-AND-SOLUTIONS.md), and the
+operating procedure in [WORKFLOW.md](WORKFLOW.md).
 
 The framing that holds the rest together:
 
@@ -27,7 +28,7 @@ The problems, in priority order:
 1. **Stay on track — developer awareness and project alignment.** Avoid drifting
    from the original problem across a months-long build through planning by
    being challenged
-   ([grill-me](https://github.com/mattpocock/skills/blob/main/skills/productivity/grill-me/SKILL.md))
+   ([grill-me](skills/grill-me/SKILL.md))
    — planning is done not when the agent understands the task but when you can
    defend it — an always-current roadmap/progress/activeContext trio, and mode
    discipline (planning, implementing, reviewing, or closing).
@@ -86,18 +87,20 @@ implementation; later you open and close a review. They are separate units of
 work, run when each is needed.
 
 **Plan** — Research and discussion turn into requirements, design decisions, and
-a roadmap broken into small vertical slices. Use `/grill-me` to stress-test the
-plan, or `/grill-with-docs` to stress-test it against the project's existing
-docs, then let `/planning-capture` store the result in documentation. Before the
-session closes, have the plan reviewed by the other provider's strongest model —
-the same findings-with-risk/effort/value loop as code review, one stage earlier
-and far cheaper — and commit the reviewed plan as a known-good checkpoint.
+a roadmap broken into small vertical slices. Use `/grill-me` to build the plan
+by being challenged, or `/grill-with-docs` to additionally challenge it against
+the project's existing docs, then let `/planning-capture` store the result in
+documentation; close the session, then commit the captured plan (a lighter
+model is enough for the commit). Then have the plan reviewed by the other
+provider's strongest model in its own session — the
+same findings-with-risk/effort/value loop as code review, one stage earlier and
+far cheaper — and commit the reviewed plan as a known-good checkpoint.
 
 **Implement** — Work through vertical slices one at a time. Each slice should be
 small — not the smallest possible, but small enough to keep context lean and
 meaningful enough to justify the session overhead of loading and saving state.
 The right balance depends on the model, context size, and the nature of the
-work; good reference numbers are provided in [FINAL-WORKFLOW.md](FINAL-WORKFLOW.md).
+work; good reference numbers are provided in [WORKFLOW.md](WORKFLOW.md).
 Make sure that ADRs are written, `roadmap.md` reflects the current plan, and
 `activeContext.md` is updated on each session close. Continue implementing the
 next slice until the context feels high and is approaching the Warn Zone, then
@@ -122,42 +125,7 @@ state files (`roadmap.md`, `progress.md`, `activeContext.md`).
 
 ## Quick start
 
-### Install the core skills
-
-Skills can be installed globally (available in every project) or per-project
-(scoped to one repository). The snippet below is one example — a global
-installation for Claude Code using symbolic links:
-
-```sh
-cd /path/to/my-workflow
-mkdir -p "$HOME/.claude/skills"
-
-for skill in \
-  session-open \
-  planning-capture \
-  plan-review \
-  next-slice \
-  doc-update \
-  cross-review \
-  review-triage \
-  session-close
-do
-  ln -sfn "$(pwd)/skills/$skill" "$HOME/.claude/skills/$skill"
-done
-```
-
-For a project-only installation, use the installer described in
-[Prepare a project](#prepare-a-project) rather than linking by hand — it wires
-the skills into `.agents/`, `.claude/`, and `.codex/` in one step.
-
-This workflow is not specific to Claude Code. It has been tested on **Claude
-Code and Codex** (primary), with **limited testing on OpenCode and Qwen Code** —
-both read `.agents/skills` and the `SKILL.md` standard, so skills wire up there,
-but the context-zone hook has not been exercised on them. When using multiple
-agents, link the skill definitions to wherever each agent looks for them (the
-installer does this for `.agents`, `.claude`, and `.codex`).
-
-### Prepare a project
+### Install into a project
 
 Run the installer from the workflow repository. It is idempotent, so you can
 re-run it any time to reconcile a project to the current layout:
@@ -167,11 +135,21 @@ re-run it any time to reconcile a project to the current layout:
 ```
 
 This links `AGENTS.md` into the project (and `CLAUDE.md` → `AGENTS.md`, since
-Claude Code reads `CLAUDE.md` while Codex reads `AGENTS.md`), wires the skills
-into `.agents/`, `.claude/`, and `.codex/`, registers the context-zone hook for
-both tools, and scaffolds `docs/{requirements,design,adr,reviews,archive,research}/`.
-Use `-n` to preview, `-f` to repair drifted links, and `--with-external` to pin
-the third-party skills per-project instead of relying on user scope.
+Claude Code reads `CLAUDE.md` while Codex reads `AGENTS.md`), wires the eight
+core skills into `.agents/`, `.claude/`, and `.codex/`, registers the
+context-zone hook for both tools, and scaffolds
+`docs/{requirements,design,adr,reviews,research,archive}/`. Use `-n` to preview,
+`-f` to repair drifted links, and `--with-external` to pin the third-party
+skills per-project instead of relying on user scope.
+
+This workflow is not specific to Claude Code. It has been tested on **Claude
+Code and Codex** (primary), with **limited testing on OpenCode and Qwen Code** —
+both read `.agents/skills` and the `SKILL.md` standard, so skills wire up there,
+but the context-zone hook has not been exercised on them. The installer links
+the skill definitions to wherever each agent looks for them (`.agents`,
+`.claude`, and `.codex`), so no manual linking is needed.
+
+### Seed a starting point
 
 State files are created on demand — `/session-close` creates `activeContext.md`
 — so the only content you seed by hand is at least one unchecked step in
@@ -234,8 +212,9 @@ loop:
 research or discussion
     -> /grill-me or /grill-with-docs
     -> /planning-capture
-    -> plan review by the other provider, then commit
-    -> /session-close        (planning context is high; close before starting implementation)
+    -> /session-close, then commit the captured plan   (planning context is high; close before review)
+    -> /plan-review (other provider's strongest model, own session)
+    -> /review-triage -> /session-close, then commit the reviewed plan
 
 implementation loop (new session):
     -> /next-slice
@@ -271,6 +250,7 @@ Each file has one job:
 | `docs/adr/` | Durable decisions that need a recorded rationale. |
 | `docs/research/` | Distilled research summaries that feed planning. |
 | `docs/reviews/` | Cross-model review findings, for plans and for code. |
+| `docs/archive/` | Superseded documents moved out of the active tree, kept for traceability. |
 | `docs/implementation-notes.md` | Rare contracts, invariants, and gotchas that are not obvious from code. |
 | `handoff-*.md` | Optional transfer packet when compact project state is not enough. |
 
@@ -305,8 +285,8 @@ This repository also vendors three skills by
 
 | Skill | Use it when |
 | --- | --- |
-| `/grill-me` | Stress-testing a plan through detailed questions. |
-| `/grill-with-docs` | Stress-testing a plan against the project's existing language and documents. |
+| `/grill-me` | Building the plan by being challenged through detailed questions. |
+| `/grill-with-docs` | Building the plan while challenging it against the project's existing language and documents. |
 | `/handoff` | Transferring work to another tool or model with a standalone context packet. |
 
 See [CREDITS.md](CREDITS.md) for attribution and license details.
@@ -348,27 +328,29 @@ dumping large files or logs.
 ## Current limitations
 
 - The Git branch, pull-request, and review flow described in
-  [FINAL-WORKFLOW.md](FINAL-WORKFLOW.md) §7 stabilized in practice only recently;
+  [WORKFLOW.md](WORKFLOW.md) §7 stabilized in practice only recently;
   expect it to keep evolving.
 - Context thresholds are practical guardrails based on repeated use and prior
   research, not universal guarantees for every task or model.
 - The workflow is strict by design, but each project still needs judgment about
   what counts as a useful implementation slice.
 
-Active improvements are tracked in [roadmap.md](roadmap.md).
+Active improvements are tracked in this project's own `roadmap.md` (a
+per-project state file, not committed here).
 
 ## Repository guide
 
 | Path | What it contains |
 | --- | --- |
-| [FINAL-WORKFLOW.md](FINAL-WORKFLOW.md) | Full operating manual: every step, what it solves, and the generic flow. |
+| [WORKFLOW.md](WORKFLOW.md) | Full operating manual: every step, what it solves, and the generic flow. |
+| [docs/PROBLEMS-AND-SOLUTIONS.md](docs/PROBLEMS-AND-SOLUTIONS.md) | The problems behind the workflow and the mechanism answering each, with diagrams. |
 | [AGENTS.md](AGENTS.md) | Router template copied into projects. |
 | [`skills/`](skills/) | Core and vendored skill definitions. |
 | [CREDITS.md](CREDITS.md) | Attribution and license details for vendored skills. |
 | [hooks/README.md](hooks/README.md) | Context hook behavior and installation. |
-| [INITIAL-REQUEST.md](INITIAL-REQUEST.md) | Original problems that led to the workflow. |
-| [`history/`](history/) | Earlier design iterations retained for traceability. |
+| [install-workflow.sh](install-workflow.sh) | Idempotent installer that wires the workflow into a project. |
+| [`docs/archive/`](docs/archive/) | Original problem records and earlier design iterations, retained for traceability. |
 
 For normal use, start with this README and `AGENTS.md`. Read
-`FINAL-WORKFLOW.md` when you need the complete rationale or want to change the
+`WORKFLOW.md` when you need the complete rationale or want to change the
 workflow itself.

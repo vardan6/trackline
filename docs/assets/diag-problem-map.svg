@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" font-family="'Segoe UI','DejaVu Sans',Helvetica,Arial,sans-serif">
+<defs>
+<marker id="ar-sec" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#52514e"/></marker>
+<marker id="ar-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2a78d6"/></marker>
+<marker id="ar-mut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#898781"/></marker>
+<marker id="ar-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1c5cab"/></marker>
+<marker id="ar-crit" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d03b3b"/></marker>
+</defs>
+<rect x="10" y="10" width="483.0" height="124.5" rx="14" fill="#eaf2fc" stroke="#86b6ef" stroke-width="2"/>
+<text x="32" y="44" font-size="20" fill="#86b6ef" text-anchor="start" font-weight="700">1</text>
+<text x="251.5" y="75.25" font-size="22" fill="#104281" text-anchor="middle" font-weight="600">Stay on track</text>
+<text x="251.5" y="112.5" font-size="15.5" fill="#52514e" text-anchor="middle">developer awareness &amp; project alignment</text>
+<rect x="507.0" y="10" width="483.0" height="124.5" rx="14" fill="#eaf2fc" stroke="#86b6ef" stroke-width="2"/>
+<text x="529.0" y="44" font-size="20" fill="#86b6ef" text-anchor="start" font-weight="700">2</text>
+<text x="748.5" y="75.25" font-size="22" fill="#104281" text-anchor="middle" font-weight="600">Context is a budget, not a window</text>
+<text x="748.5" y="112.5" font-size="15.5" fill="#52514e" text-anchor="middle">small context for quality work</text>
+<rect x="10" y="148.5" width="425.0400000000001" height="124.5" rx="14" fill="#eaf2fc" stroke="#86b6ef" stroke-width="2"/>
+<text x="32" y="182.5" font-size="20" fill="#86b6ef" text-anchor="start" font-weight="700">3</text>
+<text x="222.52000000000004" y="208.75" font-size="22" fill="#104281" text-anchor="middle" font-weight="600">Single source of truth</text>
+<text x="222.52000000000004" y="235.75" font-size="22" fill="#104281" text-anchor="middle" font-weight="600">no doc drift</text>
+<rect x="449.0400000000001" y="148.5" width="540.9599999999999" height="124.5" rx="14" fill="#eaf2fc" stroke="#86b6ef" stroke-width="2"/>
+<text x="471.0400000000001" y="182.5" font-size="20" fill="#86b6ef" text-anchor="start" font-weight="700">4</text>
+<text x="719.52" y="213.75" font-size="22" fill="#104281" text-anchor="middle" font-weight="600">Session continuity</text>
+<text x="719.52" y="251.0" font-size="15.5" fill="#52514e" text-anchor="middle">status kept out of knowledge: roadmap · activeContext · progress</text>
+<rect x="10" y="287.0" width="285.6" height="124.5" rx="14" fill="#eaf2fc" stroke="#86b6ef" stroke-width="2"/>
+<text x="32" y="321.0" font-size="20" fill="#86b6ef" text-anchor="start" font-weight="700">5</text>
+<text x="152.8" y="358.25" font-size="22" fill="#104281" text-anchor="middle" font-weight="600">Reusable skills</text>
+<rect x="309.6" y="287.0" width="304.64" height="124.5" rx="14" fill="#eaf2fc" stroke="#86b6ef" stroke-width="2"/>
+<text x="331.6" y="321.0" font-size="20" fill="#86b6ef" text-anchor="start" font-weight="700">6</text>
+<text x="461.92" y="358.25" font-size="22" fill="#104281" text-anchor="middle" font-weight="600">Atomic vertical slices</text>
+<rect x="628.24" y="287.0" width="361.76" height="124.5" rx="14" fill="#eaf2fc" stroke="#86b6ef" stroke-width="2"/>
+<text x="650.24" y="321.0" font-size="20" fill="#86b6ef" text-anchor="start" font-weight="700">7</text>
+<text x="809.12" y="358.25" font-size="22" fill="#104281" text-anchor="middle" font-weight="600">Cross-model review</text>
+<rect x="10" y="425.5" width="434.7" height="124.5" rx="14" fill="#eaf2fc" stroke="#86b6ef" stroke-width="2"/>
+<text x="32" y="459.5" font-size="20" fill="#86b6ef" text-anchor="start" font-weight="700">8</text>
+<text x="227.35" y="496.75" font-size="22" fill="#104281" text-anchor="middle" font-weight="600">Thin instruction files</text>
+<rect x="458.7" y="425.5" width="531.3" height="124.5" rx="14" fill="#eaf2fc" stroke="#86b6ef" stroke-width="2"/>
+<text x="480.7" y="459.5" font-size="20" fill="#86b6ef" text-anchor="start" font-weight="700">9</text>
+<text x="724.3499999999999" y="496.75" font-size="22" fill="#104281" text-anchor="middle" font-weight="600">The agent as a heavy Git user</text>
+</svg>

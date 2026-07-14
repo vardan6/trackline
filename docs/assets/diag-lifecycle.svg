@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400" font-family="'Segoe UI','DejaVu Sans',Helvetica,Arial,sans-serif">
+<defs>
+<marker id="ar-sec" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#52514e"/></marker>
+<marker id="ar-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2a78d6"/></marker>
+<marker id="ar-mut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#898781"/></marker>
+<marker id="ar-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1c5cab"/></marker>
+<marker id="ar-crit" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d03b3b"/></marker>
+</defs>
+<rect x="20" y="130" width="140" height="84" rx="10" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="90.0" y="162" font-size="18" fill="#1c5cab" text-anchor="middle" font-weight="700">session-open</text>
+<text x="90.0" y="184.0" font-size="13" fill="#52514e" text-anchor="middle">reads the</text>
+<text x="90.0" y="199.5" font-size="13" fill="#52514e" text-anchor="middle">state files</text>
+<rect x="193" y="130" width="136" height="84" rx="10" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="261.0" y="162" font-size="18" fill="#1c5cab" text-anchor="middle" font-weight="700">next-slice</text>
+<text x="261.0" y="184.0" font-size="13" fill="#52514e" text-anchor="middle">pick the smallest</text>
+<text x="261.0" y="199.5" font-size="13" fill="#52514e" text-anchor="middle">end-to-end change</text>
+<rect x="362" y="130" width="128" height="84" rx="10" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="426.0" y="162" font-size="18" fill="#1c5cab" text-anchor="middle" font-weight="700">implement</text>
+<text x="426.0" y="184.0" font-size="13" fill="#52514e" text-anchor="middle">code + verify</text>
+<text x="426.0" y="199.5" font-size="13" fill="#52514e" text-anchor="middle">+ commit</text>
+<rect x="523" y="130" width="150" height="84" rx="10" fill="#e6f6ef" stroke="#1baf7a" stroke-width="2"/>
+<text x="598.0" y="162" font-size="18" fill="#0c7a54" text-anchor="middle" font-weight="700">doc-update</text>
+<text x="598.0" y="184.0" font-size="13" fill="#52514e" text-anchor="middle">as needed — anything</text>
+<text x="598.0" y="199.5" font-size="13" fill="#52514e" text-anchor="middle">potentially undocumented</text>
+<rect x="706" y="130" width="140" height="84" rx="10" fill="#f1effa" stroke="#4a3aa7" stroke-width="2"/>
+<text x="776.0" y="162" font-size="18" fill="#4a3aa7" text-anchor="middle" font-weight="700">session-close</text>
+<text x="776.0" y="184.0" font-size="13" fill="#52514e" text-anchor="middle">(STEP)</text>
+<rect x="879" y="118" width="108" height="108" rx="14" fill="#4a3aa7" stroke="#4a3aa7" stroke-width="2"/>
+<text x="933" y="158" font-size="18" fill="#ffffff" text-anchor="middle" font-weight="700">session-</text>
+<text x="933" y="179" font-size="18" fill="#ffffff" text-anchor="middle" font-weight="700">close</text>
+<text x="933" y="206" font-size="14" fill="#e0dcf5" text-anchor="middle">(SESSION)</text>
+<line x1="162" y1="172.0" x2="189" y2="172.0" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<line x1="331" y1="172.0" x2="358" y2="172.0" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<line x1="492" y1="172.0" x2="519" y2="172.0" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<line x1="675" y1="172.0" x2="702" y2="172.0" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<line x1="848" y1="172.0" x2="873" y2="172.0" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<text x="261" y="238" font-size="13.5" fill="#898781" text-anchor="middle" font-style="italic">may call session-open itself</text>
+<text x="596" y="238" font-size="13.5" fill="#898781" text-anchor="middle" font-style="italic">session-close re-checks it — the safety net</text>
+<path d="M776,124 Q500,30 285,124" fill="none" stroke="#1c5cab" stroke-width="2.5" marker-end="url(#ar-dark)"/>
+<text x="530" y="52" font-size="17" fill="#1c5cab" text-anchor="middle">× N — 2–4 slices per session are normal</text>
+<path d="M933,232 Q500,370 90,222" fill="none" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)" stroke-dasharray="7 6"/>
+<text x="510" y="330" font-size="17" fill="#52514e" text-anchor="middle">next session opens already oriented — durable continuity, deliberate reset</text>
+</svg>

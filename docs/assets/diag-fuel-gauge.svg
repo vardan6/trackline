@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 420" font-family="'Segoe UI','DejaVu Sans',Helvetica,Arial,sans-serif">
+<defs>
+<marker id="ar-sec" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#52514e"/></marker>
+<marker id="ar-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2a78d6"/></marker>
+<marker id="ar-mut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#898781"/></marker>
+<marker id="ar-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1c5cab"/></marker>
+<marker id="ar-crit" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d03b3b"/></marker>
+</defs>
+<path d="M150.0,385.0 A300,300 0 0 1 237.9,172.9 L305.0,240.0 A205,205 0 0 0 245.0,385.0 Z" fill="#0ca30c" stroke="#fcfcfb" stroke-width="2"/>
+<path d="M237.9,172.9 A300,300 0 0 1 450.0,85.0 L450.0,180.0 A205,205 0 0 0 305.0,240.0 Z" fill="#fab219" stroke="#fcfcfb" stroke-width="2"/>
+<path d="M450.0,85.0 A300,300 0 0 1 750.0,385.0 L655.0,385.0 A205,205 0 0 0 450.0,180.0 Z" fill="#d03b3b" stroke="#fcfcfb" stroke-width="2"/>
+<text x="216.72041804090009" y="295.3724333278148" font-size="22" fill="#ffffff" text-anchor="middle" font-weight="700">SMART</text>
+<text x="353.37243332781486" y="158.72041804090009" font-size="22" fill="#5b3f00" text-anchor="middle" font-weight="700">TRANSITION</text>
+<text x="628.5444622496033" y="213.45553775039676" font-size="22" fill="#ffffff" text-anchor="middle" font-weight="700">DUMB</text>
+<line x1="238" y1="173" x2="229" y2="164" stroke="#0b0b0b" stroke-width="2.5"/>
+<text x="213.82633508369315" y="154.82633508369312" font-size="20" fill="#0b0b0b" text-anchor="middle" font-weight="600">50k</text>
+<line x1="450" y1="85" x2="450" y2="73" stroke="#0b0b0b" stroke-width="2.5"/>
+<text x="450.0" y="57.0" font-size="20" fill="#0b0b0b" text-anchor="middle" font-weight="600">100k</text>
+<line x1="662" y1="173" x2="671" y2="164" stroke="#0b0b0b" stroke-width="2.5"/>
+<text x="686.1736649163068" y="154.82633508369315" font-size="20" fill="#0b0b0b" text-anchor="middle" font-weight="600">150k</text>
+<text x="128" y="377" font-size="18" fill="#898781" text-anchor="end">0</text>
+<text x="772" y="377" font-size="18" fill="#898781" text-anchor="start">200k</text>
+<text x="450" y="360" font-size="17" fill="#898781" text-anchor="middle" font-style="italic">absolute tokens in the live window</text>
+<text x="450" y="325" font-size="19" fill="#52514e" text-anchor="middle" font-weight="600">not a percentage</text>
+</svg>

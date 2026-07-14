@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 250" font-family="'Segoe UI','DejaVu Sans',Helvetica,Arial,sans-serif">
+<defs>
+<marker id="ar-sec" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#52514e"/></marker>
+<marker id="ar-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2a78d6"/></marker>
+<marker id="ar-mut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#898781"/></marker>
+<marker id="ar-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1c5cab"/></marker>
+<marker id="ar-crit" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d03b3b"/></marker>
+</defs>
+<path d="M77.0,205.0 A158,158 0 0 1 123.3,93.3 L164.3,134.3 A100,100 0 0 0 135.0,205.0 Z" fill="#0ca30c" stroke="#fcfcfb" stroke-width="2"/>
+<path d="M123.3,93.3 A158,158 0 0 1 235.0,47.0 L235.0,105.0 A100,100 0 0 0 164.3,134.3 Z" fill="#fab219" stroke="#fcfcfb" stroke-width="2"/>
+<path d="M235.0,47.0 A158,158 0 0 1 393.0,205.0 L335.0,205.0 A100,100 0 0 0 235.0,105.0 Z" fill="#d03b3b" stroke="#fcfcfb" stroke-width="2"/>
+<line x1="220.40660819462084" y1="19.573375925638203" x2="222.13270830063345" y2="41.50555726776702" stroke="#0b0b0b" stroke-width="3" marker-end="url(#ar-sec)"/>
+<text x="234.40660819462084" y="15.573375925638203" font-size="18" fill="#0b0b0b" text-anchor="start" font-weight="700">the Warn Zone</text>
+<text x="235" y="175" font-size="15" fill="#898781" text-anchor="middle" font-style="italic">the hard signal</text>
+<rect x="520" y="22" width="456" height="206" rx="10" fill="#ffffff" stroke="#2a78d6" stroke-width="2.5"/>
+<text x="748" y="56" font-size="20" fill="#1c5cab" text-anchor="middle" font-weight="700">the close records</text>
+<rect x="548" y="72" width="28" height="28" rx="6" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="562" y="92" font-size="18" fill="#1c5cab" text-anchor="middle" font-weight="700">✓</text>
+<text x="592" y="92" font-size="18.5" fill="#0b0b0b" text-anchor="start">blockers</text>
+<rect x="548" y="114" width="28" height="28" rx="6" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="562" y="134" font-size="18" fill="#1c5cab" text-anchor="middle" font-weight="700">✓</text>
+<text x="592" y="134" font-size="18.5" fill="#0b0b0b" text-anchor="start">open questions</text>
+<rect x="548" y="156" width="28" height="28" rx="6" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="562" y="176" font-size="18" fill="#1c5cab" text-anchor="middle" font-weight="700">✓</text>
+<text x="592" y="176" font-size="18.5" fill="#0b0b0b" text-anchor="start">discarded dead ends — never re-litigated</text>
+</svg>

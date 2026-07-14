@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 330" font-family="'Segoe UI','DejaVu Sans',Helvetica,Arial,sans-serif">
+<defs>
+<marker id="ar-sec" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#52514e"/></marker>
+<marker id="ar-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2a78d6"/></marker>
+<marker id="ar-mut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#898781"/></marker>
+<marker id="ar-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1c5cab"/></marker>
+<marker id="ar-crit" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d03b3b"/></marker>
+</defs>
+<rect x="30" y="40" width="275" height="46" rx="23" fill="#ffffff" stroke="#52514e" stroke-width="2"/>
+<text x="167" y="69" font-size="15.5" fill="#0b0b0b" text-anchor="middle">a tool call is about to run</text>
+<line x1="309" y1="63" x2="424" y2="116" stroke="#52514e" stroke-width="2" marker-end="url(#ar-sec)"/>
+<rect x="30" y="102" width="275" height="46" rx="23" fill="#ffffff" stroke="#52514e" stroke-width="2"/>
+<text x="167" y="131" font-size="15.5" fill="#0b0b0b" text-anchor="middle">a session starts or ends</text>
+<line x1="309" y1="125" x2="424" y2="134" stroke="#52514e" stroke-width="2" marker-end="url(#ar-sec)"/>
+<rect x="30" y="164" width="275" height="46" rx="23" fill="#ffffff" stroke="#52514e" stroke-width="2"/>
+<text x="167" y="193" font-size="15.5" fill="#0b0b0b" text-anchor="middle">a prompt is submitted</text>
+<line x1="309" y1="187" x2="424" y2="152" stroke="#52514e" stroke-width="2" marker-end="url(#ar-sec)"/>
+<rect x="430" y="92" width="190" height="84" rx="14" fill="#2a78d6" stroke="#1c5cab" stroke-width="2"/>
+<text x="525" y="128" font-size="22" fill="#ffffff" text-anchor="middle" font-weight="700">hook</text>
+<text x="525" y="154" font-size="15" fill="#cde2fb" text-anchor="middle">a script</text>
+<line x1="624" y1="134" x2="716" y2="134" stroke="#2a78d6" stroke-width="2.5" marker-end="url(#ar-blue)"/>
+<rect x="722" y="92" width="250" height="84" rx="14" fill="#eaf7ea" stroke="#0ca30c" stroke-width="2.5"/>
+<text x="847" y="124" font-size="19" fill="#006300" text-anchor="middle" font-weight="700">runs — every time</text>
+<text x="847" y="152" font-size="14.5" fill="#52514e" text-anchor="middle">no model judgment involved</text>
+<rect x="30" y="232" width="455" height="62" rx="12" fill="#f2f1ee" stroke="#898781" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="257" y="258" font-size="15" fill="#898781" text-anchor="middle">instructions &amp; skills: suggestions</text>
+<text x="257" y="279" font-size="15" fill="#898781" text-anchor="middle">the model may or may not follow</text>
+<rect x="517" y="232" width="455" height="62" rx="12" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2.5"/>
+<text x="744" y="258" font-size="14.5" fill="#1c5cab" text-anchor="middle">hooks: the only layer with a guarantee</text>
+<text x="744" y="279" font-size="14.5" fill="#1c5cab" text-anchor="middle">e.g. the context-zone hook warns near the dumb zone</text>
+</svg>

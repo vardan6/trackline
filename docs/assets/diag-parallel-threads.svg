@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400" font-family="'Segoe UI','DejaVu Sans',Helvetica,Arial,sans-serif">
+<defs>
+<marker id="ar-sec" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#52514e"/></marker>
+<marker id="ar-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2a78d6"/></marker>
+<marker id="ar-mut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#898781"/></marker>
+<marker id="ar-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1c5cab"/></marker>
+<marker id="ar-crit" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d03b3b"/></marker>
+</defs>
+<rect x="20" y="130" width="190" height="140" rx="10" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2.5"/>
+<text x="115" y="185" font-size="19" fill="#1c5cab" text-anchor="middle" font-weight="700">wave of</text>
+<text x="115" y="209" font-size="19" fill="#1c5cab" text-anchor="middle" font-weight="700">prerequisites</text>
+<text x="115" y="240" font-size="14" fill="#52514e" text-anchor="middle">shared groundwork</text>
+<text x="268" y="44" font-size="14.5" fill="#898781" text-anchor="start">thread 1 — conflict-free</text>
+<rect x="268" y="50" width="130" height="44" rx="10" fill="#ffffff" stroke="#2a78d6" stroke-width="2"/>
+<text x="333" y="77" font-size="16" fill="#1c5cab" text-anchor="middle" font-weight="600">slice 1</text>
+<line x1="402" y1="72" x2="444" y2="72" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<rect x="448" y="50" width="130" height="44" rx="10" fill="#ffffff" stroke="#2a78d6" stroke-width="2"/>
+<text x="513" y="77" font-size="16" fill="#1c5cab" text-anchor="middle" font-weight="600">slice 2</text>
+<line x1="582" y1="72" x2="624" y2="72" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<rect x="628" y="50" width="130" height="44" rx="10" fill="#ffffff" stroke="#2a78d6" stroke-width="2"/>
+<text x="693" y="77" font-size="16" fill="#1c5cab" text-anchor="middle" font-weight="600">slice 3</text>
+<line x1="214" y1="170.0" x2="262" y2="72" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<text x="268" y="164" font-size="14.5" fill="#898781" text-anchor="start">thread 2 — conflict-free</text>
+<rect x="268" y="170" width="130" height="44" rx="10" fill="#ffffff" stroke="#2a78d6" stroke-width="2"/>
+<text x="333" y="197" font-size="16" fill="#1c5cab" text-anchor="middle" font-weight="600">slice 1</text>
+<line x1="402" y1="192" x2="444" y2="192" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<rect x="448" y="170" width="130" height="44" rx="10" fill="#ffffff" stroke="#2a78d6" stroke-width="2"/>
+<text x="513" y="197" font-size="16" fill="#1c5cab" text-anchor="middle" font-weight="600">slice 2</text>
+<line x1="582" y1="192" x2="624" y2="192" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<rect x="628" y="170" width="130" height="44" rx="10" fill="#ffffff" stroke="#2a78d6" stroke-width="2"/>
+<text x="693" y="197" font-size="16" fill="#1c5cab" text-anchor="middle" font-weight="600">slice 3</text>
+<line x1="214" y1="200.0" x2="262" y2="192" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<text x="268" y="284" font-size="14.5" fill="#898781" text-anchor="start">thread 3 — conflict-free</text>
+<rect x="268" y="290" width="130" height="44" rx="10" fill="#ffffff" stroke="#2a78d6" stroke-width="2"/>
+<text x="333" y="317" font-size="16" fill="#1c5cab" text-anchor="middle" font-weight="600">slice 1</text>
+<line x1="402" y1="312" x2="444" y2="312" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<rect x="448" y="290" width="130" height="44" rx="10" fill="#ffffff" stroke="#2a78d6" stroke-width="2"/>
+<text x="513" y="317" font-size="16" fill="#1c5cab" text-anchor="middle" font-weight="600">slice 2</text>
+<line x1="582" y1="312" x2="624" y2="312" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<rect x="628" y="290" width="130" height="44" rx="10" fill="#ffffff" stroke="#2a78d6" stroke-width="2"/>
+<text x="693" y="317" font-size="16" fill="#1c5cab" text-anchor="middle" font-weight="600">slice 3</text>
+<line x1="214" y1="230.0" x2="262" y2="312" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<path d="M800,72 Q850,72 872,130" fill="none" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<path d="M800,192 Q840,192 872,186" fill="none" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<path d="M800,312 Q850,312 872,240" fill="none" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<rect x="878" y="120" width="112" height="140" rx="10" fill="#f2f1ee" stroke="#898781" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="934" y="168" font-size="15.5" fill="#898781" text-anchor="middle" font-weight="600">results</text>
+<text x="934" y="188" font-size="15.5" fill="#898781" text-anchor="middle" font-weight="600">decide</text>
+<text x="934" y="208" font-size="15.5" fill="#898781" text-anchor="middle" font-weight="600">adoption</text>
+<text x="500" y="380" font-size="16.5" fill="#898781" text-anchor="middle" font-style="italic">sequential within a thread · parallel across ≤ 3 threads — experiment, not yet canonical</text>
+</svg>

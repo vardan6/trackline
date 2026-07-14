@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 360" font-family="'Segoe UI','DejaVu Sans',Helvetica,Arial,sans-serif">
+<defs>
+<marker id="ar-sec" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#52514e"/></marker>
+<marker id="ar-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2a78d6"/></marker>
+<marker id="ar-mut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#898781"/></marker>
+<marker id="ar-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1c5cab"/></marker>
+<marker id="ar-crit" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d03b3b"/></marker>
+</defs>
+<rect x="40" y="70" width="250" height="170" rx="10" fill="#ffffff" stroke="#2a78d6" stroke-width="2.5"/>
+<text x="165" y="110" font-size="22" fill="#1c5cab" text-anchor="middle" font-weight="700">loaded context</text>
+<rect x="70" y="132" width="190" height="18" rx="9" fill="#cde2fb" stroke="#86b6ef" stroke-width="1"/>
+<text x="165" y="146" font-size="11.5" fill="#1c5cab" text-anchor="middle">instructions</text>
+<rect x="70" y="156" width="190" height="18" rx="9" fill="#cde2fb" stroke="#86b6ef" stroke-width="1"/>
+<text x="165" y="170" font-size="11.5" fill="#1c5cab" text-anchor="middle">conversation</text>
+<rect x="70" y="180" width="190" height="18" rx="9" fill="#cde2fb" stroke="#86b6ef" stroke-width="1"/>
+<text x="165" y="194" font-size="11.5" fill="#1c5cab" text-anchor="middle">files</text>
+<rect x="70" y="204" width="190" height="18" rx="9" fill="#cde2fb" stroke="#86b6ef" stroke-width="1"/>
+<text x="165" y="218" font-size="11.5" fill="#1c5cab" text-anchor="middle">tool defs</text>
+<rect x="400" y="84" width="110" height="132" rx="12" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="455" y="124" font-size="20" fill="#1c5cab" text-anchor="middle" font-weight="700">call 1</text>
+<text x="455" y="154" font-size="15" fill="#52514e" text-anchor="middle">same</text>
+<text x="455" y="176" font-size="15" fill="#52514e" text-anchor="middle">context</text>
+<line x1="514" y1="150" x2="537" y2="150" stroke="#52514e" stroke-width="2" marker-end="url(#ar-sec)"/>
+<rect x="545" y="84" width="110" height="132" rx="12" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="600" y="124" font-size="20" fill="#1c5cab" text-anchor="middle" font-weight="700">call 2</text>
+<text x="600" y="154" font-size="15" fill="#52514e" text-anchor="middle">same</text>
+<text x="600" y="176" font-size="15" fill="#52514e" text-anchor="middle">context</text>
+<line x1="659" y1="150" x2="682" y2="150" stroke="#52514e" stroke-width="2" marker-end="url(#ar-sec)"/>
+<rect x="690" y="84" width="110" height="132" rx="12" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="745" y="124" font-size="20" fill="#1c5cab" text-anchor="middle" font-weight="700">call 3</text>
+<text x="745" y="154" font-size="15" fill="#52514e" text-anchor="middle">same</text>
+<text x="745" y="176" font-size="15" fill="#52514e" text-anchor="middle">context</text>
+<line x1="294" y1="150" x2="390" y2="150" stroke="#2a78d6" stroke-width="2.5" marker-end="url(#ar-blue)"/>
+<rect x="835" y="92" width="130" height="116" rx="12" fill="#fff7e4" stroke="#fab219" stroke-width="2"/>
+<text x="900" y="132" font-size="18" fill="#6b4a00" text-anchor="middle" font-weight="700">input tokens</text>
+<text x="900" y="162" font-size="15" fill="#52514e" text-anchor="middle">context</text>
+<text x="900" y="184" font-size="15" fill="#52514e" text-anchor="middle">x calls</text>
+<line x1="804" y1="150" x2="828" y2="150" stroke="#fab219" stroke-width="2" marker-end="url(#ar-sec)"/>
+<text x="500" y="282" font-size="21" fill="#0b0b0b" text-anchor="middle" font-weight="600">smaller loaded context -&gt; roughly fewer input tokens every loop</text>
+<text x="500" y="316" font-size="16" fill="#898781" text-anchor="middle" font-style="italic">prompt caching softens price, not attention</text>
+</svg>

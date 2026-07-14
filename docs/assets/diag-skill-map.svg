@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 340" font-family="'Segoe UI','DejaVu Sans',Helvetica,Arial,sans-serif">
+<defs>
+<marker id="ar-sec" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#52514e"/></marker>
+<marker id="ar-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2a78d6"/></marker>
+<marker id="ar-mut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#898781"/></marker>
+<marker id="ar-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1c5cab"/></marker>
+<marker id="ar-crit" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d03b3b"/></marker>
+</defs>
+<rect x="25" y="34" width="178" height="190" rx="12" fill="#ffffff" stroke="#898781" stroke-width="2.5"/>
+<rect x="25" y="34" width="178" height="40" rx="12" fill="#898781" stroke="#898781" stroke-width="2"/>
+<rect x="25" y="58" width="178" height="16" fill="#898781"/>
+<text x="114.0" y="60" font-size="15.5" fill="#ffffff" text-anchor="middle" font-weight="700">RESEARCH</text>
+<rect x="41" y="90" width="146" height="28" rx="14" fill="#f2f1ee" stroke="#e1e0d9" stroke-width="1.5"/>
+<text x="114.0" y="109" font-size="13.5" fill="#898781" text-anchor="middle" font-style="italic">chat · web search</text>
+<rect x="41" y="128" width="146" height="28" rx="14" fill="#eaf2fc" stroke="#c3c2b7" stroke-width="1.5"/>
+<text x="114.0" y="147" font-size="13.5" fill="#0b0b0b" text-anchor="middle" font-family="Consolas,'DejaVu Sans Mono',monospace">docs/research/*.md</text>
+<line x1="205" y1="129" x2="215" y2="129" stroke="#898781" stroke-width="2" marker-end="url(#ar-mut)" stroke-dasharray="4 4"/>
+<rect x="218" y="34" width="178" height="190" rx="12" fill="#ffffff" stroke="#2a78d6" stroke-width="2.5"/>
+<rect x="218" y="34" width="178" height="40" rx="12" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<rect x="218" y="58" width="178" height="16" fill="#2a78d6"/>
+<text x="307.0" y="60" font-size="15.5" fill="#ffffff" text-anchor="middle" font-weight="700">PLANNING</text>
+<rect x="234" y="90" width="146" height="28" rx="14" fill="#f2f1ee" stroke="#e1e0d9" stroke-width="1.5"/>
+<text x="307.0" y="109" font-size="13.5" fill="#898781" text-anchor="middle" font-family="Consolas,'DejaVu Sans Mono',monospace">grill-me</text>
+<rect x="234" y="128" width="146" height="28" rx="14" fill="#f2f1ee" stroke="#e1e0d9" stroke-width="1.5"/>
+<text x="307.0" y="147" font-size="13.5" fill="#898781" text-anchor="middle" font-family="Consolas,'DejaVu Sans Mono',monospace">grill-with-docs</text>
+<rect x="234" y="166" width="146" height="28" rx="14" fill="#eaf2fc" stroke="#c3c2b7" stroke-width="1.5"/>
+<text x="307.0" y="185" font-size="13.5" fill="#0b0b0b" text-anchor="middle" font-family="Consolas,'DejaVu Sans Mono',monospace">planning-capture</text>
+<line x1="398" y1="129" x2="408" y2="129" stroke="#898781" stroke-width="2" marker-end="url(#ar-mut)" stroke-dasharray="4 4"/>
+<rect x="411" y="34" width="178" height="190" rx="12" fill="#ffffff" stroke="#4a3aa7" stroke-width="2.5"/>
+<rect x="411" y="34" width="178" height="40" rx="12" fill="#4a3aa7" stroke="#4a3aa7" stroke-width="2"/>
+<rect x="411" y="58" width="178" height="16" fill="#4a3aa7"/>
+<text x="500.0" y="60" font-size="15.5" fill="#ffffff" text-anchor="middle" font-weight="700">PLAN REVIEW</text>
+<rect x="427" y="90" width="146" height="28" rx="14" fill="#eaf2fc" stroke="#c3c2b7" stroke-width="1.5"/>
+<text x="500.0" y="109" font-size="13.5" fill="#0b0b0b" text-anchor="middle" font-family="Consolas,'DejaVu Sans Mono',monospace">plan-review</text>
+<line x1="591" y1="129" x2="601" y2="129" stroke="#898781" stroke-width="2" marker-end="url(#ar-mut)" stroke-dasharray="4 4"/>
+<rect x="604" y="34" width="178" height="190" rx="12" fill="#ffffff" stroke="#1baf7a" stroke-width="2.5"/>
+<rect x="604" y="34" width="178" height="40" rx="12" fill="#1baf7a" stroke="#1baf7a" stroke-width="2"/>
+<rect x="604" y="58" width="178" height="16" fill="#1baf7a"/>
+<text x="693.0" y="60" font-size="15.5" fill="#ffffff" text-anchor="middle" font-weight="700">IMPLEMENTATION</text>
+<rect x="620" y="90" width="146" height="28" rx="14" fill="#eaf2fc" stroke="#c3c2b7" stroke-width="1.5"/>
+<text x="693.0" y="109" font-size="13.5" fill="#0b0b0b" text-anchor="middle" font-family="Consolas,'DejaVu Sans Mono',monospace">next-slice</text>
+<rect x="620" y="128" width="146" height="28" rx="14" fill="#eaf2fc" stroke="#c3c2b7" stroke-width="1.5"/>
+<text x="693.0" y="147" font-size="13.5" fill="#0b0b0b" text-anchor="middle" font-family="Consolas,'DejaVu Sans Mono',monospace">doc-update</text>
+<line x1="784" y1="129" x2="794" y2="129" stroke="#898781" stroke-width="2" marker-end="url(#ar-mut)" stroke-dasharray="4 4"/>
+<rect x="797" y="34" width="178" height="190" rx="12" fill="#ffffff" stroke="#eb6834" stroke-width="2.5"/>
+<rect x="797" y="34" width="178" height="40" rx="12" fill="#eb6834" stroke="#eb6834" stroke-width="2"/>
+<rect x="797" y="58" width="178" height="16" fill="#eb6834"/>
+<text x="886.0" y="60" font-size="15.5" fill="#ffffff" text-anchor="middle" font-weight="700">CODE REVIEW</text>
+<rect x="813" y="90" width="146" height="28" rx="14" fill="#eaf2fc" stroke="#c3c2b7" stroke-width="1.5"/>
+<text x="886.0" y="109" font-size="13.5" fill="#0b0b0b" text-anchor="middle" font-family="Consolas,'DejaVu Sans Mono',monospace">cross-review</text>
+<rect x="813" y="128" width="146" height="28" rx="14" fill="#eaf2fc" stroke="#c3c2b7" stroke-width="1.5"/>
+<text x="886.0" y="147" font-size="13.5" fill="#0b0b0b" text-anchor="middle" font-family="Consolas,'DejaVu Sans Mono',monospace">review-triage</text>
+<rect x="25" y="244" width="950" height="50" rx="12" fill="#eaf2fc" stroke="#1c5cab" stroke-width="2"/>
+<text x="45" y="275" font-size="16" fill="#1c5cab" text-anchor="start" font-weight="600">every stage runs as its own session:</text>
+<rect x="360" y="253" width="138" height="32" rx="16" fill="#ffffff" stroke="#2a78d6" stroke-width="1.5"/>
+<text x="429" y="274" font-size="14" fill="#1c5cab" text-anchor="middle" font-family="Consolas,'DejaVu Sans Mono',monospace">session-open</text>
+<line x1="503" y1="269" x2="528" y2="269" stroke="#52514e" stroke-width="2" marker-end="url(#ar-sec)"/>
+<text x="561" y="274" font-size="13.5" fill="#898781" text-anchor="middle" font-style="italic">the stage</text>
+<line x1="597" y1="269" x2="622" y2="269" stroke="#52514e" stroke-width="2" marker-end="url(#ar-sec)"/>
+<rect x="627" y="253" width="142" height="32" rx="16" fill="#ffffff" stroke="#2a78d6" stroke-width="1.5"/>
+<text x="698" y="274" font-size="14" fill="#1c5cab" text-anchor="middle" font-family="Consolas,'DejaVu Sans Mono',monospace">session-close</text>
+<text x="782" y="274" font-size="13.5" fill="#898781" text-anchor="start">· interrupted?</text>
+<rect x="878" y="253" width="92" height="32" rx="16" fill="#f2f1ee" stroke="#e1e0d9" stroke-width="1.5"/>
+<text x="924" y="274" font-size="13.5" fill="#898781" text-anchor="middle" font-family="Consolas,'DejaVu Sans Mono',monospace">handoff *</text>
+<text x="500" y="326" font-size="15" fill="#898781" text-anchor="middle" font-style="italic">* vendored (Matt Pocock) — five self-contained cycles in typical order; session-close ends every one</text>
+</svg>

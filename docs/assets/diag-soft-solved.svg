@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 320" font-family="'Segoe UI','DejaVu Sans',Helvetica,Arial,sans-serif">
+<defs>
+<marker id="ar-sec" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#52514e"/></marker>
+<marker id="ar-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2a78d6"/></marker>
+<marker id="ar-mut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#898781"/></marker>
+<marker id="ar-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1c5cab"/></marker>
+<marker id="ar-crit" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d03b3b"/></marker>
+</defs>
+<rect x="30" y="56" width="120" height="64" rx="10" fill="#ffffff" stroke="#0ca30c" stroke-width="2.5"/>
+<text x="90" y="82" font-size="15.5" fill="#0b0b0b" text-anchor="middle" font-weight="600">session 1</text>
+<text x="90" y="104" font-size="13.5" fill="#006300" text-anchor="middle">close ✓</text>
+<line x1="154" y1="88" x2="171" y2="88" stroke="#52514e" stroke-width="2" marker-end="url(#ar-sec)"/>
+<rect x="175" y="56" width="120" height="64" rx="10" fill="#ffffff" stroke="#0ca30c" stroke-width="2.5"/>
+<text x="235" y="82" font-size="15.5" fill="#0b0b0b" text-anchor="middle" font-weight="600">session 2</text>
+<text x="235" y="104" font-size="13.5" fill="#006300" text-anchor="middle">close ✓</text>
+<line x1="299" y1="88" x2="316" y2="88" stroke="#52514e" stroke-width="2" marker-end="url(#ar-sec)"/>
+<rect x="320" y="56" width="120" height="64" rx="10" fill="#ffffff" stroke="#0ca30c" stroke-width="2.5"/>
+<text x="380" y="82" font-size="15.5" fill="#0b0b0b" text-anchor="middle" font-weight="600">session 3</text>
+<text x="380" y="104" font-size="13.5" fill="#006300" text-anchor="middle">close ✓</text>
+<line x1="444" y1="88" x2="461" y2="88" stroke="#52514e" stroke-width="2" marker-end="url(#ar-sec)"/>
+<rect x="465" y="56" width="120" height="64" rx="10" fill="#ffffff" stroke="#0ca30c" stroke-width="2.5"/>
+<text x="525" y="82" font-size="15.5" fill="#0b0b0b" text-anchor="middle" font-weight="600">session 4</text>
+<text x="525" y="104" font-size="13.5" fill="#006300" text-anchor="middle">close ✓</text>
+<line x1="589" y1="88" x2="606" y2="88" stroke="#52514e" stroke-width="2" marker-end="url(#ar-sec)"/>
+<rect x="610" y="56" width="120" height="64" rx="10" fill="#fdf0f0" stroke="#d03b3b" stroke-width="2.5"/>
+<text x="670" y="82" font-size="15.5" fill="#d03b3b" text-anchor="middle" font-weight="600">session 5</text>
+<text x="670" y="104" font-size="13.5" fill="#d03b3b" text-anchor="middle">close skipped</text>
+<line x1="734" y1="88" x2="751" y2="88" stroke="#52514e" stroke-width="2" marker-end="url(#ar-sec)"/>
+<rect x="755" y="56" width="120" height="64" rx="10" fill="#fdf0f0" stroke="#d03b3b" stroke-width="2.5"/>
+<text x="815" y="82" font-size="15.5" fill="#d03b3b" text-anchor="middle" font-weight="600">session 6</text>
+<text x="815" y="104" font-size="13.5" fill="#d03b3b" text-anchor="middle">close skipped</text>
+<rect x="540" y="208" width="140" height="44" rx="8" fill="#f2f1ee" stroke="#898781" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="610" y="235" font-size="12.5" fill="#898781" text-anchor="middle" font-family="Consolas,'DejaVu Sans Mono',monospace">activeContext.md</text>
+<rect x="690" y="208" width="140" height="44" rx="8" fill="#f2f1ee" stroke="#898781" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="760" y="235" font-size="12.5" fill="#898781" text-anchor="middle" font-family="Consolas,'DejaVu Sans Mono',monospace">roadmap.md</text>
+<rect x="840" y="208" width="140" height="44" rx="8" fill="#f2f1ee" stroke="#898781" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="910" y="235" font-size="12.5" fill="#898781" text-anchor="middle" font-family="Consolas,'DejaVu Sans Mono',monospace">progress.md</text>
+<path d="M670,124 Q660,168 630,204" fill="none" stroke="#d03b3b" stroke-width="2.5" marker-end="url(#ar-crit)" stroke-dasharray="5 5"/>
+<path d="M815,124 Q820,168 780,204" fill="none" stroke="#d03b3b" stroke-width="2.5" marker-end="url(#ar-crit)" stroke-dasharray="5 5"/>
+<text x="760" y="282" font-size="15.5" fill="#d03b3b" text-anchor="middle" font-style="italic">the state files silently rot — the next session opens disoriented</text>
+<text x="240" y="220" font-size="19" fill="#0b0b0b" text-anchor="middle" font-weight="600">“soft solved”:</text>
+<text x="240" y="247" font-size="19" fill="#0b0b0b" text-anchor="middle" font-weight="600">it stays solved only while</text>
+<text x="240" y="274" font-size="19" fill="#0b0b0b" text-anchor="middle" font-weight="600">the discipline is followed</text>
+</svg>

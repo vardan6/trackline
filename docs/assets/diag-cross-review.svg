@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400" font-family="'Segoe UI','DejaVu Sans',Helvetica,Arial,sans-serif">
+<defs>
+<marker id="ar-sec" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#52514e"/></marker>
+<marker id="ar-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2a78d6"/></marker>
+<marker id="ar-mut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#898781"/></marker>
+<marker id="ar-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1c5cab"/></marker>
+<marker id="ar-crit" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d03b3b"/></marker>
+</defs>
+<rect x="30" y="60" width="240" height="100" rx="10" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="150" y="98" font-size="20" fill="#1c5cab" text-anchor="middle" font-weight="700">Implementing agent</text>
+<text x="150" y="126" font-size="16" fill="#52514e" text-anchor="middle">model A</text>
+<rect x="330" y="30" width="272" height="64" rx="10" fill="#ffffff" stroke="#52514e" stroke-width="2"/>
+<text x="466" y="56" font-size="15" fill="#0b0b0b" text-anchor="middle" font-weight="600">the diff since the</text>
+<text x="466" y="76" font-size="15" fill="#0b0b0b" text-anchor="middle" font-weight="600">last known-good commit</text>
+<rect x="330" y="116" width="272" height="52" rx="10" fill="#ffffff" stroke="#52514e" stroke-width="2"/>
+<text x="466" y="148" font-size="14.5" fill="#0b0b0b" text-anchor="middle" font-weight="600">the docs — PRD, ADRs, glossary</text>
+<rect x="680" y="44" width="290" height="130" rx="10" fill="#f1effa" stroke="#4a3aa7" stroke-width="2.5"/>
+<text x="825" y="82" font-size="21" fill="#4a3aa7" text-anchor="middle" font-weight="700">Reviewing agent</text>
+<text x="825" y="110" font-size="15.5" fill="#52514e" text-anchor="middle">model B — different provider,</text>
+<text x="825" y="129" font-size="15.5" fill="#52514e" text-anchor="middle">the strongest available</text>
+<text x="825" y="158" font-size="15" fill="#4a3aa7" text-anchor="middle" font-style="italic">reads the diff AGAINST the docs</text>
+<rect x="680" y="240" width="290" height="74" rx="10" fill="#ffffff" stroke="#4a3aa7" stroke-width="2"/>
+<text x="825" y="270.0" font-size="19" fill="#0b0b0b" text-anchor="middle" font-weight="700">findings</text>
+<text x="825" y="296" font-size="15.5" fill="#52514e" text-anchor="middle">docs/reviews/*.md</text>
+<rect x="30" y="240" width="240" height="74" rx="10" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="150" y="268.0" font-size="17" fill="#1c5cab" text-anchor="middle" font-weight="600">validates each finding</text>
+<text x="150" y="296" font-size="15" fill="#52514e" text-anchor="middle">must-fix / later / invalid</text>
+<line x1="272" y1="90" x2="334" y2="70" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<line x1="272" y1="130" x2="334" y2="142" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<line x1="594" y1="62" x2="674" y2="80" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<line x1="594" y1="142" x2="674" y2="130" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<line x1="825" y1="178" x2="825" y2="234" stroke="#4a3aa7" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<text x="872" y="210" font-size="15" fill="#4a3aa7" text-anchor="start" font-family="Consolas,'DejaVu Sans Mono',monospace">/cross-review</text>
+<line x1="674" y1="277" x2="276" y2="277" stroke="#4a3aa7" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<text x="475" y="265" font-size="15" fill="#4a3aa7" text-anchor="middle" font-family="Consolas,'DejaVu Sans Mono',monospace">/review-triage</text>
+<line x1="150" y1="238" x2="150" y2="166" stroke="#c3c2b7" stroke-width="2" stroke-dasharray="5 5"/>
+<text x="500" y="372" font-size="16" fill="#898781" text-anchor="middle" font-style="italic">the second model catches what the implementing model cannot see about its own work</text>
+</svg>

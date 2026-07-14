@@ -18,8 +18,9 @@ Source: [`mattpocock/skills`](https://github.com/mattpocock/skills) —
 These three are copied (vendored) rather than authored here. They are used in
 this workflow's planning phase (`grill-me`, `grill-with-docs`) and for
 cross-tool/model session transfer (`handoff`). The remaining skills in
-`skills/` — `session-open`, `planning-capture`, `next-slice`, `doc-update`,
-`review-triage`, `session-close` — are authored in this repository.
+`skills/` — `session-open`, `planning-capture`, `plan-review`, `next-slice`,
+`doc-update`, `cross-review`, `review-triage`, `session-close` — are authored
+in this repository.
 
 ## Notes
 

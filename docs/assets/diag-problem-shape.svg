@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 430" font-family="'Segoe UI','DejaVu Sans',Helvetica,Arial,sans-serif">
+<defs>
+<marker id="ar-sec" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#52514e"/></marker>
+<marker id="ar-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2a78d6"/></marker>
+<marker id="ar-mut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#898781"/></marker>
+<marker id="ar-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1c5cab"/></marker>
+<marker id="ar-crit" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d03b3b"/></marker>
+</defs>
+<text x="20" y="72" font-size="18" fill="#52514e" text-anchor="start">plans keep changing</text>
+<text x="20" y="152" font-size="18" fill="#52514e" text-anchor="start">docs keep growing</text>
+<text x="20" y="232" font-size="18" fill="#52514e" text-anchor="start">reviews pile up</text>
+<rect x="240" y="30" width="96" height="44" rx="10" fill="#ffffff" stroke="#2a78d6" stroke-width="2"/>
+<text x="288" y="57" font-size="16" fill="#1c5cab" text-anchor="middle">plan v1</text>
+<line x1="340" y1="52" x2="426" y2="52" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<rect x="430" y="30" width="96" height="44" rx="10" fill="#ffffff" stroke="#2a78d6" stroke-width="2"/>
+<text x="478" y="57" font-size="16" fill="#1c5cab" text-anchor="middle">plan v2</text>
+<line x1="530" y1="52" x2="616" y2="52" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<rect x="620" y="30" width="96" height="44" rx="10" fill="#ffffff" stroke="#2a78d6" stroke-width="2"/>
+<text x="668" y="57" font-size="16" fill="#1c5cab" text-anchor="middle">plan v3</text>
+<line x1="720" y1="52" x2="806" y2="52" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<rect x="810" y="30" width="96" height="44" rx="10" fill="#ffffff" stroke="#2a78d6" stroke-width="2"/>
+<text x="858" y="57" font-size="16" fill="#1c5cab" text-anchor="middle">plan v4</text>
+<rect x="250" y="146" width="56" height="12" rx="3" fill="#cde2fb" stroke="#86b6ef" stroke-width="1.5"/>
+<rect x="342" y="141" width="56" height="17" rx="3" fill="#cde2fb" stroke="#86b6ef" stroke-width="1.5"/>
+<rect x="434" y="136" width="56" height="22" rx="3" fill="#cde2fb" stroke="#86b6ef" stroke-width="1.5"/>
+<rect x="526" y="131" width="56" height="27" rx="3" fill="#cde2fb" stroke="#86b6ef" stroke-width="1.5"/>
+<rect x="618" y="126" width="56" height="32" rx="3" fill="#cde2fb" stroke="#86b6ef" stroke-width="1.5"/>
+<rect x="710" y="121" width="56" height="37" rx="3" fill="#cde2fb" stroke="#86b6ef" stroke-width="1.5"/>
+<rect x="802" y="116" width="56" height="42" rx="3" fill="#cde2fb" stroke="#86b6ef" stroke-width="1.5"/>
+<rect x="894" y="111" width="56" height="47" rx="3" fill="#cde2fb" stroke="#86b6ef" stroke-width="1.5"/>
+<rect x="285" y="190" width="34" height="34" rx="6" fill="#ffffff" stroke="#4a3aa7" stroke-width="2"/>
+<text x="302" y="213" font-size="20" fill="#4a3aa7" text-anchor="middle">✓</text>
+<rect x="435" y="190" width="34" height="34" rx="6" fill="#ffffff" stroke="#4a3aa7" stroke-width="2"/>
+<text x="452" y="213" font-size="20" fill="#4a3aa7" text-anchor="middle">✓</text>
+<rect x="585" y="190" width="34" height="34" rx="6" fill="#ffffff" stroke="#4a3aa7" stroke-width="2"/>
+<text x="602" y="213" font-size="20" fill="#4a3aa7" text-anchor="middle">✓</text>
+<rect x="735" y="190" width="34" height="34" rx="6" fill="#ffffff" stroke="#4a3aa7" stroke-width="2"/>
+<text x="752" y="213" font-size="20" fill="#4a3aa7" text-anchor="middle">✓</text>
+<rect x="885" y="190" width="34" height="34" rx="6" fill="#ffffff" stroke="#4a3aa7" stroke-width="2"/>
+<text x="902" y="213" font-size="20" fill="#4a3aa7" text-anchor="middle">✓</text>
+<line x1="30" y1="300" x2="975" y2="300" stroke="#0b0b0b" stroke-width="3" marker-end="url(#ar-sec)"/>
+<text x="30" y="330" font-size="17" fill="#898781" text-anchor="start">month 1</text>
+<text x="960" y="330" font-size="17" fill="#898781" text-anchor="end">month 6+</text>
+<rect x="70" y="262" width="34" height="26" rx="5" fill="#eaf2fc" stroke="#86b6ef" stroke-width="1.5"/>
+<rect x="126" y="262" width="34" height="26" rx="5" fill="#eaf2fc" stroke="#86b6ef" stroke-width="1.5"/>
+<rect x="182" y="262" width="34" height="26" rx="5" fill="#eaf2fc" stroke="#86b6ef" stroke-width="1.5"/>
+<rect x="238" y="262" width="34" height="26" rx="5" fill="#eaf2fc" stroke="#86b6ef" stroke-width="1.5"/>
+<rect x="294" y="262" width="34" height="26" rx="5" fill="#eaf2fc" stroke="#86b6ef" stroke-width="1.5"/>
+<rect x="350" y="262" width="34" height="26" rx="5" fill="#eaf2fc" stroke="#86b6ef" stroke-width="1.5"/>
+<rect x="406" y="262" width="34" height="26" rx="5" fill="#eaf2fc" stroke="#86b6ef" stroke-width="1.5"/>
+<rect x="462" y="262" width="34" height="26" rx="5" fill="#eaf2fc" stroke="#86b6ef" stroke-width="1.5"/>
+<rect x="518" y="262" width="34" height="26" rx="5" fill="#eaf2fc" stroke="#86b6ef" stroke-width="1.5"/>
+<rect x="574" y="262" width="34" height="26" rx="5" fill="#eaf2fc" stroke="#86b6ef" stroke-width="1.5"/>
+<rect x="630" y="262" width="34" height="26" rx="5" fill="#eaf2fc" stroke="#86b6ef" stroke-width="1.5"/>
+<rect x="686" y="262" width="34" height="26" rx="5" fill="#eaf2fc" stroke="#86b6ef" stroke-width="1.5"/>
+<rect x="742" y="262" width="34" height="26" rx="5" fill="#eaf2fc" stroke="#86b6ef" stroke-width="1.5"/>
+<rect x="798" y="262" width="34" height="26" rx="5" fill="#eaf2fc" stroke="#86b6ef" stroke-width="1.5"/>
+<rect x="854" y="262" width="34" height="26" rx="5" fill="#eaf2fc" stroke="#86b6ef" stroke-width="1.5"/>
+<rect x="910" y="262" width="34" height="26" rx="5" fill="#eaf2fc" stroke="#86b6ef" stroke-width="1.5"/>
+<text x="500" y="258" font-size="10" fill="#0b0b0b" text-anchor="middle"></text>
+<text x="500" y="345" font-size="16" fill="#898781" text-anchor="middle" font-style="italic">session · session · session — dozens of them</text>
+<rect x="230" y="368" width="540" height="48" rx="24" fill="#fdf0f0" stroke="#d03b3b" stroke-width="2"/>
+<text x="500" y="398" font-size="20" fill="#d03b3b" text-anchor="middle" font-weight="600">…and no single conversation that holds it all</text>
+</svg>

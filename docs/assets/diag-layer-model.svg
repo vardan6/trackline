@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 430" font-family="'Segoe UI','DejaVu Sans',Helvetica,Arial,sans-serif">
+<defs>
+<marker id="ar-sec" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#52514e"/></marker>
+<marker id="ar-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2a78d6"/></marker>
+<marker id="ar-mut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#898781"/></marker>
+<marker id="ar-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1c5cab"/></marker>
+<marker id="ar-crit" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d03b3b"/></marker>
+</defs>
+<rect x="30" y="30" width="690" height="84" rx="10" fill="#cde2fb" stroke="#fcfcfb" stroke-width="2"/>
+<text x="52" y="68.0" font-size="22" fill="#104281" text-anchor="start" font-weight="700">Requirements</text>
+<text x="52" y="94.0" font-size="16.5" fill="#104281" text-anchor="start">WHAT</text>
+<rect x="30" y="126" width="690" height="84" rx="10" fill="#86b6ef" stroke="#fcfcfb" stroke-width="2"/>
+<text x="52" y="164.0" font-size="22" fill="#104281" text-anchor="start" font-weight="700">Design / ADRs</text>
+<text x="52" y="190.0" font-size="16.5" fill="#104281" text-anchor="start">WHY</text>
+<rect x="30" y="222" width="690" height="84" rx="10" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/>
+<text x="52" y="260.0" font-size="22" fill="#ffffff" text-anchor="start" font-weight="700">Code + tests</text>
+<text x="52" y="286.0" font-size="16.5" fill="#ffffff" text-anchor="start">HOW — the executable truth</text>
+<rect x="30" y="318" width="420" height="58" rx="10" fill="#f2f1ee" stroke="#fcfcfb" stroke-width="2"/>
+<text x="52" y="343.0" font-size="22" fill="#898781" text-anchor="start" font-weight="700">Implementation notes</text>
+<text x="52" y="369.0" font-size="16.5" fill="#898781" text-anchor="start">rare non-obvious invariants only</text>
+<rect x="760" y="30" width="210" height="264" rx="10" fill="#e9f7f1" stroke="#1baf7a" stroke-width="2.5"/>
+<text x="865" y="66" font-size="21" fill="#0c7a54" text-anchor="middle" font-weight="700">State files</text>
+<text x="865" y="92" font-size="15.5" fill="#0c7a54" text-anchor="middle">WHERE work is now</text>
+<rect x="782" y="112" width="166" height="40" rx="8" fill="#ffffff" stroke="#1baf7a" stroke-width="1.5"/>
+<text x="865" y="138" font-size="15" fill="#0c7a54" text-anchor="middle">activeContext.md</text>
+<rect x="782" y="166" width="166" height="40" rx="8" fill="#ffffff" stroke="#1baf7a" stroke-width="1.5"/>
+<text x="865" y="192" font-size="15" fill="#0c7a54" text-anchor="middle">roadmap.md</text>
+<rect x="782" y="220" width="166" height="40" rx="8" fill="#ffffff" stroke="#1baf7a" stroke-width="1.5"/>
+<text x="865" y="246" font-size="15" fill="#0c7a54" text-anchor="middle">progress.md</text>
+<text x="500" y="408" font-size="17" fill="#898781" text-anchor="middle" font-style="italic">one canonical home per fact — reference, don't copy</text>
+</svg>

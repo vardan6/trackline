@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 420" font-family="'Segoe UI','DejaVu Sans',Helvetica,Arial,sans-serif">
+<defs>
+<marker id="ar-sec" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#52514e"/></marker>
+<marker id="ar-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2a78d6"/></marker>
+<marker id="ar-mut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#898781"/></marker>
+<marker id="ar-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1c5cab"/></marker>
+<marker id="ar-crit" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d03b3b"/></marker>
+</defs>
+<rect x="16" y="30" width="312" height="320" rx="10" fill="#eaf2fc" stroke="#2a78d6" stroke-width="3"/>
+<text x="172.0" y="76" font-size="24" fill="#2a78d6" text-anchor="middle" font-weight="700">/session-close</text>
+<rect x="67.0" y="96" width="210" height="34" rx="17" fill="#2a78d6" stroke="#2a78d6" stroke-width="2"/>
+<text x="172.0" y="118" font-size="15.5" fill="#ffffff" text-anchor="middle" font-weight="600">the DEFAULT ending</text>
+<text x="172.0" y="168" font-size="16.5" fill="#52514e" text-anchor="middle">deliberate reset with durable</text>
+<text x="172.0" y="193" font-size="16.5" fill="#52514e" text-anchor="middle">continuity — writes the state</text>
+<text x="172.0" y="218" font-size="16.5" fill="#52514e" text-anchor="middle">files; next session opens</text>
+<text x="172.0" y="243" font-size="16.5" fill="#52514e" text-anchor="middle">already oriented</text>
+<rect x="344" y="30" width="312" height="320" rx="10" fill="#ffffff" stroke="#4a3aa7" stroke-width="2"/>
+<text x="500.0" y="76" font-size="24" fill="#4a3aa7" text-anchor="middle" font-weight="700">/handoff</text>
+<rect x="395.0" y="96" width="210" height="34" rx="17" fill="#4a3aa7" stroke="#4a3aa7" stroke-width="2"/>
+<text x="500.0" y="118" font-size="15.5" fill="#ffffff" text-anchor="middle" font-weight="600">cross-tool transfer</text>
+<text x="500.0" y="168" font-size="16.5" fill="#52514e" text-anchor="middle">receiver is a different tool or</text>
+<text x="500.0" y="193" font-size="16.5" fill="#52514e" text-anchor="middle">model that doesn't know this</text>
+<text x="500.0" y="218" font-size="16.5" fill="#52514e" text-anchor="middle">workflow; standalone doc,</text>
+<text x="500.0" y="243" font-size="16.5" fill="#52514e" text-anchor="middle">references artifacts by path</text>
+<rect x="672" y="30" width="312" height="320" rx="10" fill="#ffffff" stroke="#d03b3b" stroke-width="2"/>
+<text x="828.0" y="76" font-size="24" fill="#d03b3b" text-anchor="middle" font-weight="700">/compact</text>
+<rect x="723.0" y="96" width="210" height="34" rx="17" fill="#d03b3b" stroke="#d03b3b" stroke-width="2"/>
+<text x="828.0" y="118" font-size="15.5" fill="#ffffff" text-anchor="middle" font-weight="600">lossy last resort</text>
+<text x="828.0" y="168" font-size="16.5" fill="#52514e" text-anchor="middle">built-in summary-and-continue;</text>
+<text x="828.0" y="193" font-size="16.5" fill="#52514e" text-anchor="middle">emergency valve at ~180k —</text>
+<text x="828.0" y="218" font-size="16.5" fill="#52514e" text-anchor="middle">prefer clean slice boundaries</text>
+<text x="828.0" y="243" font-size="16.5" fill="#52514e" text-anchor="middle">and fresh sessions</text>
+<text x="500" y="392" font-size="16.5" fill="#898781" text-anchor="middle" font-style="italic">use /session-close by default; reach sideways only when its boundary doesn't cover the move</text>
+</svg>

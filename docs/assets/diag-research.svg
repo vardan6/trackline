@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 300" font-family="'Segoe UI','DejaVu Sans',Helvetica,Arial,sans-serif">
+<defs>
+<marker id="ar-sec" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#52514e"/></marker>
+<marker id="ar-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2a78d6"/></marker>
+<marker id="ar-mut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#898781"/></marker>
+<marker id="ar-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1c5cab"/></marker>
+<marker id="ar-crit" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d03b3b"/></marker>
+</defs>
+<rect x="20" y="30" width="235" height="60" rx="10" fill="#ffffff" stroke="#52514e" stroke-width="2"/>
+<text x="137" y="56" font-size="16.5" fill="#0b0b0b" text-anchor="middle" font-weight="600">voice-chat exploration</text>
+<text x="137" y="77" font-size="13" fill="#898781" text-anchor="middle">e.g. ChatGPT</text>
+<line x1="259" y1="60" x2="294" y2="92" stroke="#52514e" stroke-width="2" marker-end="url(#ar-sec)"/>
+<rect x="20" y="108" width="235" height="60" rx="10" fill="#ffffff" stroke="#52514e" stroke-width="2"/>
+<text x="137" y="134" font-size="16.5" fill="#0b0b0b" text-anchor="middle" font-weight="600">web / AI search</text>
+<text x="137" y="155" font-size="13" fill="#898781" text-anchor="middle">PoC · tech · protocols · limits</text>
+<line x1="259" y1="138" x2="294" y2="104" stroke="#52514e" stroke-width="2" marker-end="url(#ar-sec)"/>
+<rect x="300" y="62" width="210" height="76" rx="10" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="405" y="92" font-size="16" fill="#1c5cab" text-anchor="middle" font-weight="600">read · discuss</text>
+<text x="405" y="114" font-size="16" fill="#1c5cab" text-anchor="middle" font-weight="600">structure · summarize</text>
+<line x1="514" y1="100" x2="556" y2="100" stroke="#2a78d6" stroke-width="2.5" marker-end="url(#ar-blue)"/>
+<rect x="560" y="62" width="210" height="76" rx="10" fill="#2a78d6" stroke="#1c5cab" stroke-width="2"/>
+<text x="665" y="92" font-size="15.5" fill="#ffffff" text-anchor="middle" font-weight="700">docs/research/*.md</text>
+<text x="665" y="116" font-size="13.5" fill="#cde2fb" text-anchor="middle">the distilled document</text>
+<line x1="774" y1="100" x2="816" y2="100" stroke="#2a78d6" stroke-width="2.5" marker-end="url(#ar-blue)"/>
+<rect x="820" y="62" width="160" height="76" rx="10" fill="#ffffff" stroke="#1baf7a" stroke-width="2.5"/>
+<text x="900" y="88" font-size="14.5" fill="#0c7a54" text-anchor="middle" font-weight="600">planning /</text>
+<text x="900" y="106" font-size="14.5" fill="#0c7a54" text-anchor="middle" font-weight="600">implementation</text>
+<text x="900" y="124" font-size="14.5" fill="#0c7a54" text-anchor="middle" font-weight="600">session</text>
+<path d="M137,172 Q500,268 892,146" fill="none" stroke="#d03b3b" stroke-width="2.5" marker-end="url(#ar-crit)" stroke-dasharray="6 5"/>
+<text x="500" y="232" font-size="16.5" fill="#d03b3b" text-anchor="middle" font-weight="600">✗  raw research never enters the session — only the distilled document does</text>
+</svg>
