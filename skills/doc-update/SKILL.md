@@ -33,7 +33,7 @@ Do NOT pre-load all docs.
 ## Steps
 
 1. Read the diff. Identify what genuinely changed in behavior, architecture, contract, or invariant.
-2. Preserve the audience priority: docs should first help coding agents make correct development decisions, and second give humans a coherent project picture.
+2. Write agent-first docs (human readability is the second reader, nearly free): docs should first help coding agents make correct development decisions, and second give humans a coherent project picture.
 3. Preserve one canonical source of truth per fact. Prefer pointers over copied explanations, and update the smallest set of docs that keeps future implementation decisions correct.
 4. Apply the decision table — each row independently:
 
@@ -47,14 +47,11 @@ Do NOT pre-load all docs.
 
 5. Edit existing docs first. Create new only when a durable category has no home.
 6. Reference code paths instead of explaining all implementation details.
-7. Keep status out of requirements and design. If only the phase, blocker, or next step changed, update only `roadmap.md`, `activeContext.md`, or `progress.md`.
-8. Keep `roadmap.md` and `activeContext.md` lean while updating them:
-   - `roadmap.md`: checklist and phase markers only; no narrative progress diary
-   - `activeContext.md`: cheap session-start state only; no repeated history
-9. If code and design/ADR disagree, report the conflict instead of rewriting the standing decision silently.
-10. Confirm `activeContext.md` still names the correct next step. If not, fix that one line.
-11. If no durable docs need updates, say so explicitly. That is a valid outcome.
-12. Print the Output.
+7. Keep status out of requirements and design. If only the phase, blocker, or next step changed, update only `roadmap.md`, `activeContext.md`, or `progress.md` — and keep them lean: `roadmap.md` checklist-first, `activeContext.md` cheap session-start state, no narrative or repeated history.
+8. If code and design/ADR disagree, report the conflict instead of rewriting the standing decision silently.
+9. Confirm `activeContext.md` still names the correct next step. If not, fix that one line.
+10. If no durable docs need updates, say so explicitly. That is a valid outcome.
+11. Print the Output.
 
 ## Output
 

@@ -1,6 +1,6 @@
 ---
 name: cross-review
-description: Cross-model review of implemented work against the documentation by a different provider's strongest model. Hunts bugs, misimplementation, missing items, gaps, and incorrect logic in the diff since the last known-good commit, plus improvements; writes a rated findings table to docs/reviews/. Use for /cross-review or when asked to review implemented work.
+description: Cross-model review of implemented work against the docs by the other provider's strongest model; writes a rated findings table to docs/reviews/. Use for /cross-review or when asked to review implemented work.
 ---
 
 # cross-review

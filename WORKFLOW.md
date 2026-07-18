@@ -393,7 +393,9 @@ bug-fixing step: if testing surfaces a bug you fix it as part of the slice, then
 run `/doc-update` only if that fix changed durable behavior or a contract.
 
 **Comes after.** One or more implemented slices, or applied review fixes — at any
-point in the loop where real change has outrun the docs.
+point in the loop where real change has outrun the docs. This includes ad-hoc
+work outside `/next-slice`: invoke `/doc-update` directly whenever that work
+changes durable behavior, architecture, or a contract.
 
 **Comes before.** `/session-close`. (SESSION-mode `session-close` also runs the
 `doc-update` decision table once, so you do not always call it separately.)
@@ -637,7 +639,8 @@ installable artifacts, not just descriptions of them.
 **Skill shape.** Every canonical skill uses the same six-section skeleton —
 *When to use · Do NOT use when · Inputs (read order) · Steps · Output · Stop
 conditions* — budgeted ~40 lines, hard cap 60. The fixed shape is what makes the
-workflow predictable enough to follow yourself.
+workflow predictable enough to follow yourself. The design criteria behind the
+shape live in [docs/skill-criteria.md](docs/skill-criteria.md).
 
 **`AGENTS.md`.** A ~50-line router symlinked into each project (with `CLAUDE.md →
 AGENTS.md` so both names resolve to it). It answers: where am I, what's the
@@ -713,6 +716,23 @@ is still open.)
 
 After bootstrap: audit MCP servers and disable unused ones; run `/session-open` to
 inspect state, or `/next-slice` to start coding.
+
+**Recommended agent environment.** Install these tools in the environment where
+the coding agent actually runs, which may not be the same as your interactive
+shell:
+
+| Tool | Purpose | Debian or WSL install |
+|---|---|---|
+| `rg` | Fast, Git-aware text search. | `sudo apt install ripgrep` |
+| `fdfind` | Focused file discovery without printing an entire tree. | `sudo apt install fd-find` |
+| `jq` | Select JSON fields; also required by hook installation and runtime parsing. | `sudo apt install jq` |
+| `sg` | Structural code search for larger refactors. | `npm install -g @ast-grep/cli` |
+
+`rg` is the expected default for repository search. The other search tools are
+optional; `jq` is a workflow prerequisite because the installer uses it to
+merge the Claude hook without clobbering existing settings. The hook's exact
+runtime dependency and fallback behavior are owned by
+[hooks/README.md](hooks/README.md#dependencies).
 
 ## 9. Skill names and attribution
 

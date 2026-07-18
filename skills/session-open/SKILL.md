@@ -16,9 +16,7 @@ Recover project state and route to the correct workflow. Do not select an implem
 
 - The user gave a direct task that does not require roadmap state.
 - The user explicitly invoked another applicable skill.
-- Mid-session, picking the next code change → `/next-slice`.
-- After finishing a roadmap step → `/session-close (STEP mode)`.
-- Closing a session for handoff → `/session-close`.
+- Next code change → `/next-slice`; finished step → `/session-close (STEP)`; ending the session → `/session-close`.
 
 ## Inputs (read order, stop early if confident)
 

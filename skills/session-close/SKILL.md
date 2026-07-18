@@ -1,6 +1,6 @@
 ---
 name: session-close
-description: Close a finished step or prepare handoff. Use for /session-close.
+description: Close a step (STEP) or end the session (SESSION) — the only writer of the live state files. Use for /session-close.
 ---
 
 # session-close
@@ -65,7 +65,7 @@ those defaults.
      - loose ends are too detailed for `activeContext.md`, OR
      - mid-phase transfer with non-trivial context that doesn't belong in `activeContext.md`.
    - Keep the handoff tiny by default. It should bridge the next session, not replay the whole one. Prefer pointers to `activeContext.md`, `roadmap.md`, `progress.md`, commits, or exact files over restating large narratives.
-   - If a handoff file is needed, fill the template below.
+   - If a handoff file is needed, fill `HANDOFF-TEMPLATE.md` from this skill's directory.
    - **Planning-capture check:** If `/grill-me`, brainstorm, or research ran this session with no following `/planning-capture`, that planning will die with the conversation — ask whether to run `/planning-capture` first (default yes). `/grill-with-docs` captures inline, so it needs no prompt. Otherwise resolve silently. Gate only; do not capture here.
 
 4. **Commit boundary:** never commit automatically. If the user requested a
@@ -73,43 +73,6 @@ those defaults.
    commit and suggest a message. Do not make committing the next workflow step.
 
 5. Print the Output.
-
-## Handoff template (SESSION mode only, if needed)
-
-```
-# Handoff — <date> <time>
-
-## Where we are
-<current phase + literal next step>
-
-## Changed files
-- <path>: <short reason>
-
-## Implemented
-- <durable outcome, not every edit>
-
-## Open loops
-- <unfinished item; file:line if useful>
-
-## Decisions made
-- <decision + one-line why; promote to ADR if durable>
-
-## Discarded as noise
-- <dead end or failed hypothesis likely to be retried>
-
-## Verification
-- <command>: <result>
-
-## Docs
-- Updated: <docs>
-- Intentionally not updated: <docs and reason>
-
-## Next
-<one atomic step>
-
-## Suggested next skill
-<usually /session-open for orientation or /next-slice for implementation>
-```
 
 ## Output
 

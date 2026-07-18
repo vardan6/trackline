@@ -10,7 +10,6 @@ Turn planning output into durable docs. Classify, route, stop.
 ## When to use
 
 - After `/grill-me`, `/grill-with-docs`, external brainstorm, or research.
-- After `/to-prd` or `/to-issues` if their outputs need further routing.
 - User says: "capture the plan", "save this as requirements", "write this up".
 - User invokes `/planning-capture`.
 
@@ -30,7 +29,7 @@ Turn planning output into durable docs. Classify, route, stop.
 ## Steps
 
 1. Read inputs. Do not load all specs by default.
-2. Preserve the audience priority: docs should first help coding agents make correct development decisions, and second give humans a coherent project picture.
+2. Write agent-first docs (human readability is the second reader, nearly free): docs should first help coding agents make correct development decisions, and second give humans a coherent project picture.
 3. Preserve one canonical source of truth per fact. Prefer pointers over copied explanations, and write the smallest doc update that keeps future implementation decisions correct.
 4. For each non-trivial point in the planning output, classify into exactly one bucket:
    - **Requirement** → agreed finished-project behavior, user expectation, constraint, acceptance criterion, non-goal, overall product picture.
@@ -49,7 +48,7 @@ Turn planning output into durable docs. Classify, route, stop.
    - Mark work **AFK** when it can proceed autonomously and **HITL** when it requires a human decision, review, or approval. Prefer AFK where practical, but do not defer necessary HITL decisions.
    - Keep roadmap items checklist-first. Store requirements and design decisions in their canonical docs rather than duplicating them in roadmap items.
    - Leave exact file-level scope and selection of the next atomic code change to `/next-slice`.
-7. Do NOT store current status in requirements or design. Live state belongs in `activeContext.md`; phase/checklist state in `roadmap.md`; completed cycle history in `progress.md`.
+7. Status routing: live state → `activeContext.md`; phase/checklist → `roadmap.md`; completed history → `progress.md` — never into requirements or design.
 8. Do NOT create an internals or implementation spec.
 9. If a planning decision conflicts with implementation reality or an existing design/ADR, surface the conflict instead of overwriting it silently.
 10. Print the Output.

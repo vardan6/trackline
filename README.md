@@ -1,356 +1,169 @@
-# My AI Coding Workflow
+# Engineer the Workflow, Not Just the Prompt
 
-A practical workflow for long-running projects built with AI coding agents.
+A session-based workflow for building long-running projects with AI coding
+agents — tested on **Claude Code and Codex**, refined against months of real
+work.
 
-It keeps each session focused, breaks implementation into small changes, and
-stores the state needed to continue later. The goal is simple: a new session
-should not need the full history of every earlier conversation.
+## The problem
 
-## Goals
+Vibe-coding works for a day-long task. Once a project runs longer than a
+week — many sessions, several rounds of planning and implementation — two
+problems dominate:
 
-Each problem this workflow solves, in one sentence. The recurring failures of
-long-running AI-assisted coding were context, documentation, and orientation
-problems, and all three turned out to be addressable. The list below is in the
-priority order those pains actually surfaced; the full rationale for every
-goal — each problem, its symptoms, why it happens, and the mechanism that
-answers it, with diagrams — lives in
-[docs/PROBLEMS-AND-SOLUTIONS.md](docs/PROBLEMS-AND-SOLUTIONS.md), and the
-operating procedure in [WORKFLOW.md](WORKFLOW.md).
+1. **The human loses track.** The agent is faster than your understanding:
+   each step looks reasonable, and a week later you discover the medium-level
+   decisions it quietly made. You no longer know what was built or how to
+   proceed — the moment many people quit coding agents.
+2. **The agent leaves its smart zone.** The reliable context zone is far
+   smaller than the advertised window. Past it, the agent misses information
+   already in context, confuses similar files, and spins for an hour burning
+   your usage limits. Context must be managed as a budget.
 
-The framing that holds the rest together:
+Both are amplified by a third: **project knowledge has no reliable home.**
+Every new session re-derives state from scratch, status is buried inside
+design documents, and stale documentation gets trusted completely — the same
+bug was "fixed" four times because a leftover doc kept re-teaching the buggy
+behavior as intended.
 
-**Engineer the workflow, not just the prompt.** Treat the workflow as an
-engineering problem in its own right — specified, pressure-tested, and refined
-against real work — because the workflow matters more than the model.
+None of these are model problems. They need a *defined process* — specified,
+pressure-tested, and refined against real work, like any other engineering
+artifact. The full analysis of all nine failure modes is in
+[docs/PROBLEMS-AND-SOLUTIONS.md](docs/PROBLEMS-AND-SOLUTIONS.md).
 
-The problems, in priority order:
+## The idea
 
-1. **Stay on track — developer awareness and project alignment.** Avoid drifting
-   from the original problem across a months-long build through planning by
-   being challenged
-   ([grill-me](skills/grill-me/SKILL.md))
-   — planning is done not when the agent understands the task but when you can
-   defend it — an always-current roadmap/progress/activeContext trio, and mode
-   discipline (planning, implementing, reviewing, or closing).
-2. **Context is a budget, not a window.** Keep the agent inside its reliable
-   *smart zone* and out of the *dumb zone* by treating context as an absolute
-   token budget rather than a fraction of the advertised window — long-context
-   degradation such as [lost in the middle](https://arxiv.org/abs/2307.03172)
-   (Liu et al.) and [context rot](https://www.trychroma.com/research/context-rot)
-   (Chroma Research) starts well before the window is full, so a lean context is
-   a quality decision first and a cost decision second.
-3. **No documentation drift / single source of truth.** Keep *code as the truth*,
-   drop the internals layer that goes stale, give every fact *one canonical home*,
-   and apply the deletion test — would removing this make a future session decide
-   worse? — so stale duplicated docs never become a second source of truth the
-   agent trusts completely.
-4. **Status separate from knowledge.** Keep current status in small live-state
-   files (`activeContext.md`, `roadmap.md`, `progress.md`) so moving the work
-   forward never means editing requirements or design.
-5. **Session continuity through externalized state.** Let each session open
-   already oriented by reading a few small curated files instead of re-deriving
-   the whole project from history — keeping in mind that save and restore also
-   cost tokens, so the state files stay small and the close stays cheap and
-   routine. When work needs to move between sessions, tools, or models, use a
-   clean handoff: a self-contained packet instead of relying on the live
-   transcript.
-6. **Reusable skills instead of repeated prompts.** Move the prompts you retype
-   every session into named skills that guide the workflow and manage its flow
-   from session-open through session-close.
-7. **Atomic vertical slices.** Implement one small vertical slice at a time so the
-   developer can review and understand each change, and the agent never needs the
-   whole project in working memory.
-8. **Cross-model code review.** Have a second, stronger, and always different
-   model write findings to a Markdown file scoped to the diff since the last
-   known-good commit, let the original agent validate each against the code, and
-   implement only the confirmed ~70–80% (triaged must-fix-now,
-   before-phase-complete, backlog, or invalid).
-9. **Thin instruction files, exact names.** Keep `AGENTS.md` / `CLAUDE.md` as a
-   thin router and name things exactly (page, widget, file, function, path),
-   because everything you load competes for the model's attention. A minimal or
-   even absent file is often best for small, focused tasks, but this workflow
-   deliberately keeps `AGENTS.md` because it is load-bearing — it declares the
-   mode, names the next step, and points at the docs.
-10. **The AI agent is a heavy Git user.** The agent reads history (`git log`,
-    `git diff`) to orient itself — conversation provides reasoning, project files
-    preserve decisions, and Git preserves change. This is a powerful capability
-    worth using deliberately: small, meaningful commits and clean checkpoints give
-    the agent a reliable trail to follow, and that pays off significantly when
-    sessions resume or context needs to be reconstructed.
+Work happens in three **self-contained cycles** — *plan*, *implement*,
+*review* — each run when needed, each ended with `/session-close`, the standard
+close-out step that synchronizes the project's live state. The next session
+opens from a few small state files instead of a long transcript.
 
-## How it works
+These principles carry the design:
 
-The workflow runs as three self-contained cycles — *plan*, *implement*, and
-*review* — each opened with `/session-open` when orientation is needed and ended
-with `/session-close`. You close the plan; later you open and close
-implementation; later you open and close a review. They are separate units of
-work, run when each is needed.
+- **Plan by being challenged.** Planning is done not when the agent understands
+  the task, but when *you* can defend it. A grilling session interrogates the
+  plan branch by branch before any code exists — this is how the human stays
+  on track.
+- **Context is a budget, not a window.** The reliable "smart zone" is an
+  absolute token count — roughly 100k — no matter how large the advertised
+  window is. Close sessions before the agent enters the dumb zone.
+- **Agent-first documentation, fewest possible layers.** Docs exist first for
+  the coding agent; well-structured, human-readable docs come almost for free
+  as the second reader. Requirements say *what*, design and ADRs say *why*,
+  **code says how** — the internals layer that mirrors code is deliberately
+  killed. Fewer layers mean less drift and fewer tokens, and are what makes
+  **one source of truth per fact** actually possible. Stale docs mislead an
+  agent more than no docs, because the agent trusts them completely.
+- **Status isolated from knowledge.** Current state lives in three small live
+  files — `activeContext.md`, `roadmap.md`, `progress.md` — so moving work
+  forward never means editing requirements or design.
+- **Atomic vertical slices, written into the roadmap.** Planning breaks the
+  work into small end-to-end changes — a sliver of UI + service + data,
+  independently verifiable — instead of horizontal layers that only become
+  testable when the UI finally appears.
+- **Skills instead of repeated prompts.** The prompts you retype every session
+  become named slash commands that also manage the flow — and the always-loaded
+  `AGENTS.md` stays a thin router, never an encyclopedia.
+- **The agent is a heavy Git user.** It reads history to orient itself, so
+  small meaningful commits are context boundaries — clean history is fuel, not
+  hygiene.
+- **Cross-model review.** A second model from a *different provider* reviews
+  both the plan and the code against the docs; the original agent validates
+  each finding before anything changes. Two models agreeing is signal.
 
-**Plan** — Research and discussion turn into requirements, design decisions, and
-a roadmap broken into small vertical slices. Use `/grill-me` to build the plan
-by being challenged, or `/grill-with-docs` to additionally challenge it against
-the project's existing docs, then let `/planning-capture` store the result in
-documentation; close the session, then commit the captured plan (a lighter
-model is enough for the commit). Then have the plan reviewed by the other
-provider's strongest model in its own session — the
-same findings-with-risk/effort/value loop as code review, one stage earlier and
-far cheaper — and commit the reviewed plan as a known-good checkpoint.
+The full argument — each failure mode, why it happens, and the mechanism that
+answers it, with diagrams — is in
+[docs/PROBLEMS-AND-SOLUTIONS.md](docs/PROBLEMS-AND-SOLUTIONS.md). The complete
+operating manual is [WORKFLOW.md](WORKFLOW.md).
 
-**Implement** — Work through vertical slices one at a time. Each slice should be
-small — not the smallest possible, but small enough to keep context lean and
-meaningful enough to justify the session overhead of loading and saving state.
-The right balance depends on the model, context size, and the nature of the
-work; good reference numbers are provided in [WORKFLOW.md](WORKFLOW.md).
-Make sure that ADRs are written, `roadmap.md` reflects the current plan, and
-`activeContext.md` is updated on each session close. Continue implementing the
-next slice until the context feels high and is approaching the Warn Zone, then
-close and open fresh. As a softer guide: if context is still light and the next
-slice description is close to what was just worked on — same files, same area —
-continuing is usually fine; if the next slice is clearly different territory,
-closing first is the better call. The Warn Zone is the harder signal to
-respect, but the earlier judgment is a feel that develops with experience and
-varies by model, coding agent, and project.
+## The loop
 
-**Review** — Run a review at the end of a phase, or any time it feels overdue.
-A second model — ideally from a different provider entirely, e.g. Claude
-reviewing Codex output or vice versa — reads the diff since the last known-good
-commit and writes findings. Feed those findings back to the original provider:
-it typically agrees with 70–80% and handles the rest as a priority or detail
-difference. Findings are collected in a table with risk, effort, and value
-columns so each item can be weighed: how much risk it carries, how much effort
-it takes to fix, and what value the fix delivers.
+![Workflow overview](docs/assets/diag-workflow-overview.svg)
 
-Every cycle ends with `/session-close` — the only step that writes the live
-state files (`roadmap.md`, `progress.md`, `activeContext.md`).
+The most-used move is `/next-slice` — in practice the most reliable prompt is
+literally *"find the next slice and implement it."* Take another slice while
+context stays light; close the session as you approach the warn zone. The full
+graph with every node's inputs, checks, and outputs is in
+[WORKFLOW.md §1.1](WORKFLOW.md).
+
+## The context budget
+
+![Fuel gauge](docs/assets/diag-fuel-gauge.svg)
+
+Long-context degradation starts well before the window is full
+([Lost in the Middle](https://arxiv.org/abs/2307.03172),
+[Context Rot](https://www.trychroma.com/research/context-rot)). The thresholds
+are **fixed token amounts** — "12%" on a 1M-window model and "60%" on a 200k
+model are the same ~120k tokens. One rule to remember: **start closing at
+100k, stop coding at 120k.** An optional [Stop hook](hooks/README.md) watches
+the count after every turn and nudges at the right moment — because what must
+happen every time cannot depend on the model remembering.
 
 ## Quick start
-
-### Install into a project
-
-Run the installer from the workflow repository. It is idempotent, so you can
-re-run it any time to reconcile a project to the current layout:
 
 ```sh
 ./install-workflow.sh /path/to/your/project
 ```
 
-This links `AGENTS.md` into the project (and `CLAUDE.md` → `AGENTS.md`, since
-Claude Code reads `CLAUDE.md` while Codex reads `AGENTS.md`), wires the eight
-core skills into `.agents/`, `.claude/`, and `.codex/`, registers the
-context-zone hook for both tools, and scaffolds
-`docs/{requirements,design,adr,reviews,research,archive}/`. Use `-n` to preview,
-`-f` to repair drifted links, and `--with-external` to pin the third-party
-skills per-project instead of relying on user scope.
+Idempotent — re-run any time to reconcile. It links `AGENTS.md` (and
+`CLAUDE.md` → `AGENTS.md`), wires the skills into `.agents/`, `.claude/`, and
+`.codex/`, registers the context-zone hook for both tools, and scaffolds the
+`docs/` tree. Flags: `-n` preview, `-f` repair links, `--with-external` pin
+third-party skills per-project. Git and `jq` are prerequisites; without `jq`,
+the installer leaves the Claude hook unregistered. See the
+[hook dependencies](hooks/README.md#dependencies) for setup details.
 
-This workflow is not specific to Claude Code. It has been tested on **Claude
-Code and Codex** (primary), with **limited testing on OpenCode and Qwen Code** —
-both read `.agents/skills` and the `SKILL.md` standard, so skills wire up there,
-but the context-zone hook has not been exercised on them. The installer links
-the skill definitions to wherever each agent looks for them (`.agents`,
-`.claude`, and `.codex`), so no manual linking is needed.
-
-### Seed a starting point
-
-State files are created on demand — `/session-close` creates `activeContext.md`
-— so the only content you seed by hand is at least one unchecked step in
-`roadmap.md`, giving the agent a concrete starting point:
+Seed one unchecked step in `roadmap.md`:
 
 ```md
 # Roadmap
-
 ## Phase 1 - First useful outcome
-
 - [ ] Describe the first small result to implement.
 ```
 
-Then open the project with your coding agent. Use `/session-open` to inspect
-project state:
+Then open your coding agent and run `/next-slice` — or `/session-open` first if
+you are resuming and need orientation. State files (`activeContext.md`,
+`progress.md`) are created by the workflow as it runs.
 
-```text
-/session-open
-```
+## The skills
 
-The agent reads the current project state, identifies the active mode, and
-names the next workflow action. It does not select an implementation slice
-unless you run `/next-slice`.
+| Skill | Mode | Use it when |
+| --- | --- | --- |
+| `/grill-me` · `/grill-with-docs` | plan | Building the plan by being challenged, question by question. |
+| `/planning-capture` | plan | Writing the agreed plan into durable docs and a vertically sliced roadmap. |
+| `/plan-review` | plan review | Reviewing the captured plan as the other provider's strongest model. |
+| `/next-slice` | implement | Picking the next small, verifiable vertical slice. |
+| `/doc-update` | implement | Syncing durable docs to what actually changed (git diff, decision table). |
+| `/cross-review` | review | Reviewing the diff since the last known-good commit against the docs. |
+| `/review-triage` | review | Validating findings and sorting them by risk, effort, and value. |
+| `/session-open` | any | Recovering orientation on an ambiguous resume. |
+| `/session-close` | any | Ending a step (STEP) or session (SESSION) and synchronizing live state. |
+| `/handoff` | any | Writing a standalone `handoff-*.md` packet for a tool or model that does not know this workflow. |
 
-## A typical session
-
-Suppose the roadmap says the next feature is password reset.
-
-1. Run `/session-open` when resuming without a specific task.
-2. Confirm that implementation is the correct mode and password reset is next.
-3. Run `/next-slice`.
-4. The agent chooses one small vertical slice, such as letting a user submit
-   their email, recording the reset request, and showing a confirmation.
-5. Ask the agent to implement that slice.
-6. Run `/session-close (STEP)` to record the result and select the next step.
-7. Continue with another slice, or run `/session-close` to end the session.
-
-The next session can restart from `activeContext.md` and `roadmap.md` instead of
-reconstructing the project from a long transcript.
-
-The implementation loop in shorthand:
-
-```text
-/session-open when orientation is needed
-    -> /next-slice
-    -> implement and verify
-    -> /session-close (STEP)
-    -> repeat, or /session-close (SESSION) when stopping
-```
-
-If you are resuming and already know what to work on next, you can skip
-`/session-open` and start directly with `/next-slice`.
-
-## Planning larger work
-
-Large features usually need more preparation before entering the implementation
-loop:
-
-```text
-research or discussion
-    -> /grill-me or /grill-with-docs
-    -> /planning-capture
-    -> /session-close, then commit the captured plan   (planning context is high; close before review)
-    -> /plan-review (other provider's strongest model, own session)
-    -> /review-triage -> /session-close, then commit the reviewed plan
-
-implementation loop (new session):
-    -> /next-slice
-    -> implement and verify
-    -> /session-close (STEP)
-    -> repeat
-```
-
-Keep raw research and long conversations outside the implementation session
-when possible. Bring in a concise Markdown summary and the exact files needed
-for the next decision.
-
-## Working outside the loop
-
-Not every change goes through `/next-slice` — sometimes you ask for an ad-hoc
-fix, or a prompt simply falls outside the workflow skills. `/session-close`
-always checks whether documentation needs updating, but you can run
-`/doc-update` directly whenever you know such a change must reach the docs,
-instead of waiting for the close to catch it.
+`grill-me`, `grill-with-docs`, and `handoff` are vendored from
+[Matt Pocock's skills](https://github.com/mattpocock/skills) under MIT — see
+[CREDITS.md](CREDITS.md).
 
 ## Project files
 
-Each file has one job:
-
-| File or directory | Purpose |
-| --- | --- |
-| `AGENTS.md`/`CLAUDE.md` | Routes the agent to the correct workflow and project documents. |
-| `activeContext.md` | Small snapshot of the current state, next step, and blockers. |
-| `roadmap.md` | Checklist of phases and unfinished work. |
-| `progress.md` | Short history of completed steps. |
-| `docs/requirements/` | What the finished project must do. |
-| `docs/design/` | Important implementation decisions and tradeoffs. |
-| `docs/adr/` | Durable decisions that need a recorded rationale. |
-| `docs/research/` | Distilled research summaries that feed planning. |
-| `docs/reviews/` | Cross-model review findings, for plans and for code. |
-| `docs/archive/` | Superseded documents moved out of the active tree, kept for traceability. |
-| `docs/implementation-notes.md` | Rare contracts, invariants, and gotchas that are not obvious from code. |
-| `handoff-*.md` | Optional transfer packet when compact project state is not enough. |
-
-The core documentation rule is:
+Status lives apart from knowledge, so moving work forward never means editing
+requirements. Three small live-state files at the root — `activeContext.md`
+(now + next step), `roadmap.md` (unchecked slices), `progress.md` (done) — and
+durable knowledge under `docs/`: `requirements/`, `design/`, `adr/`,
+`reviews/`, `research/`, `archive/` for superseded documents, plus rare
+`implementation-notes.md`.
 
 > Requirements define what must be true. Design explains why the system has
 > its shape. Code defines how it works.
 
-Current status belongs in `activeContext.md`, `roadmap.md`, and `progress.md`,
-not in requirements or design documents.
+## Going deeper
 
-## Skills
-
-### Core workflow
-
-| Skill | Use it when |
+| Read | For |
 | --- | --- |
-| `/session-open` | Recovering state when resuming without a specific task. |
-| `/planning-capture` | Turning research, brainstorming, or a planning session into durable project documents. |
-| `/plan-review` | Reviewing a captured plan as the second-provider model; findings go to `docs/reviews/`. |
-| `/next-slice` | Choosing the next small implementation change. |
-| `/doc-update` | Checking whether completed work changed requirements, design, ADRs, or durable implementation notes. |
-| `/cross-review` | Reviewing implemented work against the docs as the second-provider model; findings go to `docs/reviews/`. |
-| `/review-triage` | Sorting review findings by what must be fixed now and what can wait. |
-| `/session-close (STEP)` | Finishing one roadmap step while continuing the session. |
-| `/session-close` | Ending the session and leaving compact state for the next one. |
+| [WORKFLOW.md](WORKFLOW.md) | The operating manual — every step, its inputs, outputs, and the workflow graph. |
+| [docs/PROBLEMS-AND-SOLUTIONS.md](docs/PROBLEMS-AND-SOLUTIONS.md) | The why — nine real failure modes and the mechanism answering each. |
+| [AGENTS.md](AGENTS.md) | The thin router template every project links. |
+| [hooks/README.md](hooks/README.md) | Context-zone hook thresholds and setup. |
 
-### Planning and handoff
-
-This repository also vendors three skills by
-[Matt Pocock](https://github.com/mattpocock/skills) under the MIT License:
-
-| Skill | Use it when |
-| --- | --- |
-| `/grill-me` | Building the plan by being challenged through detailed questions. |
-| `/grill-with-docs` | Building the plan while challenging it against the project's existing language and documents. |
-| `/handoff` | Transferring work to another tool or model with a standalone context packet. |
-
-See [CREDITS.md](CREDITS.md) for attribution and license details.
-
-## Optional setup
-
-### Context-zone hook
-
-The optional hook warns the agent when a session is becoming too large. It can
-suggest closing the session or creating a handoff before context quality
-degrades.
-
-One script serves both tools. `install-workflow.sh` wires it up automatically;
-for manual setup or details see [hooks/README.md](hooks/README.md).
-
-### Command-line tools
-
-These tools help agents locate information and keep command output small:
-
-| Tool | Purpose | Debian or WSL install |
-| --- | --- | --- |
-| `rg` | Fast, git-aware text search. | `sudo apt install ripgrep` |
-| `fdfind` | Focused file discovery without printing an entire tree. | `sudo apt install fd-find` |
-| `jq` | Select only the needed fields from JSON output. | `sudo apt install jq` |
-| `sg` | Structural code search for larger refactors. | `npm install -g @ast-grep/cli` |
-
-Install tools in the environment where the agent runs, not only in your
-interactive shell.
-
-### RTK
-
-RTK is an optional command-output proxy. It can reduce noisy shell output
-before that output reaches the model.
-
-RTK is a personal optimization, not a requirement of this workflow. It also
-does not replace the instruction to search first, read narrow ranges, and avoid
-dumping large files or logs.
-
-## Current limitations
-
-- The Git branch, pull-request, and review flow described in
-  [WORKFLOW.md](WORKFLOW.md) §7 stabilized in practice only recently;
-  expect it to keep evolving.
-- Context thresholds are practical guardrails based on repeated use and prior
-  research, not universal guarantees for every task or model.
-- The workflow is strict by design, but each project still needs judgment about
-  what counts as a useful implementation slice.
-
-Active improvements are tracked in this project's own `roadmap.md` (a
-per-project state file, not committed here).
-
-## Repository guide
-
-| Path | What it contains |
-| --- | --- |
-| [WORKFLOW.md](WORKFLOW.md) | Full operating manual: every step, what it solves, and the generic flow. |
-| [docs/PROBLEMS-AND-SOLUTIONS.md](docs/PROBLEMS-AND-SOLUTIONS.md) | The problems behind the workflow and the mechanism answering each, with diagrams. |
-| [AGENTS.md](AGENTS.md) | Router template copied into projects. |
-| [`skills/`](skills/) | Core and vendored skill definitions. |
-| [CREDITS.md](CREDITS.md) | Attribution and license details for vendored skills. |
-| [hooks/README.md](hooks/README.md) | Context hook behavior and installation. |
-| [install-workflow.sh](install-workflow.sh) | Idempotent installer that wires the workflow into a project. |
-| [`docs/archive/`](docs/archive/) | Original problem records and earlier design iterations, retained for traceability. |
-
-For normal use, start with this README and `AGENTS.md`. Read
-`WORKFLOW.md` when you need the complete rationale or want to change the
-workflow itself.
+Honest limitations: the token thresholds are calibrated heuristics, not
+guarantees; slice sizing still takes judgment; and the branch/PR flow is the
+youngest part and will keep evolving.

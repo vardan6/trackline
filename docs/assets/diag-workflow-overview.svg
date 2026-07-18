@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 648" font-family="'Segoe UI','DejaVu Sans',Helvetica,Arial,sans-serif">
+<defs>
+<marker id="ar-sec" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#52514e"/></marker>
+<marker id="ar-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1c5cab"/></marker>
+<marker id="ar-mut" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#898781"/></marker>
+</defs>
+
+<!-- ===== band: PLAN ===== -->
+<rect x="12" y="16" width="976" height="104" rx="12" fill="#f7fafe" stroke="#2a78d6" stroke-width="1.5"/>
+<rect x="24" y="54" width="94" height="32" rx="16" fill="#2a78d6"/>
+<text x="71" y="75" font-size="13.5" fill="#ffffff" text-anchor="middle" font-weight="700">PLAN</text>
+
+<rect x="130" y="38" width="130" height="64" rx="10" fill="#f2f1ee" stroke="#898781" stroke-width="2"/>
+<text x="195" y="64" font-size="14" fill="#52514e" text-anchor="middle" font-weight="700">research summary</text>
+<text x="195" y="84" font-size="12" fill="#898781" text-anchor="middle">distilled markdown</text>
+
+<rect x="288" y="38" width="180" height="64" rx="10" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="378" y="63" font-size="15" fill="#1c5cab" text-anchor="middle" font-weight="700">grill-me · -with-docs</text>
+<text x="378" y="83" font-size="12.5" fill="#52514e" text-anchor="middle">plan by being challenged</text>
+
+<rect x="496" y="38" width="170" height="64" rx="10" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="581" y="63" font-size="15" fill="#1c5cab" text-anchor="middle" font-weight="700">planning-capture</text>
+<text x="581" y="83" font-size="12.5" fill="#52514e" text-anchor="middle">decisions → sliced roadmap</text>
+
+<rect x="692" y="38" width="128" height="64" rx="10" fill="#f1effa" stroke="#4a3aa7" stroke-width="2"/>
+<text x="756" y="63" font-size="15" fill="#4a3aa7" text-anchor="middle" font-weight="700">session-close</text>
+<text x="756" y="83" font-size="12.5" fill="#52514e" text-anchor="middle">write live state</text>
+
+<rect x="846" y="38" width="130" height="64" rx="10" fill="#f2f1ee" stroke="#898781" stroke-width="2"/>
+<text x="911" y="63" font-size="14" fill="#52514e" text-anchor="middle" font-weight="700">commit ✓</text>
+<text x="911" y="83" font-size="12" fill="#898781" text-anchor="middle">captured plan</text>
+
+<line x1="262" y1="70" x2="284" y2="70" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<line x1="470" y1="70" x2="492" y2="70" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<line x1="668" y1="70" x2="688" y2="70" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<line x1="822" y1="70" x2="842" y2="70" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+
+<!-- plan -> plan review -->
+<path d="M911,104 v28 a8,8 0 0 1 -8,8 H228 a8,8 0 0 0 -8,8 v26" fill="none" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<text x="560" y="134" font-size="13" fill="#898781" text-anchor="middle" font-style="italic">fresh session</text>
+
+<!-- ===== band: PLAN REVIEW ===== -->
+<rect x="12" y="160" width="976" height="104" rx="12" fill="#f9f8fd" stroke="#4a3aa7" stroke-width="1.5"/>
+<rect x="24" y="198" width="94" height="32" rx="16" fill="#4a3aa7"/>
+<text x="71" y="219" font-size="11.5" fill="#ffffff" text-anchor="middle" font-weight="700">PLAN REVIEW</text>
+
+<rect x="130" y="182" width="180" height="64" rx="10" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="220" y="207" font-size="15" fill="#1c5cab" text-anchor="middle" font-weight="700">plan-review</text>
+<text x="220" y="227" font-size="12" fill="#52514e" text-anchor="middle">strongest model, other provider</text>
+
+<rect x="340" y="182" width="160" height="64" rx="10" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="420" y="207" font-size="15" fill="#1c5cab" text-anchor="middle" font-weight="700">review-triage</text>
+<text x="420" y="227" font-size="12.5" fill="#52514e" text-anchor="middle">validate every finding</text>
+
+<rect x="530" y="182" width="128" height="64" rx="10" fill="#f1effa" stroke="#4a3aa7" stroke-width="2"/>
+<text x="594" y="207" font-size="15" fill="#4a3aa7" text-anchor="middle" font-weight="700">session-close</text>
+<text x="594" y="227" font-size="12.5" fill="#52514e" text-anchor="middle">write live state</text>
+
+<rect x="688" y="182" width="170" height="64" rx="10" fill="#f2f1ee" stroke="#898781" stroke-width="2"/>
+<text x="773" y="207" font-size="14" fill="#52514e" text-anchor="middle" font-weight="700">commit ✓</text>
+<text x="773" y="227" font-size="12" fill="#898781" text-anchor="middle">known-good checkpoint</text>
+
+<line x1="312" y1="214" x2="336" y2="214" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<line x1="502" y1="214" x2="526" y2="214" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<line x1="660" y1="214" x2="684" y2="214" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+
+<!-- plan review -> implement -->
+<path d="M773,248 v28 a8,8 0 0 1 -8,8 H213 a8,8 0 0 0 -8,8 v26" fill="none" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<text x="500" y="278" font-size="13" fill="#898781" text-anchor="middle" font-style="italic">fresh session — usually straight to the next slice</text>
+
+<!-- ===== band: IMPLEMENT ===== -->
+<rect x="12" y="304" width="976" height="148" rx="12" fill="#f5fcf9" stroke="#1baf7a" stroke-width="1.5"/>
+<rect x="24" y="342" width="94" height="32" rx="16" fill="#1baf7a"/>
+<text x="71" y="363" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="700">IMPLEMENT</text>
+
+<rect x="130" y="326" width="150" height="64" rx="10" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="205" y="351" font-size="15" fill="#1c5cab" text-anchor="middle" font-weight="700">next-slice</text>
+<text x="205" y="371" font-size="12.5" fill="#52514e" text-anchor="middle">pick one vertical slice</text>
+
+<rect x="310" y="326" width="170" height="64" rx="10" fill="#ffffff" stroke="#898781" stroke-width="2"/>
+<text x="395" y="351" font-size="14.5" fill="#0b0b0b" text-anchor="middle" font-weight="700">implement + verify</text>
+<text x="395" y="371" font-size="12.5" fill="#52514e" text-anchor="middle">code · test · inspect</text>
+
+<rect x="510" y="326" width="150" height="64" rx="10" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="585" y="351" font-size="15" fill="#1c5cab" text-anchor="middle" font-weight="700">doc-update</text>
+<text x="585" y="371" font-size="12.5" fill="#52514e" text-anchor="middle">if behavior changed</text>
+
+<rect x="690" y="326" width="160" height="64" rx="10" fill="#f1effa" stroke="#4a3aa7" stroke-width="2"/>
+<text x="770" y="351" font-size="15" fill="#4a3aa7" text-anchor="middle" font-weight="700">session-close</text>
+<text x="770" y="371" font-size="12" fill="#52514e" text-anchor="middle">STEP — or SESSION to stop</text>
+
+<line x1="282" y1="358" x2="306" y2="358" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<line x1="482" y1="358" x2="506" y2="358" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<line x1="662" y1="358" x2="686" y2="358" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+
+<!-- slice loop -->
+<path d="M770,394 Q490,462 213,394" fill="none" stroke="#1c5cab" stroke-width="2.5" marker-end="url(#ar-dark)"/>
+<text x="490" y="442" font-size="13" fill="#1c5cab" text-anchor="middle">× N — take another slice while context stays light</text>
+
+<!-- implement -> review -->
+<path d="M850,358 h86 a8,8 0 0 1 8,8 v92 a8,8 0 0 1 -8,8 H228 a8,8 0 0 0 -8,8 v32" fill="none" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<text x="640" y="461" font-size="13" fill="#898781" text-anchor="middle" font-style="italic">phase done — review before the PR</text>
+
+<!-- ===== band: REVIEW ===== -->
+<rect x="12" y="492" width="976" height="104" rx="12" fill="#fef9f6" stroke="#eb6834" stroke-width="1.5"/>
+<rect x="24" y="530" width="94" height="32" rx="16" fill="#eb6834"/>
+<text x="71" y="551" font-size="13.5" fill="#ffffff" text-anchor="middle" font-weight="700">REVIEW</text>
+
+<rect x="130" y="514" width="180" height="64" rx="10" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="220" y="539" font-size="15" fill="#1c5cab" text-anchor="middle" font-weight="700">cross-review</text>
+<text x="220" y="559" font-size="12" fill="#52514e" text-anchor="middle">other provider reads the diff</text>
+
+<rect x="340" y="514" width="170" height="64" rx="10" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="425" y="539" font-size="15" fill="#1c5cab" text-anchor="middle" font-weight="700">review-triage</text>
+<text x="425" y="559" font-size="12.5" fill="#52514e" text-anchor="middle">validate · sort · fix</text>
+
+<rect x="540" y="514" width="128" height="64" rx="10" fill="#f1effa" stroke="#4a3aa7" stroke-width="2"/>
+<text x="604" y="539" font-size="15" fill="#4a3aa7" text-anchor="middle" font-weight="700">session-close</text>
+<text x="604" y="559" font-size="12.5" fill="#52514e" text-anchor="middle">record the outcome</text>
+
+<rect x="698" y="514" width="160" height="64" rx="10" fill="#f2f1ee" stroke="#898781" stroke-width="2"/>
+<text x="778" y="539" font-size="14" fill="#52514e" text-anchor="middle" font-weight="700">open PR → merge</text>
+<text x="778" y="559" font-size="12" fill="#898781" text-anchor="middle">clean history is fuel</text>
+
+<line x1="312" y1="546" x2="336" y2="546" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<line x1="512" y1="546" x2="536" y2="546" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<line x1="670" y1="546" x2="694" y2="546" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+
+<!-- findings back into slices -->
+<path d="M425,510 Q330,436 219,396" fill="none" stroke="#898781" stroke-width="2" stroke-dasharray="7 6" marker-end="url(#ar-mut)"/>
+<text x="278" y="484" font-size="12.5" fill="#898781" text-anchor="middle" font-style="italic">validated findings → new slices</text>
+
+<!-- caption -->
+<text x="500" y="630" font-size="14" fill="#898781" text-anchor="middle" font-style="italic">blue = skill (slash command) · purple = session-close, the only writer of live state · gray = artifact / checkpoint</text>
+</svg>

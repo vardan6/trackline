@@ -32,10 +32,9 @@ description: Pick the next small implementation slice. Use when the user asks wh
    - all dependencies and required HITL decisions, reviews, or approvals are resolved
    - small enough to finish in one session
    - produces a concrete, reviewable artifact or behavior
-   - tied to a roadmap item
+   - tied to a roadmap item; leaves a clear next step or completes the item
    - low ambiguity
    - easy to verify (test, manual check, or command)
-   - leaves either a clear next step or a completed roadmap item
 4. Prefer autonomous work, then the smallest slice that unblocks roadmap progress.
 5. Print the Output. Wait for user confirmation, then implement.
 6. Code is implementation truth; durable docs are decision truth. Surface conflicts.
