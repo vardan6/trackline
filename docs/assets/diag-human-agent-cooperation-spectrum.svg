@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 610" role="img" aria-labelledby="title desc" font-family="'Segoe UI','DejaVu Sans',Helvetica,Arial,sans-serif">
+  <title id="title">Human–agent cooperation spectrum</title>
+  <desc id="desc">Five software-development modes arranged from direct human execution to delegated system execution, with human responsibility retained throughout and agentic engineering shown as a growing cross-cutting discipline.</desc>
+  <defs>
+    <linearGradient id="axis" x1="0" x2="1">
+      <stop offset="0" stop-color="#2a78d6"/>
+      <stop offset="1" stop-color="#4a3aa7"/>
+    </linearGradient>
+    <linearGradient id="discipline" x1="0" x2="1">
+      <stop offset="0" stop-color="#eaf2fc" stop-opacity=".35"/>
+      <stop offset="1" stop-color="#e8e4fa"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0 0 10 5 0 10z" fill="#4a3aa7"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="610" rx="20" fill="#ffffff"/>
+  <text x="60" y="62" font-size="29" font-weight="700" fill="#171717">Human–agent cooperation in software development</text>
+  <text x="60" y="94" font-size="16" fill="#66645f">A delegation spectrum—not a quality ranking or maturity ladder</text>
+
+  <text x="60" y="145" font-size="14" font-weight="700" fill="#1c5cab">HUMAN-EXECUTED</text>
+  <text x="1140" y="145" font-size="14" font-weight="700" text-anchor="end" fill="#4a3aa7">SYSTEM-EXECUTED</text>
+  <line x1="60" y1="174" x2="1140" y2="174" stroke="url(#axis)" stroke-width="7" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <text x="600" y="148" text-anchor="middle" font-size="14" fill="#66645f">larger scope and longer loops delegated</text>
+
+  <g>
+    <circle cx="100" cy="174" r="11" fill="#2a78d6" stroke="#fff" stroke-width="4"/>
+    <rect x="38" y="207" width="180" height="142" rx="14" fill="#f7fafe" stroke="#2a78d6" stroke-width="2"/>
+    <text x="128" y="240" text-anchor="middle" font-size="18" font-weight="700" fill="#1c5cab">Direct coding</text>
+    <text x="128" y="270" text-anchor="middle" font-size="14" fill="#52514e"><tspan x="128">Human chooses and</tspan><tspan x="128" dy="20">executes each step</tspan></text>
+    <text x="128" y="326" text-anchor="middle" font-size="12.5" fill="#898781">unit: implementation action</text>
+  </g>
+
+  <g>
+    <circle cx="342" cy="174" r="11" fill="#3473cc" stroke="#fff" stroke-width="4"/>
+    <rect x="252" y="207" width="180" height="142" rx="14" fill="#f5f8fd" stroke="#3473cc" stroke-width="2"/>
+    <text x="342" y="240" text-anchor="middle" font-size="18" font-weight="700" fill="#245fae">AI-assisted coding</text>
+    <text x="342" y="270" text-anchor="middle" font-size="14" fill="#52514e"><tspan x="342">Human directs;</tspan><tspan x="342" dy="20">AI suggests or edits</tspan></text>
+    <text x="342" y="326" text-anchor="middle" font-size="12.5" fill="#898781">unit: suggestion or edit</text>
+  </g>
+
+  <g>
+    <circle cx="570" cy="174" r="11" fill="#3b65c1" stroke="#fff" stroke-width="4"/>
+    <rect x="480" y="207" width="180" height="142" rx="14" fill="#f4f5fb" stroke="#3b65c1" stroke-width="2"/>
+    <text x="570" y="240" text-anchor="middle" font-size="18" font-weight="700" fill="#3152a3">Vibe coding</text>
+    <text x="570" y="270" text-anchor="middle" font-size="14" fill="#52514e"><tspan x="570">Human describes and</tspan><tspan x="570" dy="20">steers by behavior</tspan></text>
+    <text x="570" y="326" text-anchor="middle" font-size="12.5" fill="#898781">unit: visible outcome</text>
+  </g>
+
+  <g>
+    <circle cx="798" cy="174" r="11" fill="#4356b5" stroke="#fff" stroke-width="4"/>
+    <rect x="708" y="207" width="180" height="142" rx="14" fill="#f3f2fa" stroke="#4356b5" stroke-width="2"/>
+    <text x="798" y="240" text-anchor="middle" font-size="18" font-weight="700" fill="#3a469d">Agentic coding</text>
+    <text x="798" y="270" text-anchor="middle" font-size="14" fill="#52514e"><tspan x="798">Agent plans, acts, tests,</tspan><tspan x="798" dy="20">and iterates on a goal</tspan></text>
+    <text x="798" y="326" text-anchor="middle" font-size="12.5" fill="#898781">unit: bounded task</text>
+  </g>
+
+  <g>
+    <circle cx="1040" cy="174" r="11" fill="#4a3aa7" stroke="#fff" stroke-width="4"/>
+    <rect x="922" y="207" width="236" height="142" rx="14" fill="#f1effa" stroke="#4a3aa7" stroke-width="2"/>
+    <text x="1040" y="240" text-anchor="middle" font-size="18" font-weight="700" fill="#4a3aa7">Agentic system operation</text>
+    <text x="1040" y="270" text-anchor="middle" font-size="14" fill="#52514e"><tspan x="1040">System runs longer or</tspan><tspan x="1040" dy="20">coordinated workflows</tspan></text>
+    <text x="1040" y="326" text-anchor="middle" font-size="12.5" fill="#898781">unit: bounded workflow</text>
+  </g>
+
+  <path d="M38 396 H1158 V472 H38 Z" fill="url(#discipline)" stroke="#8c82c7" stroke-width="1.5"/>
+  <path d="M38 472 L1158 472" stroke="#4a3aa7" stroke-width="5"/>
+  <text x="62" y="426" font-size="17" font-weight="700" fill="#4a3aa7">Agentic engineering</text>
+  <text x="62" y="453" font-size="14" fill="#52514e">The cross-cutting discipline around delegation: context · constraints · permissions · evaluation · observability · recovery</text>
+  <text x="1134" y="426" text-anchor="end" font-size="13.5" font-weight="700" fill="#4a3aa7">more delegation → stronger engineering controls</text>
+
+  <rect x="38" y="508" width="1120" height="62" rx="12" fill="#f5fcf9" stroke="#1baf7a" stroke-width="1.5"/>
+  <text x="62" y="535" font-size="14" font-weight="700" fill="#14835e">HUMAN RESPONSIBILITY REMAINS</text>
+  <text x="62" y="557" font-size="14" fill="#52514e">author → editor → director → supervisor → system designer and governor</text>
+  <text x="1134" y="548" text-anchor="end" font-size="13" fill="#66645f">authority may be delegated; accountability is not</text>
+</svg>

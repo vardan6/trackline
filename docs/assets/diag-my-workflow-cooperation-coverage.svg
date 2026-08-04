@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc" font-family="'Segoe UI','DejaVu Sans',Helvetica,Arial,sans-serif">
+  <title id="title">my-workflow on the human–agent cooperation spectrum</title>
+  <desc id="desc">A gradual line from direct coding through AI-assisted coding, vibe coding, and agentic coding to agentic system operation. my-workflow is marked at agentic coding because agents execute bounded coding loops, while humans still initiate and govern the wider workflow.</desc>
+  <defs>
+    <linearGradient id="spectrum" x1="0" x2="1">
+      <stop offset="0" stop-color="#2a78d6"/>
+      <stop offset="0.52" stop-color="#5e64c7"/>
+      <stop offset="1" stop-color="#8b3fa7"/>
+    </linearGradient>
+    <filter id="soft-shadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#3a2b73" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="520" fill="#ffffff"/>
+
+  <text x="60" y="58" font-size="29" font-weight="700" fill="#171717">Where my-workflow sits today</text>
+  <text x="60" y="89" font-size="16" fill="#66645f">A spectrum of delegated execution—not a ranking of quality</text>
+
+  <text x="60" y="142" font-size="13" font-weight="700" fill="#1c5cab">MORE HUMAN-EXECUTED</text>
+  <text x="1140" y="142" font-size="13" font-weight="700" text-anchor="end" fill="#7b3197">MORE SYSTEM-EXECUTED</text>
+
+  <line x1="75" y1="190" x2="1125" y2="190" stroke="url(#spectrum)" stroke-width="8" stroke-linecap="round"/>
+  <path d="M75 178 L55 190 L75 202" fill="none" stroke="#2a78d6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M1125 178 L1145 190 L1125 202" fill="none" stroke="#8b3fa7" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <g text-anchor="middle">
+    <circle cx="110" cy="190" r="9" fill="#2a78d6" stroke="#fff" stroke-width="4"/>
+    <text x="110" y="232" font-size="16" font-weight="700" fill="#1c5cab">Direct coding</text>
+    <text x="110" y="254" font-size="12.5" fill="#77746f">human writes</text>
+
+    <circle cx="345" cy="190" r="9" fill="#466fcf" stroke="#fff" stroke-width="4"/>
+    <text x="345" y="232" font-size="16" font-weight="700" fill="#3457aa">AI-assisted coding</text>
+    <text x="345" y="254" font-size="12.5" fill="#77746f">AI suggests</text>
+
+    <circle cx="575" cy="190" r="9" fill="#6260c3" stroke="#fff" stroke-width="4"/>
+    <text x="575" y="232" font-size="16" font-weight="700" fill="#514ead">Vibe coding</text>
+    <text x="575" y="254" font-size="12.5" fill="#77746f">human steers outcomes</text>
+
+    <circle cx="810" cy="190" r="24" fill="#fff" stroke="#4a3aa7" stroke-width="5" filter="url(#soft-shadow)"/>
+    <circle cx="810" cy="190" r="11" fill="#4a3aa7"/>
+    <path d="M810 160 V126" stroke="#4a3aa7" stroke-width="3"/>
+    <rect x="714" y="99" width="192" height="34" rx="17" fill="#4a3aa7"/>
+    <text x="810" y="122" font-size="14" font-weight="700" fill="#fff">MY WORKFLOW IS HERE</text>
+    <text x="810" y="232" font-size="17" font-weight="700" fill="#4a3aa7">Agentic coding</text>
+    <text x="810" y="254" font-size="12.5" fill="#77746f">agent executes a bounded task</text>
+
+    <circle cx="1065" cy="190" r="9" fill="#8b3fa7" stroke="#fff" stroke-width="4"/>
+    <text x="1065" y="232" font-size="16" font-weight="700" fill="#7b3197">Agentic system</text>
+    <text x="1065" y="252" font-size="16" font-weight="700" fill="#7b3197">operation</text>
+    <text x="1065" y="274" font-size="12.5" fill="#77746f">system runs the workflow</text>
+  </g>
+
+  <path d="M760 302 C690 292 636 289 591 278" fill="none" stroke="#2a78d6" stroke-width="2"/>
+  <circle cx="591" cy="278" r="4" fill="#2a78d6"/>
+  <text x="760" y="320" font-size="14" font-weight="700" text-anchor="middle" fill="#1c5cab">Why it is beyond vibe coding</text>
+  <text x="760" y="346" font-size="13.5" text-anchor="middle" fill="#52514e">The agent plans, edits, runs tools, tests, diagnoses, and iterates</text>
+  <text x="760" y="367" font-size="13.5" text-anchor="middle" fill="#52514e">inside a confirmed vertical slice—with durable state and review evidence.</text>
+
+  <path d="M905 302 C955 291 1001 288 1049 278" fill="none" stroke="#8b3fa7" stroke-width="2"/>
+  <circle cx="1049" cy="278" r="4" fill="#8b3fa7"/>
+  <text x="955" y="407" font-size="14" font-weight="700" text-anchor="middle" fill="#7b3197">Why it is not further right</text>
+  <text x="955" y="433" font-size="13.5" text-anchor="middle" fill="#52514e">Humans still start each cycle, confirm scope, triage findings,</text>
+  <text x="955" y="454" font-size="13.5" text-anchor="middle" fill="#52514e">authorize commits, and coordinate agents and sessions.</text>
+
+  <text x="60" y="490" font-size="13.5" font-weight="700" fill="#14835e">POSITION: HUMAN-GOVERNED AGENTIC CODING</text>
+  <text x="1140" y="490" font-size="13" text-anchor="end" fill="#77746f">authority is delegated inside the task; lifecycle control stays human</text>
+</svg>
