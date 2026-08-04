@@ -1,11 +1,15 @@
-# Problems and Solutions
+# Why — Problems and Solutions
 
 > Why this workflow exists: the real failure modes of long-running AI-assisted
-> coding, what causes each one, and the mechanism in this repository that
-> answers it. This is lived experience refined over months of real projects —
-> numbers are personal operating heuristics consistent with published research,
-> never measured constants. The raw documents this was distilled from are
-> preserved in [archive/](archive/).
+> coding, what causes each one, and the mechanism that answers it. This is
+> lived experience refined over months of real projects — numbers are personal
+> operating heuristics consistent with published research, never measured
+> constants. The raw documents this was distilled from are preserved in
+> [docs/archive/](docs/archive/).
+>
+> This document is the *why*. The procedure — every step, its inputs, checks,
+> and outputs — is [WORKFLOW.md](WORKFLOW.md), and each section below links
+> into it rather than restating it.
 
 **The framing that holds everything together: engineer the workflow, not just
 the prompt.** After several months of AI-assisted development, most problems
@@ -18,7 +22,7 @@ specified, pressure-tested, and refined against real work.
 
 ## The shape of the problem
 
-![The shape of the problem](assets/diag-problem-shape.svg)
+![The shape of the problem](docs/assets/diag-problem-shape.svg)
 
 A months-long project has many sessions, changing plans, growing docs, piling
 reviews — and no single conversation that holds it all. Three real stories show
@@ -56,7 +60,7 @@ agent quietly made.
 
 ## The problem map
 
-![Problem map](assets/diag-problem-map.svg)
+![Problem map](docs/assets/diag-problem-map.svg)
 
 Nine problems, in the priority order the pain actually surfaced. Each section
 below states the problem, why it happens, the solution, and the exact mechanism
@@ -82,19 +86,19 @@ roadmap / progress / activeContext trio, and enforce mode discipline so both
 sides always know whether the work is research, planning, plan review,
 implementation, or code review.
 
-**In this workflow.** [`/grill-me`](../skills/grill-me/SKILL.md) and
-[`/grill-with-docs`](../skills/grill-with-docs/SKILL.md) run the interrogation
+**In this workflow.** [`/grill-me`](skills/grill-me/SKILL.md) and
+[`/grill-with-docs`](skills/grill-with-docs/SKILL.md) run the interrogation
 (the `-with-docs` variant additionally challenges the plan against the
 project's existing documents and domain language);
-[`/planning-capture`](../skills/planning-capture/SKILL.md) — the most
+[`/planning-capture`](skills/planning-capture/SKILL.md) — the most
 human-in-the-loop step of the whole workflow, which is exactly why the
 strongest available model belongs here — distributes the results into
 requirements, design, ADRs, roadmap, and active context. Planning consumes few
 tokens compared to implementation but has the highest leverage.
 
-![Plan review](assets/diag-plan-review.svg)
+![Plan review](docs/assets/diag-plan-review.svg)
 
-Before implementation starts, [`/plan-review`](../skills/plan-review/SKILL.md)
+Before implementation starts, [`/plan-review`](skills/plan-review/SKILL.md)
 has the *other provider's* strongest model review the captured plan — the same
 findings loop as code review, one stage earlier and far cheaper: a flaw caught
 in the plan costs an edit; caught in code it costs a re-implementation. Then
@@ -109,7 +113,7 @@ is much smaller. Past it, the agent misses information already in context,
 loses the goal, confuses similar files, hallucinates, makes unnecessary
 changes, and spins for 20–60 minutes without solving the problem.
 
-![Fuel gauge](assets/diag-fuel-gauge.svg)
+![Fuel gauge](docs/assets/diag-fuel-gauge.svg)
 
 **Why it happens.** Degradation starts well before the window is full — *Lost
 in the Middle* (Liu et al.) shows retrieval depends on position; *Context Rot*
@@ -121,14 +125,15 @@ thresholds with a model-dependent transition band, not one cliff — and they ar
 window does not move the cliff; it just makes the same cliff look like a
 smaller percentage.
 
-![Same tokens, different dials](assets/diag-dials.svg)
+![Same tokens, different dials](docs/assets/diag-dials.svg)
 
-"46%" on a ~258k effective window, "12%" on a 1M model, and "60%" on a 200k
-model all mean the same ~120k tokens. On a 1M-window model this workflow closes
-sessions around 10% of advertised capacity and stops new code by 12% —
-wasteful on paper, reliably smarter in practice.
+The same token count therefore reads as a different percentage on every product
+surface, which is why a status-line percentage is a readout and never a target.
+On a 1M-window model this workflow closes sessions at around a tenth of the
+advertised capacity — wasteful on paper, reliably smarter in practice. The
+exact thresholds live in [WORKFLOW.md §6](WORKFLOW.md).
 
-![Context is a multiplier](assets/diag-context-multiplier.svg)
+![Context is a multiplier](docs/assets/diag-context-multiplier.svg)
 
 There is also a mechanical cost: on every iteration of the agentic loop the
 entire context is re-sent to the model, so input-token consumption scales
@@ -138,15 +143,16 @@ of the base input price — but the model still *attends* to every loaded token
 on every call. That is why lean context is a **quality lever first and a cost
 lever second**.
 
-**The solution.** Treat context as a budget. Operational guardrails derived
-from the evidence: finish the current slice around ~80k, close the session
-after the current step around ~100k, stop starting new code around ~120k.
+**The solution.** Treat context as a budget: a fixed number of tokens to spend
+per session, with the close scheduled before quality drops rather than after
+you notice that it has.
 
-**In this workflow.** The [context-zone hook](../hooks/README.md) watches token
-usage after every turn and nudges at fixed token amounts — the same absolute
-thresholds regardless of which model's window is active:
+**In this workflow.** The [context-zone hook](hooks/README.md) watches token
+usage after every turn and nudges at those fixed amounts, whatever the active
+model's window — because what must happen every time cannot depend on the model
+remembering:
 
-![Hook thresholds](assets/diag-hook-thresholds.svg)
+![Hook thresholds](docs/assets/diag-hook-thresholds.svg)
 
 ## 3. Documentation with one source of truth
 
@@ -181,7 +187,7 @@ researching what to write down at all:
 5. **The always-loaded router gets the strictest budget.** `AGENTS.md` /
    `CLAUDE.md` is loaded every session, so every line must earn its keep.
 
-![Layer model](assets/diag-layer-model.svg)
+![Layer model](docs/assets/diag-layer-model.svg)
 
 Applying the criteria killed the third layer: requirements = *what*;
 design/ADRs = *why*; **code and tests = the executable truth for *how***;
@@ -191,8 +197,8 @@ this make a future session decide worse?* If not, delete it.
 
 **In this workflow.** The docs tree (`docs/requirements/`, `docs/design/`,
 `docs/adr/`, `docs/implementation-notes.md`) with
-[`/doc-update`](../skills/doc-update/SKILL.md) as the sync mechanism and
-[`/session-close`](../skills/session-close/SKILL.md) as the safety net that
+[`/doc-update`](skills/doc-update/SKILL.md) as the sync mechanism and
+[`/session-close`](skills/session-close/SKILL.md) as the safety net that
 re-checks the doc-update decision once per close.
 
 ## 4. Session continuity — externalized state, status separate from knowledge
@@ -204,27 +210,24 @@ you rarely know which step is the last — so handoff timing could never be
 planned. And when status lived inside requirements or design documents, moving
 work forward meant editing four documents.
 
-**The solution.** Externalize state into three small live-state files —
-`activeContext.md` (now + next step + blockers), `roadmap.md` (phases,
-unfinished work), `progress.md` (short history of finished work) — and keep
-status *out* of the knowledge documents entirely. A session boundary becomes
+**The solution.** Externalize state into a few small live-state files, and keep
+status *out* of the knowledge documents entirely, so a session boundary becomes
 *a deliberate reset with durable continuity, not a loss of project knowledge*.
 Two cautions from practice: save and restore also cost tokens, so the state
 files must stay small; and the close must be cheap and routine, or an
 unpredictable session end will make you skip it and lose the thread.
 
-![Session lifecycle](assets/diag-lifecycle.svg)
+![Session lifecycle](docs/assets/diag-lifecycle.svg)
 
-**In this workflow.** The workflow is not one long pipeline — it is a small set
-of self-contained cycles (plan, implement, review), each run when needed and
-each ended with [`/session-close`](../skills/session-close/SKILL.md), the only
-writer of the state files. [`/session-open`](../skills/session-open/SKILL.md)
-opens the next session already oriented. The close also records blockers, open
-questions, and **discarded dead ends** — the most commonly omitted part of a
-handoff, and one of the most valuable, because the next session never
-re-litigates a path that already failed.
+**In this workflow.** [`/session-close`](skills/session-close/SKILL.md) is the
+only writer of the state files and [`/session-open`](skills/session-open/SKILL.md)
+opens the next session already oriented — the file-by-file contract is
+[WORKFLOW.md §4](WORKFLOW.md). The close also records blockers, open questions,
+and **discarded dead ends** — the most commonly omitted part of a handoff, and
+one of the most valuable, because the next session never re-litigates a path
+that already failed.
 
-![Compaction vs session-close vs handoff](assets/diag-compaction-vs.svg)
+![Compaction vs session-close vs handoff](docs/assets/diag-compaction-vs.svg)
 
 When context climbs, there are three exits, and the choice is directional, not
 neutral: **`/session-close` is the normal answer** — preserve durable state and
@@ -246,7 +249,7 @@ the flow* — what comes first, what's next, how a session properly ends. Skills
 are not macros; they are the workflow's guidance system, and they enforce
 **mode discipline**: at any moment the work is in exactly one stage.
 
-![Skill map](assets/diag-skill-map.svg)
+![Skill map](docs/assets/diag-skill-map.svg)
 
 **In this workflow.** Five stages in typical order — **research · planning ·
 plan review · implementation · code review** — run inside the three
@@ -256,7 +259,7 @@ self-contained cycles (plan, implement, review), each cycle opened by
 exploration are distilled into `docs/research/*.md`, and raw research never
 enters an implementation session.
 
-![Research flow](assets/diag-research.svg)
+![Research flow](docs/assets/diag-research.svg)
 
 Planning holds `grill-me` /
 `grill-with-docs` / `planning-capture`; plan review holds `plan-review`;
@@ -281,17 +284,18 @@ so the economics must be honest. The lived numbers: implementing one slice
 typically moves context from ~10–15% to ~20–30% (200k-era readout), very rarely
 toward 40% — which is why two, three, even four slices per session are normal.
 
-**In this workflow.** [`/next-slice`](../skills/next-slice/SKILL.md) chooses
+**In this workflow.** [`/next-slice`](skills/next-slice/SKILL.md) chooses
 the slice; the loop is `next-slice → implement and verify →
-session-close (STEP)`, repeated until context approaches the Warn Zone.
+session-close (STEP)`, repeated until context approaches the Warn Zone, with a
+commit whenever the state reached is one worth returning to (§9).
 
-![When to close](assets/diag-when-to-close.svg)
+![When to close](docs/assets/diag-when-to-close.svg)
 
 When to close is a feel plus a hard signal: if the next slice is clearly
 different territory, close first; the Warn Zone (~100k tokens) is the signal
 to respect regardless.
 
-![Parallel slice threads](assets/diag-parallel-threads.svg)
+![Parallel slice threads](docs/assets/diag-parallel-threads.svg)
 
 The newest experiment — not yet canonical — extends the discipline: plan a
 first wave of prerequisites, then up to three independent, conflict-free
@@ -304,7 +308,7 @@ dependencies or conflicts between them.
 work — and a structured way was needed to review it (and to use leftover
 usage-window budget productively).
 
-![Cross-model review](assets/diag-cross-review.svg)
+![Cross-model review](docs/assets/diag-cross-review.svg)
 
 **The solution.** A second, stronger, always *different-provider* model (Claude
 reviews Codex output, or vice versa) reads the diff since the last known-good
@@ -319,9 +323,9 @@ invalid. Two independent models usually agree on the important findings, and
 that agreement is signal. The review discussion itself is disposable; only
 validated findings and the resulting changes are kept.
 
-**In this workflow.** [`/cross-review`](../skills/cross-review/SKILL.md) on the
+**In this workflow.** [`/cross-review`](skills/cross-review/SKILL.md) on the
 reviewer side writes findings to `docs/reviews/`;
-[`/review-triage`](../skills/review-triage/SKILL.md) on the original agent's
+[`/review-triage`](skills/review-triage/SKILL.md) on the original agent's
 side validates and sorts them; accepted findings fold into `roadmap.md` and get
 implemented as ordinary slices.
 
@@ -341,7 +345,7 @@ line: could this live in a skill with the same decision quality? If yes, move
 it. In prompts, use exact names — file, function, page, widget, path — so the
 agent fetches the right context itself; that is what lets the context stay
 thin. For small focused tasks a minimal or even absent instruction file often
-works better; this workflow's [`AGENTS.md`](../AGENTS.md) is the deliberate
+works better; this workflow's [`AGENTS.md`](AGENTS.md) is the deliberate
 exception because it is load-bearing — it declares the mode, names the next
 step, and points at the docs.
 
@@ -353,7 +357,7 @@ diff against the last commit — you think it reviewed everything while it
 reviewed one slice. A messy history of "wip" and "fix" also removes a signal
 the agent actively uses to orient itself.
 
-![Commit timeline](assets/diag-commit-timeline.svg)
+![Commit timeline](docs/assets/diag-commit-timeline.svg)
 
 **The solution.** The agent reads history — `git log`, `git diff`,
 `git blame` — to understand what changed and why: conversation provides
@@ -362,14 +366,14 @@ working states a few times a day, with one agent-aware consideration on top of
 the usual criteria: the agent reads diffs to make assumptions and load context,
 so **commit boundaries are also context boundaries**.
 
-![Branch and PR flow](assets/diag-branch-pr.svg)
+![Branch and PR flow](docs/assets/diag-branch-pr.svg)
 
-**In this workflow.** As practiced now: when work switches to a larger topic,
-create a branch → implement and commit several times → before the PR, run the
-cross-model review (typically ~10 findings, half of them critical or important,
-usually all the validated ones implemented via a review-items roadmap) → PR → merge. The plan
-review's "then commit" checkpoint and the code review's "diff since last
-known-good commit" scope both stand on this discipline.
+**In this workflow.** Every cycle ends with a commit stage, and the code
+review's "diff since the last known-good commit" scope stands entirely on that
+discipline. But the commits are the one part of the workflow no skill performs:
+each stage is a checkpoint you take, batch, or skip, and only the one before
+the PR is binding. The branch and pull-request flow as practiced is
+[WORKFLOW.md §7](WORKFLOW.md).
 
 ## Not solved — and the automation that guards the discipline
 
@@ -381,7 +385,7 @@ documentation* — a documentation-drift confession from the workflow that
 preaches against drift — reconciled in July 2026, the same day the practiced
 but skill-less review steps became `/plan-review` and `/cross-review`.
 
-![Soft-solved problems](assets/diag-soft-solved.svg)
+![Soft-solved problems](docs/assets/diag-soft-solved.svg)
 
 Several problems are only **"soft solved"**: they stay solved only while the
 discipline is followed. Skip session-close twice and the state files silently
@@ -390,16 +394,16 @@ discipline: instructions and skills are suggestions the model may or may not
 follow; **hooks always run** — the only layer of the customization surface with
 a guarantee.
 
-![Hooks](assets/diag-hooks.svg)
+![Hooks](docs/assets/diag-hooks.svg)
 
-The [context-zone hook](../hooks/README.md) warns as the session approaches the
+The [context-zone hook](hooks/README.md) warns as the session approaches the
 dumb zone; `/session-close` is the single choke-point that writes state; the
-idempotent [installer](../install-workflow.sh) wires skills and hooks so a
+idempotent [installer](install-workflow.sh) wires skills and hooks so a
 project cannot be half-configured — the same skills and the same single hook
 script run on both Claude Code and Codex, one canonical copy symlinked
 everywhere, no per-tool forks.
 
-![Installer](assets/diag-installer.svg)
+![Installer](docs/assets/diag-installer.svg)
 
 *What must happen every time cannot depend on the model remembering.*
 
@@ -407,6 +411,6 @@ everywhere, no per-tool forks.
 
 This is the distilled, current form of material that accumulated over months:
 the original pain-point record, raw workflow-design conversations, and
-supplementary notes are preserved verbatim in [archive/](archive/). The
+supplementary notes are preserved verbatim in [archive/](docs/archive/). The
 operating manual — every step in detail — is
-[WORKFLOW.md](../WORKFLOW.md).
+[WORKFLOW.md](WORKFLOW.md).

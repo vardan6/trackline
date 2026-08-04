@@ -27,8 +27,7 @@ behavior as intended.
 
 None of these are model problems. They need a *defined process* — specified,
 pressure-tested, and refined against real work, like any other engineering
-artifact. The full analysis of all nine failure modes is in
-[docs/PROBLEMS-AND-SOLUTIONS.md](docs/PROBLEMS-AND-SOLUTIONS.md).
+artifact. The full analysis of all nine failure modes is in [WHY.md](WHY.md).
 
 ## The idea
 
@@ -71,9 +70,8 @@ These principles carry the design:
   each finding before anything changes. Two models agreeing is signal.
 
 The full argument — each failure mode, why it happens, and the mechanism that
-answers it, with diagrams — is in
-[docs/PROBLEMS-AND-SOLUTIONS.md](docs/PROBLEMS-AND-SOLUTIONS.md). The complete
-operating manual is [WORKFLOW.md](WORKFLOW.md).
+answers it, with diagrams — is in [WHY.md](WHY.md). The complete operating
+manual is [WORKFLOW.md](WORKFLOW.md).
 
 ## The loop
 
@@ -84,6 +82,11 @@ literally *"find the next slice and implement it."* Take another slice while
 context stays light; close the session as you approach the warn zone. The full
 graph with every node's inputs, checks, and outputs is in
 [WORKFLOW.md §1.1](WORKFLOW.md).
+
+Every band ends in a commit, and every commit is yours — the skills do not
+commit. Checkpoint when the state is worth returning to, batch several slices
+into one, or skip it. Only the last one is binding: the branch has to be
+committed before the PR, and splitting it into reviewable commits is your job.
 
 ## The context budget
 
@@ -160,7 +163,7 @@ durable knowledge under `docs/`: `requirements/`, `design/`, `adr/`,
 | Read | For |
 | --- | --- |
 | [WORKFLOW.md](WORKFLOW.md) | The operating manual — every step, its inputs, outputs, and the workflow graph. |
-| [docs/PROBLEMS-AND-SOLUTIONS.md](docs/PROBLEMS-AND-SOLUTIONS.md) | The why — nine real failure modes and the mechanism answering each. |
+| [WHY.md](WHY.md) | The why — nine real failure modes and the mechanism answering each. |
 | [AGENTS.md](AGENTS.md) | The thin router template every project links. |
 | [hooks/README.md](hooks/README.md) | Context-zone hook thresholds and setup. |
 
