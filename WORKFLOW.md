@@ -8,7 +8,9 @@
 >
 > Read the README first. Read this when you want the complete operating model or
 > want to change the workflow itself. The rationale behind each problem lives in
-> [docs/PROBLEMS-AND-SOLUTIONS.md](docs/PROBLEMS-AND-SOLUTIONS.md); this document is the procedure.
+> [WHY.md](WHY.md); this document is the procedure. Every number, table, and
+> file contract has its home here — WHY.md links to them instead of repeating
+> them, and this document links back for the reasoning instead of re-arguing it.
 
 ---
 
@@ -178,29 +180,24 @@ second copy.
 ## 2. Operating principles
 
 Five ideas justify the steps. They are summarized here and argued in full in
-[docs/PROBLEMS-AND-SOLUTIONS.md](docs/PROBLEMS-AND-SOLUTIONS.md) and the README's Goals.
+[WHY.md](WHY.md) and the README's Goals.
 
 - **Engineer the workflow, not just the prompt.** The workflow is a specified,
-  pressure-tested artifact, refined against real work — it matters more than the
-  model.
+  pressure-tested artifact — it matters more than the model.
 - **Context is a budget, not a window.** The reliable **smart zone** is an
-  absolute token count, not a fraction of the advertised window; past it lies
-  the **dumb zone**, where the agent misses information already in context,
-  confuses files, and spins. Avoiding the dumb zone is the reason the
-  session-close / session-open loop exists at all. Context size is also a
-  token-usage multiplier: every iteration of the agentic loop re-sends the
-  loaded context, so a lean context is cheaper as well as smarter — while a few
-  slices that share the same context can still run in one session. See §6 for
-  the thresholds.
+  absolute token count; past it lies the **dumb zone**, and avoiding it is the
+  reason the session-close / session-open loop exists at all. Thresholds in §6,
+  evidence in [WHY §2](WHY.md).
 - **Code is the truth; one canonical home per fact.** Re-derive *how* from the
-  code. Never write an internals spec that mirrors code, and never duplicate a
-  fact across docs. Apply the deletion test: if removing a line would not make a
-  future session decide worse, delete it.
+  code, never duplicate a fact across docs, and apply the deletion test: if
+  removing a line would not make a future session decide worse, delete it. The
+  layer model that follows from this is in [WHY §3](WHY.md); the tree it
+  produces is §4.
 - **Mode discipline.** At any moment the work is in exactly one mode — planning,
-  implementing, reviewing, or closing — and each skill belongs to one mode.
+  implementing, reviewing, or closing — and each skill belongs to one mode (§5).
 - **Atomic vertical slices.** Implement one small, end-to-end, independently
   verifiable change at a time, so the agent never needs the whole project in
-  working memory.
+  working memory ([WHY §6](WHY.md)).
 
 ## 3. The steps in detail
 
