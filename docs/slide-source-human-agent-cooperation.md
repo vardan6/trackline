@@ -1,65 +1,72 @@
 # Slide source: Human-governed agentic coding
 
-> **Use:** source copy and speaker notes for one presentation slide.  
-> **Primary visual:** [Project coverage SVG](assets/diag-my-workflow-cooperation-coverage.svg)  
-> **General model:** [Human–agent cooperation spectrum](research/human-agent-cooperation-spectrum.md)  
-> **Evidence:** [`my-workflow` assessment](my-workflow-human-agent-cooperation-assessment.md)
+> **Visual:** [Project coverage SVG](assets/diag-my-workflow-cooperation-coverage.svg)  
+> **Definitions and model:** [Human–agent cooperation spectrum](research/human-agent-cooperation-spectrum.md)
 
-## Recommended slide
+![Where my-workflow sits on the human–agent cooperation spectrum](assets/diag-my-workflow-cooperation-coverage.svg)
 
-### Title
+## Slide
 
-**Where `my-workflow` sits: human-governed agentic coding**
+### Where `my-workflow` sits: human-governed agentic coding
 
-### Main statement
+> Agents execute bounded development loops. Humans govern their goals,
+> boundaries, consequential decisions, and progression.
 
-> Agents execute bounded coding and review loops; humans govern goals,
-> boundaries, consequential decisions, and progression between loops.
+| Agents execute | Humans govern | The system does not |
+| --- | --- | --- |
+| Inspect, plan, edit, test, document, and review within a confirmed slice | Set direction, confirm slices, change scope, triage findings, and authorize Git actions | Schedule work, coordinate agents, enforce permissions, or operate unattended |
 
-### Three supporting points
+**Position:** agentic coding, not agentic system operation.
 
-- **Delegated:** repository inspection, planning support, implementation within
-  a confirmed slice, testing, documentation updates, and evidence-based review.
-- **Human-controlled:** planning decisions, slice confirmation, review triage,
-  scope changes, commits and pushes, and movement into the next cycle.
-- **Not yet covered:** autonomous scheduling, enforceable permission policy,
-  shared evaluations, automatic multi-agent coordination, and deployment
-  governance.
-
-### Footer
-
-**Current position:** agentic coding—not agentic system operation.  
-**Engineering strength:** context, state, checkpoints, review, and recovery
-artifacts.
+**Strength:** durable context, small slices, explicit checkpoints, review
+evidence, and recovery artifacts.
 
 ## Speaker notes
 
-The diagram is a delegation spectrum, not a maturity ladder. `my-workflow`
-does not occupy one fixed point: planning is strongly human-led, while bounded
-implementation and review are agentic. The workflow's distinctive choice is to
-delegate execution inside small cycles and return control to the human at the
-boundaries.
+This is a spectrum of delegated execution, not a quality ranking or maturity
+ladder. Different phases occupy different positions: planning is strongly
+human-led, bounded implementation and review are agentic, and Git or deployment
+actions remain direct or AI-assisted.
 
-This makes the project more rigorous than vibe coding, because agents operate
-against durable requirements, explicit slices, tests, diffs, and review
-artifacts. But it is not an autonomous agent platform: people still launch the
-sessions, choose the next cycle, coordinate providers, accept findings, and
-authorize Git actions.
+`my-workflow` is beyond vibe coding because the agent operates a tool-using
+loop against durable requirements: it plans, edits, runs checks, diagnoses
+failures, and iterates inside a confirmed vertical slice. Tests, diffs, state,
+and review findings make the work inspectable.
 
-The lower band in the visual is important. Agentic engineering is not a final
-stage after agentic coding; it is the discipline that makes delegation safe.
-The workflow already has strong context engineering, state continuity, and
-review boundaries. Its main gaps are enforceable permissions, common
-evaluations, unified traces, and automated coordination.
+It stops short of agentic system operation because people still start sessions,
+select cycles, coordinate providers, triage findings, and authorize commits.
+There is no persistent scheduler, automatic multi-agent runtime, enforceable
+permission policy, shared evaluation harness, or deployment governance.
 
-## Optional shorter slide copy
+The most accurate summary is:
 
-**Headline:** Bounded autonomy, explicit human control.
+> Agentic execution inside human-controlled cycles, supported by an emerging
+> agentic-engineering discipline.
 
-**Body:** `my-workflow` delegates implementation and review to agents one
-verified slice at a time. Humans retain control of plans, scope, findings,
-commits, and lifecycle transitions.
+Agentic engineering is a cross-cutting discipline, not a final point on the
+spectrum. The linked research note owns that distinction, the mode definitions,
+the evaluation dimensions, and the model's caveats.
 
-**Callout:** The next frontier is not “more agents”; it is enforceable controls
-and better evidence.
+## Assessment basis
 
+The position reflects current behavior, weighted in this order:
+
+1. installer and hook behavior;
+2. active skill contracts and `AGENTS.md` routing;
+3. current workflow and problem documentation;
+4. archived material only as historical context.
+
+The clearest project evidence is:
+
+- `next-slice`: one confirmed, independently verifiable slice per cycle;
+- `plan-review`, `cross-review`, and `review-triage`: evidence-producing review
+  with human-mediated decisions;
+- `session-open`, `session-close`, and the state files: resumable work without
+  unattended continuation;
+- `hooks/context-zone.sh`: an automatic but advisory runtime guard;
+- `WORKFLOW.md`: explicit human control of commits, pushes, and experimental
+  parallel work.
+
+Most safeguards are instruction-enforced rather than runtime-enforced. That is
+the main boundary between the workflow's current rigor and a governed agent
+operating platform.
