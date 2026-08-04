@@ -283,7 +283,8 @@ toward 40% — which is why two, three, even four slices per session are normal.
 
 **In this workflow.** [`/next-slice`](../skills/next-slice/SKILL.md) chooses
 the slice; the loop is `next-slice → implement and verify →
-session-close (STEP)`, repeated until context approaches the Warn Zone.
+session-close (STEP)`, repeated until context approaches the Warn Zone, with a
+commit whenever the state reached is one worth returning to (§9).
 
 ![When to close](assets/diag-when-to-close.svg)
 
@@ -370,6 +371,11 @@ cross-model review (typically ~10 findings, half of them critical or important,
 usually all the validated ones implemented via a review-items roadmap) → PR → merge. The plan
 review's "then commit" checkpoint and the code review's "diff since last
 known-good commit" scope both stand on this discipline.
+
+Each cycle therefore ends with a commit stage — captured plan, reviewed plan,
+implementation, code review — and none of them is enforced, because the skills
+do not commit. Take, batch, or skip them; skipping only costs resolution. The
+commit before the PR is the one that is not negotiable.
 
 ## Not solved — and the automation that guards the discipline
 

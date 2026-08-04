@@ -40,18 +40,25 @@ IMPLEMENT  (repeat per slice)
     → implement and verify
     → /doc-update                        as needed — only when the slice changed durable behavior
     → /session-close                     STEP to continue with another slice, SESSION to stop
+    → commit                             your checkpoint — take it when the state is worth returning to
   ↺ take another slice while context stays light; end the session as you near the Warn Zone (§6)
 
 REVIEW  (its own step — run after a slice or phase, often in a separate session)
     → /cross-review                      the other provider's strongest model reads the diff → findings file
     → /review-triage                     validate, sort, fix only must-fix-now
     → /session-close                     record the outcome
+    → commit                             the one commit you cannot skip — the branch must be clean before the PR
 ```
 
 Every cycle ends with `/session-close` — the only step that writes the live state
 files (`roadmap.md`, `progress.md`, `activeContext.md`), which is why it is never
 optional. `/handoff` is a separate option for moving work to a *different* tool or
 model; it is not a stage in this flow.
+
+The `commit` closing each cycle is the opposite kind of step: no skill runs it
+and nothing enforces it. Checkpoint when the state is worth returning to, batch
+several slices into one, or skip it. Only the last one is binding — committing
+the branch properly before the PR is your job, not the agent's (§7).
 
 The most-used move is `/next-slice`; in practice the most reliable prompt is
 literally *"please find the next slice and then implement it."* Everything below
@@ -63,6 +70,10 @@ The same flow as a graph: nodes are skills (each labeled with its § below),
 diamonds are decisions, edge labels are the conditions that move work between
 nodes. The per-node contracts — inputs, checks, outputs — follow in the table,
 because a graph stays readable only when nodes stay small.
+
+The four `commit` nodes are the only ones you perform yourself — no skill
+commits (§7). Skip one and the flow still runs; the cost is a coarser diff for
+the next review or resume. Only the commit before the PR is mandatory.
 
 ```mermaid
 flowchart TD
@@ -97,12 +108,14 @@ flowchart TD
         SCS["/session-close STEP<br/>ticks roadmap.md · appends progress.md ·<br/>refreshes activeContext.md"]:::skill
         ZQ{"context light AND<br/>same territory?"}:::decision
         SC3["/session-close SESSION<br/>writes: activeContext.md · roadmap.md · progress.md"]:::skill
+        C3(["commit — your checkpoint<br/>(you decide; also fine per slice at SCS)"]):::artifact
     end
 
     subgraph REV["REVIEW — other provider's strongest model"]
         CR["/cross-review (§3.9)<br/>diff since known-good commit, read against docs<br/>writes: docs/reviews/*.md"]:::skill
         RT2["/review-triage (§3.9)<br/>implementer validates findings<br/>folds accepted ones into roadmap.md"]:::skill
         SC4["/session-close SESSION<br/>writes: activeContext.md · roadmap.md · progress.md"]:::skill
+        C4(["commit — before the PR<br/>(the one commit you cannot skip)"]):::artifact
     end
 
     MERGE(["open PR → merge (§7)"]):::artifact
@@ -124,12 +137,15 @@ flowchart TD
     SCS --> ZQ
     ZQ -- "yes — take<br/>another slice" --> NS
     ZQ -- "no — Warn Zone ~100k<br/>or different territory" --> SC3
-    SC3 -- "phase done /<br/>before PR" --> CR
-    SC3 -- "work remains —<br/>next session" --> NS
+    SC3 --> C3
+    SCS -. "worth saving —<br/>your call" .-> C3
+    C3 -- "phase done /<br/>before PR" --> CR
+    C3 -- "work remains —<br/>next session" --> NS
     CR -- "findings file" --> RT2
     RT2 -- "accepted findings →<br/>roadmap.md review items" --> NS
     RT2 --> SC4
-    SC4 -- "all must-fix-now done" --> MERGE
+    SC4 -- "all must-fix-now done" --> C4
+    C4 --> MERGE
     HOOK -. "nudges at 80k / 100k / 120k" .-> ZQ
     IV -. "interrupted — cannot<br/>close properly" .-> HAND
 ```
@@ -153,6 +169,7 @@ second copy.
 | `/doc-update` (§3.8) | implementer | git diff of the change | decision table: which durable doc did this touch? | updated docs — or "nothing durable changed" | `/session-close` |
 | `/session-close` STEP (§3.10) | implementer | the finished step | step really finished? scope changed → `/doc-update` first | ticked `roadmap.md`, dated `progress.md`, refreshed `activeContext.md` | `/next-slice` — context light and same territory; SESSION close otherwise |
 | `/session-close` SESSION (§3.10) | any cycle | session state | doc-update table once; blockers, open questions, dead ends | state files (+ `handoff-*.md` only if needed) | next session's `/session-open` |
+| commit (§7) | you — never the agent | the closed step or session | is this a state worth returning to? | a checkpoint in history, and a review scope for `/cross-review` | next slice / review / PR — optional each time, required before the PR |
 | `/cross-review` (§3.9) | other provider's strongest model | diff since last known-good commit + the docs | misimplementation, gaps, bugs, better options | findings file in `docs/reviews/` | `/review-triage` — always |
 | `/review-triage` on code (§3.9) | implementer | findings + the actual code | validate each; sort must-fix-now / before-phase / backlog / invalid | review items folded into `roadmap.md` | `/next-slice` for fixes; PR when clean |
 | `/handoff` (§3.11) | any cycle, interrupted | the live conversation | receiver does not know this workflow? | standalone, pointer-based handoff doc | the other tool's session |

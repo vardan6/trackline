@@ -85,6 +85,11 @@ context stays light; close the session as you approach the warn zone. The full
 graph with every node's inputs, checks, and outputs is in
 [WORKFLOW.md §1.1](WORKFLOW.md).
 
+Every band ends in a commit, and every commit is yours — the skills do not
+commit. Checkpoint when the state is worth returning to, batch several slices
+into one, or skip it. Only the last one is binding: the branch has to be
+committed before the PR, and splitting it into reviewable commits is your job.
+
 ## The context budget
 
 ![Fuel gauge](docs/assets/diag-fuel-gauge.svg)

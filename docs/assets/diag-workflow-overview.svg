@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 648" font-family="'Segoe UI','DejaVu Sans',Helvetica,Arial,sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 660" font-family="'Segoe UI','DejaVu Sans',Helvetica,Arial,sans-serif">
 <defs>
 <marker id="ar-sec" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#52514e"/></marker>
 <marker id="ar-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1c5cab"/></marker>
@@ -65,7 +65,7 @@
 <line x1="660" y1="214" x2="684" y2="214" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
 
 <!-- plan review -> implement -->
-<path d="M773,248 v28 a8,8 0 0 1 -8,8 H213 a8,8 0 0 0 -8,8 v26" fill="none" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<path d="M773,248 v28 a8,8 0 0 1 -8,8 H208 a8,8 0 0 0 -8,8 v26" fill="none" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
 <text x="500" y="278" font-size="13" fill="#898781" text-anchor="middle" font-style="italic">fresh session — usually straight to the next slice</text>
 
 <!-- ===== band: IMPLEMENT ===== -->
@@ -73,63 +73,74 @@
 <rect x="24" y="342" width="94" height="32" rx="16" fill="#1baf7a"/>
 <text x="71" y="363" font-size="12" fill="#ffffff" text-anchor="middle" font-weight="700">IMPLEMENT</text>
 
-<rect x="130" y="326" width="150" height="64" rx="10" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
-<text x="205" y="351" font-size="15" fill="#1c5cab" text-anchor="middle" font-weight="700">next-slice</text>
-<text x="205" y="371" font-size="12.5" fill="#52514e" text-anchor="middle">pick one vertical slice</text>
+<rect x="130" y="326" width="140" height="64" rx="10" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="200" y="351" font-size="15" fill="#1c5cab" text-anchor="middle" font-weight="700">next-slice</text>
+<text x="200" y="371" font-size="12" fill="#52514e" text-anchor="middle">pick one vertical slice</text>
 
-<rect x="310" y="326" width="170" height="64" rx="10" fill="#ffffff" stroke="#898781" stroke-width="2"/>
-<text x="395" y="351" font-size="14.5" fill="#0b0b0b" text-anchor="middle" font-weight="700">implement + verify</text>
-<text x="395" y="371" font-size="12.5" fill="#52514e" text-anchor="middle">code · test · inspect</text>
+<rect x="298" y="326" width="165" height="64" rx="10" fill="#ffffff" stroke="#898781" stroke-width="2"/>
+<text x="380" y="351" font-size="14.5" fill="#0b0b0b" text-anchor="middle" font-weight="700">implement + verify</text>
+<text x="380" y="371" font-size="12.5" fill="#52514e" text-anchor="middle">code · test · inspect</text>
 
-<rect x="510" y="326" width="150" height="64" rx="10" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
-<text x="585" y="351" font-size="15" fill="#1c5cab" text-anchor="middle" font-weight="700">doc-update</text>
-<text x="585" y="371" font-size="12.5" fill="#52514e" text-anchor="middle">if behavior changed</text>
+<rect x="491" y="326" width="140" height="64" rx="10" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="561" y="351" font-size="15" fill="#1c5cab" text-anchor="middle" font-weight="700">doc-update</text>
+<text x="561" y="371" font-size="12" fill="#52514e" text-anchor="middle">if behavior changed</text>
 
-<rect x="690" y="326" width="160" height="64" rx="10" fill="#f1effa" stroke="#4a3aa7" stroke-width="2"/>
-<text x="770" y="351" font-size="15" fill="#4a3aa7" text-anchor="middle" font-weight="700">session-close</text>
-<text x="770" y="371" font-size="12" fill="#52514e" text-anchor="middle">STEP — or SESSION to stop</text>
+<rect x="659" y="326" width="160" height="64" rx="10" fill="#f1effa" stroke="#4a3aa7" stroke-width="2"/>
+<text x="739" y="351" font-size="15" fill="#4a3aa7" text-anchor="middle" font-weight="700">session-close</text>
+<text x="739" y="371" font-size="12" fill="#52514e" text-anchor="middle">STEP — or SESSION to stop</text>
 
-<line x1="282" y1="358" x2="306" y2="358" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
-<line x1="482" y1="358" x2="506" y2="358" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
-<line x1="662" y1="358" x2="686" y2="358" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<rect x="847" y="326" width="129" height="64" rx="10" fill="#f2f1ee" stroke="#898781" stroke-width="2"/>
+<text x="911" y="351" font-size="14" fill="#52514e" text-anchor="middle" font-weight="700">commit ✓</text>
+<text x="911" y="371" font-size="12" fill="#898781" text-anchor="middle">your checkpoint</text>
+
+<line x1="272" y1="358" x2="294" y2="358" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<line x1="465" y1="358" x2="487" y2="358" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<line x1="633" y1="358" x2="655" y2="358" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<line x1="821" y1="358" x2="843" y2="358" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
 
 <!-- slice loop -->
-<path d="M770,394 Q490,462 213,394" fill="none" stroke="#1c5cab" stroke-width="2.5" marker-end="url(#ar-dark)"/>
-<text x="490" y="442" font-size="13" fill="#1c5cab" text-anchor="middle">× N — take another slice while context stays light</text>
+<path d="M739,394 Q470,462 207,394" fill="none" stroke="#1c5cab" stroke-width="2.5" marker-end="url(#ar-dark)"/>
+<text x="470" y="442" font-size="13" fill="#1c5cab" text-anchor="middle">× N — take another slice while context stays light</text>
 
 <!-- implement -> review -->
-<path d="M850,358 h86 a8,8 0 0 1 8,8 v92 a8,8 0 0 1 -8,8 H228 a8,8 0 0 0 -8,8 v32" fill="none" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
-<text x="640" y="461" font-size="13" fill="#898781" text-anchor="middle" font-style="italic">phase done — review before the PR</text>
+<path d="M911,392 v66 a8,8 0 0 1 -8,8 H223 a8,8 0 0 0 -8,8 v32" fill="none" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<text x="660" y="461" font-size="13" fill="#898781" text-anchor="middle" font-style="italic">phase done — review before the PR</text>
 
 <!-- ===== band: REVIEW ===== -->
 <rect x="12" y="492" width="976" height="104" rx="12" fill="#fef9f6" stroke="#eb6834" stroke-width="1.5"/>
 <rect x="24" y="530" width="94" height="32" rx="16" fill="#eb6834"/>
 <text x="71" y="551" font-size="13.5" fill="#ffffff" text-anchor="middle" font-weight="700">REVIEW</text>
 
-<rect x="130" y="514" width="180" height="64" rx="10" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
-<text x="220" y="539" font-size="15" fill="#1c5cab" text-anchor="middle" font-weight="700">cross-review</text>
-<text x="220" y="559" font-size="12" fill="#52514e" text-anchor="middle">other provider reads the diff</text>
+<rect x="130" y="514" width="170" height="64" rx="10" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="215" y="539" font-size="15" fill="#1c5cab" text-anchor="middle" font-weight="700">cross-review</text>
+<text x="215" y="559" font-size="11.5" fill="#52514e" text-anchor="middle">other provider reads the diff</text>
 
-<rect x="340" y="514" width="170" height="64" rx="10" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
-<text x="425" y="539" font-size="15" fill="#1c5cab" text-anchor="middle" font-weight="700">review-triage</text>
-<text x="425" y="559" font-size="12.5" fill="#52514e" text-anchor="middle">validate · sort · fix</text>
+<rect x="328" y="514" width="150" height="64" rx="10" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2"/>
+<text x="403" y="539" font-size="15" fill="#1c5cab" text-anchor="middle" font-weight="700">review-triage</text>
+<text x="403" y="559" font-size="12.5" fill="#52514e" text-anchor="middle">validate · sort · fix</text>
 
-<rect x="540" y="514" width="128" height="64" rx="10" fill="#f1effa" stroke="#4a3aa7" stroke-width="2"/>
-<text x="604" y="539" font-size="15" fill="#4a3aa7" text-anchor="middle" font-weight="700">session-close</text>
-<text x="604" y="559" font-size="12.5" fill="#52514e" text-anchor="middle">record the outcome</text>
+<rect x="506" y="514" width="128" height="64" rx="10" fill="#f1effa" stroke="#4a3aa7" stroke-width="2"/>
+<text x="570" y="539" font-size="15" fill="#4a3aa7" text-anchor="middle" font-weight="700">session-close</text>
+<text x="570" y="559" font-size="12" fill="#52514e" text-anchor="middle">record the outcome</text>
 
-<rect x="698" y="514" width="160" height="64" rx="10" fill="#f2f1ee" stroke="#898781" stroke-width="2"/>
-<text x="778" y="539" font-size="14" fill="#52514e" text-anchor="middle" font-weight="700">open PR → merge</text>
-<text x="778" y="559" font-size="12" fill="#898781" text-anchor="middle">clean history is fuel</text>
+<rect x="662" y="514" width="140" height="64" rx="10" fill="#f2f1ee" stroke="#898781" stroke-width="2"/>
+<text x="732" y="539" font-size="14" fill="#52514e" text-anchor="middle" font-weight="700">commit ✓</text>
+<text x="732" y="559" font-size="12" fill="#898781" text-anchor="middle">before the PR</text>
 
-<line x1="312" y1="546" x2="336" y2="546" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
-<line x1="512" y1="546" x2="536" y2="546" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
-<line x1="670" y1="546" x2="694" y2="546" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<rect x="830" y="514" width="146" height="64" rx="10" fill="#f2f1ee" stroke="#898781" stroke-width="2"/>
+<text x="903" y="539" font-size="14" fill="#52514e" text-anchor="middle" font-weight="700">open PR → merge</text>
+<text x="903" y="559" font-size="12" fill="#898781" text-anchor="middle">clean history is fuel</text>
+
+<line x1="302" y1="546" x2="324" y2="546" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<line x1="480" y1="546" x2="502" y2="546" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<line x1="636" y1="546" x2="658" y2="546" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
+<line x1="804" y1="546" x2="826" y2="546" stroke="#52514e" stroke-width="2.5" marker-end="url(#ar-sec)"/>
 
 <!-- findings back into slices -->
-<path d="M425,510 Q330,436 219,396" fill="none" stroke="#898781" stroke-width="2" stroke-dasharray="7 6" marker-end="url(#ar-mut)"/>
-<text x="278" y="484" font-size="12.5" fill="#898781" text-anchor="middle" font-style="italic">validated findings → new slices</text>
+<path d="M403,510 Q320,438 210,396" fill="none" stroke="#898781" stroke-width="2" stroke-dasharray="7 6" marker-end="url(#ar-mut)"/>
+<text x="272" y="484" font-size="12.5" fill="#898781" text-anchor="middle" font-style="italic">validated findings → new slices</text>
 
 <!-- caption -->
-<text x="500" y="630" font-size="14" fill="#898781" text-anchor="middle" font-style="italic">blue = skill (slash command) · purple = session-close, the only writer of live state · gray = artifact / checkpoint</text>
+<text x="500" y="622" font-size="14" fill="#898781" text-anchor="middle" font-style="italic">blue = skill (slash command) · purple = session-close, the only writer of live state · gray = artifact / checkpoint</text>
+<text x="500" y="642" font-size="13" fill="#898781" text-anchor="middle" font-style="italic">the gray commits are yours, not the agent's — optional each time, required before the PR</text>
 </svg>
