@@ -1,8 +1,8 @@
 # Engineer the Workflow, Not Just the Prompt
 
-A session-based workflow for building long-running projects with AI coding
-agents — tested on **Claude Code and Codex**, refined against months of real
-work.
+**Trackline** — a session-based workflow for building long-running projects with
+AI coding agents. Tested on **Claude Code and Codex**, refined against months of
+real work.
 
 ## The problem
 

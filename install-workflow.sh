@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# install-workflow.sh — wire the my-workflow shared workflow into a project.
+# install-workflow.sh — wire the Trackline shared workflow into a project.
 #
 # Idempotent and re-runnable: run it again any time to reconcile a project to
 # the current canonical state (repairs drifted or broken links). The workflow
@@ -41,7 +41,7 @@ usage() {
   cat <<EOF
 Usage: install-workflow.sh [OPTIONS] [project-dir]
 
-Wire the my-workflow workflow into a project via symlinks (idempotent).
+Wire the Trackline workflow into a project via symlinks (idempotent).
 
   project-dir         Target project root (default: current directory)
 

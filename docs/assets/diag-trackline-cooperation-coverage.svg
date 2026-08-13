@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 390" role="img" aria-labelledby="title desc" font-family="'Segoe UI','DejaVu Sans',Helvetica,Arial,sans-serif">
-  <title id="title">my-workflow on the human–agent cooperation spectrum</title>
-  <desc id="desc">A continuous spectrum from direct coding through AI-assisted coding and vibe coding to agentic coding and agentic operation. my-workflow is marked at agentic coding: it is beyond vibe coding because an agent executes bounded development loops, but humans still govern the wider workflow.</desc>
+  <title id="title">Trackline on the human–agent cooperation spectrum</title>
+  <desc id="desc">A continuous spectrum from direct coding through AI-assisted coding and vibe coding to agentic coding and agentic operation. Trackline is marked at agentic coding: it is beyond vibe coding because an agent executes bounded development loops, but humans still govern the wider workflow.</desc>
   <defs>
     <linearGradient id="spectrum" gradientUnits="userSpaceOnUse" x1="62" y1="150" x2="1138" y2="150">
       <stop offset="0" stop-color="#2a78d6"/>
@@ -14,7 +14,7 @@
 
   <rect width="1200" height="390" fill="#ffffff"/>
 
-  <text x="48" y="45" font-size="28" font-weight="700" fill="#171717">Where my-workflow sits today</text>
+  <text x="48" y="45" font-size="28" font-weight="700" fill="#171717">Where Trackline sits today</text>
   <text x="48" y="74" font-size="16" fill="#66645f">A spectrum of delegated execution—not a ranking of quality</text>
 
   <text x="48" y="118" font-size="13" font-weight="700" fill="#1c5cab">MORE HUMAN-EXECUTED</text>

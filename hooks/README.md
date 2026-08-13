@@ -67,7 +67,7 @@ work and close first.
 ### Install (both tools — use the installer)
 
 `install-workflow.sh` wires this up for you: it creates the single in-project
-link `.agents/hooks/context-zone.sh -> my-workflow/hooks/context-zone.sh`,
+link `.agents/hooks/context-zone.sh -> trackline/hooks/context-zone.sh`,
 merges the Stop block into `.claude/settings.json`, and symlinks
 `.codex/hooks.json`. Both tools then run the **same** script via the **same**
 command string:

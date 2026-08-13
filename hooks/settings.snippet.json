@@ -1,5 +1,5 @@
 {
-  "_comment": "Merge this Stop hook into .claude/settings.json (project) or ~/.claude/settings.json (user-global). The command is identical to the one Codex uses in .codex/hooks.json — both point at the single in-project link .agents/hooks/context-zone.sh, which resolves to my-workflow/hooks/context-zone.sh. The git-toplevel form resolves the project root from any subdirectory. Thresholds live as defaults inside the script; add the optional _env_override block below ONLY to override them per project.",
+  "_comment": "Merge this Stop hook into .claude/settings.json (project) or ~/.claude/settings.json (user-global). The command is identical to the one Codex uses in .codex/hooks.json — both point at the single in-project link .agents/hooks/context-zone.sh, which resolves to trackline/hooks/context-zone.sh. The git-toplevel form resolves the project root from any subdirectory. Thresholds live as defaults inside the script; add the optional _env_override block below ONLY to override them per project.",
 
   "hooks": {
     "Stop": [

@@ -8,7 +8,7 @@
 </defs>
 <rect x="280" y="24" width="440" height="76" rx="10" fill="#eaf2fc" stroke="#2a78d6" stroke-width="2.5"/>
 <text x="500" y="55" font-size="21" fill="#1c5cab" text-anchor="middle" font-weight="700">one canonical copy</text>
-<text x="500" y="82" font-size="16" fill="#52514e" text-anchor="middle">my-workflow repo — skills/ + hooks/</text>
+<text x="500" y="82" font-size="16" fill="#52514e" text-anchor="middle">trackline repo — skills/ + hooks/</text>
 <path d="M400,108 L600,108 L540,168 L460,168 Z" fill="#cde2fb" stroke="#86b6ef" stroke-width="2"/>
 <rect x="340" y="172" width="320" height="52" rx="26" fill="#2a78d6" stroke="#1c5cab" stroke-width="2"/>
 <text x="500" y="205" font-size="19" fill="#ffffff" text-anchor="middle" font-weight="700">install-workflow.sh</text>

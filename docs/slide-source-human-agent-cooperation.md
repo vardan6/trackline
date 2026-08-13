@@ -1,13 +1,13 @@
 # Slide source: Human-governed agentic coding
 
-> **Visual:** [Project coverage SVG](assets/diag-my-workflow-cooperation-coverage.svg)  
+> **Visual:** [Project coverage SVG](assets/diag-trackline-cooperation-coverage.svg)  
 > **Definitions and model:** [Human–agent cooperation spectrum](research/human-agent-cooperation-spectrum.md)
 
-![Where my-workflow sits on the human–agent cooperation spectrum](assets/diag-my-workflow-cooperation-coverage.svg)
+![Where Trackline sits on the human–agent cooperation spectrum](assets/diag-trackline-cooperation-coverage.svg)
 
 ## Slide
 
-### Where `my-workflow` sits: human-governed agentic coding
+### Where Trackline sits: human-governed agentic coding
 
 > Agents execute bounded development loops. Humans govern their goals,
 > boundaries, consequential decisions, and progression.
@@ -28,7 +28,7 @@ ladder. Different phases occupy different positions: planning is strongly
 human-led, bounded implementation and review are agentic, and Git or deployment
 actions remain direct or AI-assisted.
 
-`my-workflow` is beyond vibe coding because the agent operates a tool-using
+Trackline is beyond vibe coding because the agent operates a tool-using
 loop against durable requirements: it plans, edits, runs checks, diagnoses
 failures, and iterates inside a confirmed vertical slice. Tests, diffs, state,
 and review findings make the work inspectable.

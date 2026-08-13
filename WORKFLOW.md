@@ -646,7 +646,7 @@ a commit after a substantial checkpoint, and Git mechanics stay out of
 
 ## 8. Setup and meta
 
-**The meta-project.** This `my-workflow/` directory is the source of truth for
+**The meta-project.** This `trackline/` directory is the source of truth for
 both the workflow docs and the canonical skills. The skills in `skills/` are the
 installable artifacts, not just descriptions of them.
 
@@ -668,11 +668,11 @@ standard; OpenCode and Qwen also read project `.agents/skills`. The context-zone
 hook is exercised on Claude Code and Codex only. Each agent looks for skills in a
 different directory, which the installer handles (below).
 
-**Single source of truth — link, never copy.** `my-workflow/` lives in one common
+**Single source of truth — link, never copy.** `trackline/` lives in one common
 location and holds the only real copy of every artifact — each skill, the hook
 script, `AGENTS.md`, the docs conventions. A real development project never
 contains its own copy: it **symlinks each skill and each shared file back into
-that common `my-workflow`**, so an edit made once in `my-workflow` is instantly
+that common `trackline`**, so an edit made once in `trackline` is instantly
 live in every project that links it. The only things a project holds of its own
 are those symlinks plus the minimum per-tool registration each agent forces (and
 its own `docs/` content). There is no "Codex version" vs "Claude version" of
@@ -701,8 +701,8 @@ links.
 command wires everything; re-run it any time to reconcile a project (repair
 drifted or broken links) after the canonical set changes. It:
 
-- links `AGENTS.md → my-workflow/AGENTS.md` and `CLAUDE.md → AGENTS.md`;
-- installs skills through a **funnel**: `.agents/skills/<s> → my-workflow/skills/<s>`
+- links `AGENTS.md → trackline/AGENTS.md` and `CLAUDE.md → AGENTS.md`;
+- installs skills through a **funnel**: `.agents/skills/<s> → trackline/skills/<s>`
   is the one real link, and `.claude/skills` + `.codex/skills` redirect into
   `.agents/skills` (mirrors the user-scope layout; OpenCode reads `.agents/skills`
   directly);
