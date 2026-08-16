@@ -1,4 +1,4 @@
-# Initial Request — The Problems Behind My Workflow
+# Initial Request — The Problems Behind Trackline
 
 > This is the record of *why* the workflow exists: the real pain points I hit
 > doing long-running AI-assisted coding, and how I now understand solving each

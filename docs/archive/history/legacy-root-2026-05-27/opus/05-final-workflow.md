@@ -82,13 +82,13 @@ docs/
 
 ## 2. Project shape — meta-project (locked Q1)
 
-This `my-workflow/` directory is the **source of truth** for the workflow and the
+This `trackline/` directory is the **source of truth** for the workflow and the
 canonical skill set. Both the docs explaining the workflow AND the skills
 implementing it live here. New projects install the workflow by:
 
 1. Copying `opus/AGENTS.md` into the project root, with paths adjusted.
 2. Creating `docs/` with empty `current-state.md`, `roadmap.md`, `progress.md`.
-3. Symlinking or copying the canonical skills from `my-workflow/skills/` into
+3. Symlinking or copying the canonical skills from `trackline/skills/` into
    `~/.claude/skills/` (or `.claude/skills/` for project-scoped use).
 
 The skills here ARE the installable artifacts, not just descriptions of them.
@@ -124,7 +124,7 @@ This shape is what makes the workflow predictable enough to follow yourself.
 
 ## 5. Canonical skill set (locked Q3)
 
-Seven skills, each living at `my-workflow/skills/<name>/SKILL.md`:
+Seven skills, each living at `trackline/skills/<name>/SKILL.md`:
 
 | Skill              | Mode                  | One-line job                                                |
 |--------------------|-----------------------|-------------------------------------------------------------|
@@ -157,7 +157,7 @@ is plan/code review triage. Distinct skills, distinct jobs.
 
 ## 7. AGENTS.md template
 
-The router lives at `my-workflow/opus/AGENTS.md`. It is ~80 lines and answers
+The router lives at `trackline/AGENTS.md`. It is ~80 lines and answers
 four questions: where am I, what's the workflow, where are docs, what gotchas.
 
 Copy it into new projects, update the paths in §3 to match your `docs/` layout,
@@ -177,10 +177,10 @@ Wire via `/update-config`:
 ## 9. Bootstrap checklist (per new project)
 
 ```
-1. Copy my-workflow/opus/AGENTS.md → <project>/AGENTS.md, adjust paths.
+1. Copy trackline/AGENTS.md → <project>/AGENTS.md, adjust paths.
 2. mkdir -p <project>/docs/{requirements,design,adr,handoffs}
 3. touch <project>/docs/{current-state,roadmap,progress}.md
-4. Ensure ~/.claude/skills/ contains the 7 canonical skills (symlinked from my-workflow/skills/).
+4. Ensure ~/.claude/skills/ contains the 7 canonical skills (symlinked from trackline/skills/).
 5. /update-config — wire the Stop + context hooks.
 6. Audit MCP servers; disable unused.
 7. First session: /session-open.

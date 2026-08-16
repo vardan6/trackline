@@ -41,7 +41,7 @@
     <circle cx="835" cy="150" r="9" fill="#4a3aa7"/>
     <path d="M835 124 V106" stroke="#4a3aa7" stroke-width="3"/>
     <rect x="747" y="82" width="176" height="29" rx="14.5" fill="#4a3aa7"/>
-    <text x="835" y="102" font-size="13" font-weight="700" fill="#fff">MY WORKFLOW IS HERE</text>
+    <text x="835" y="102" font-size="13" font-weight="700" fill="#fff">TRACKLINE IS HERE</text>
     <text x="835" y="191" font-size="17" font-weight="700" fill="#4a3aa7">Agentic coding</text>
     <text x="835" y="214" font-size="14" fill="#77746f">agent executes a bounded task</text>
 
