@@ -519,6 +519,11 @@ root; knowledge lives under `docs/`.
 from. If any of the three grows into a narrative document, that is workflow drift —
 trim it at the next close.
 
+> The artifact-centric inverse of this section — every document as a node, with
+> its producers, real consumers, terminal-node analysis, and the compression
+> ladder between stages — lives in
+> [docs/document-lifecycle.md](docs/document-lifecycle.md).
+
 ### Knowledge / durable docs
 
 ```text
