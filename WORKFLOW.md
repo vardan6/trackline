@@ -103,7 +103,7 @@ flowchart TD
 
     subgraph IMPL["IMPLEMENT — fresh session, repeat per slice"]
         SO["optional: /session-open (§3.5)<br/>ambiguous resume only — usually skipped<br/>reads: activeContext.md · roadmap.md"]:::skill
-        NS["/next-slice (§3.6)<br/>picks one atomic slice from roadmap.md<br/>cross-checks: activeContext.md · git state ·<br/>the relevant code"]:::skill
+        NS["/next-slice (§3.6)<br/>picks one atomic slice from roadmap.md<br/>opens: cited requirements · design · linked ADRs<br/>cross-checks: state · git · relevant code"]:::skill
         IV["implement + verify (§3.7)<br/>writes: code + tests<br/>(only activeContext.md may move inline)"]
         DQ{"durable behavior<br/>changed?"}:::decision
         DU["/doc-update (§3.8)<br/>updates: docs/requirements/ · docs/design/ ·<br/>docs/adr/ · docs/implementation-notes.md"]:::skill
@@ -166,7 +166,7 @@ second copy.
 | `/plan-review` (§3.4) | other provider's strongest model, own session | the captured docs | gaps, contradictions, wrong assumptions, terminology drift | findings table (effort/risk/value) in `docs/reviews/` | `/review-triage` — always |
 | `/review-triage` on the plan (§3.4, §3.9) | planner | findings file + the docs | validate / clarify / justify each finding | revised plan docs | `/session-close`, then commit; implementation opens fresh |
 | `/session-open` (§3.5) | optional — ambiguous resume only, usually skipped | `activeContext.md`, `roadmap.md` (handoff only if unclear) | which mode? what single next action? | declared mode + named next action | that action — usually `/next-slice`; skipped for direct tasks |
-| `/next-slice` (§3.6) | implementer | `activeContext.md`, `roadmap.md`, recent git state, the relevant code | smallest meaningful, dependency-free, verifiable slice | one proposed slice | implement — after your confirmation |
+| `/next-slice` (§3.6) | implementer | state, recent git, cited requirement/design sections + linked ADRs, relevant code | citations resolve exactly once; smallest meaningful, dependency-free, verifiable slice | one proposed slice | implement — after your confirmation |
 | implement + verify (§3.7) | implementer | the confirmed slice | test / manual check / inspectable diff passes | working, verified change | `/doc-update` if durable behavior changed; else `/session-close (STEP)` |
 | `/doc-update` (§3.8) | implementer | git diff of the change | decision table: which durable doc did this touch? | updated docs — or "nothing durable changed" | `/session-close` |
 | `/session-close` STEP (§3.10) | implementer | the finished step | step really finished? scope changed → `/doc-update` first | ticked `roadmap.md`, dated `progress.md`, refreshed `activeContext.md` | `/next-slice` — context light and same territory; SESSION close otherwise |
@@ -364,14 +364,29 @@ implementation.
 
 **What it does.** Reads `activeContext.md` and `roadmap.md`, identifies candidate
 slices for the current roadmap item, and picks exactly one atomic vertical slice
-that is small, low-ambiguity, dependency-free, and easy to verify. It prints the
-slice and waits for your confirmation before implementing.
+that is small, low-ambiguity, dependency-free, and easy to verify. It then opens
+every doc the chosen slice cites (§4), plus any ADR those pages link. It prints
+the slice and waits for your confirmation before implementing.
 
 **What it solves.** Keeps each task small enough that the agent never needs the
 whole project in working memory, and keeps you reviewing one understandable change
 at a time. This is the workflow's center of gravity — the most-used and most
 reliable step. The natural prompt *"find the next slice and implement it"* bundles
 the pick and the implement.
+
+**Why the cited read is mandatory.** This step is the only consumer of the durable
+docs on the implementation side; `/session-open` is forbidden from reading them
+and `/cross-review` reads them only after the code exists. When the read was
+discretionary (*"stop when confident"*), confidence always arrived from the state
+files alone and the deep layers went cold — the observed failure was a defect
+already diagnosed in the design doc being rediscovered by reading code. Citation
+is the contract: what a slice names, the slice reads.
+
+Watch the escape hatch, not just the rule. `no doc governs: <reason>` can decay
+exactly as *"stop when confident"* did — neither is wrong as written; both simply
+stop evaluating to "read." Track how often slices claim it: past roughly a fifth
+of them, the contract has quietly reverted and the number will say so long before
+another rediscovered-defect incident does.
 
 **Comes after.** Established implementation mode (from `/session-open`,
 `/planning-capture`, or a previous `/session-close`). `/next-slice` can also
@@ -540,6 +555,77 @@ docs/
 `install-workflow.sh` scaffolds the six subdirectories (create-if-missing); the
 directory list lives in one `DOCS_DIRS` array in that script, so it stays in sync
 as the tree grows.
+
+#### Citations — ordinary Markdown links
+
+A roadmap slice **cites** its governing docs instead of copying their prose. The
+citation is a plain relative Markdown link:
+
+```markdown
+- [ ] Add transient retry behavior.
+      Docs: [Sync requirements](docs/requirements/sync.md),
+      [Backoff schedule](docs/design/sync.md#backoff-schedule-and-jitter)
+```
+
+- **Whole file is the default.** Under ~150 lines, cite the file; reading the
+  extra lines is cheaper than maintaining finer-grained references.
+- **Add a `#heading` fragment above ~150 lines**, where whole-file reading stops
+  being cheap.
+- **A link with a fragment means read that section; without one, read the file.**
+- **A missing file or unresolved heading stops implementation** (§3.6). Broken
+  links are the point: a heading rename usually signals the content's meaning
+  moved, so inbound citations should be re-checked rather than silently kept
+  pointing at changed material.
+
+**What a slice may cite.** Citability follows the stage a document belongs to,
+not its usefulness:
+
+| Directories | Stage | Citable |
+|---|---|---|
+| `requirements/`, `design/`, `adr/` | decision truth — what the behavior must be | yes |
+| `reviews/` | post-implementation evidence — a defect found, analysed, fix agreed | yes |
+| `research/` | pre-planning input — nothing has been agreed yet | **no** |
+
+Any directory in the project's docs tree (`DOCS_DIRS`) inherits these rules by
+stage, so a project can add its own without changing this file.
+
+`research/` is excluded deliberately. Research *precedes* the decision, so citing
+it would let a slice implement from material nobody has agreed to. The capture
+step exists for this: `/planning-capture` converts research into a requirement,
+a design section, or an ADR, and the slice cites that. The exclusion also keeps
+the uncaptured-research health check honest — if slices could cite research
+directly, research would never need capturing and the check would never fire.
+
+`reviews/` is included for the mirror-image reason. A review is *post*-
+implementation: the code exists, the defect is real, and the finding already
+carries both the analysis and the agreed fix. For a bug fix that restores
+intended behavior, the review is the correct and sufficient citation — the
+requirement never changed, so there is nothing to promote. Cite the finding's
+heading, not the whole report.
+
+**Where a review citation stops being enough.** If the fix *changes* intended
+behavior rather than restoring it, the review starts the work but does not end
+it: `/doc-update` still lands the outcome in requirements, design, or an ADR. A
+review is dated evidence, never the canonical home for behavior. Keep fix plans
+in reviews short — once one grows into architecture, it belongs in `design/`.
+
+**The path a fact travels.** `research/` → `/planning-capture` →
+`requirements/` · `design/` · `adr/` → cited by a roadmap slice → `/next-slice`
+reads it → implement → `/doc-update` → `reviews/` → cited by the next fix slice.
+A citation attaches only where the fact has already been agreed; every arrow into
+a citable directory is a step that agreed something.
+
+Deliberately *not* a stable-ID scheme. Permanent `REQ-`/`DES-` tokens were
+designed and rejected: they solve heading renames and file moves, neither of
+which Trackline has observed, and they trade loud, checkable breakage for an
+identifier that still resolves after the section it names has changed meaning.
+Links are native to Markdown, clickable, scoped by path, and validated by
+off-the-shelf tooling.
+
+**One hazard the checker must cover:** duplicate headings inside one file get
+position-dependent anchors (`#retry`, `#retry-1`), so inserting a section above
+silently repoints every later fragment. Flag duplicate headings, not just
+unresolvable targets.
 
 Rules for the tree: documentation is **agent-first, human-second**. Keep one
 canonical home per fact and prefer pointers over copies. **Code is implementation

@@ -11,7 +11,8 @@
 >
 > The questions, evidence, and decisions that produced this document — plus the
 > open threads still to act on — live in
-> [research/documentation-model-inquiry.md](research/documentation-model-inquiry.md).
+> The source inquiry contains private reference-project evidence and is retained
+> outside this public repository.
 
 ---
 
@@ -93,7 +94,10 @@ flowchart LR
 
     AC -.->|"/next-slice reads"| SLICE(["chosen slice"]):::transient
     ROAD -.->|"/next-slice reads"| SLICE
-    DES -.->|"read only if slice cites it"| SLICE
+    REQ -.->|"mandatory when the slice links it"| SLICE
+    DES -.->|"mandatory when the slice links it"| SLICE
+    ADR -.->|"one hop from a cited design page"| SLICE
+    CREV -.->|"mandatory when a fix slice links it"| SLICE
     SLICE -->|"implement + verify"| CODE
     CODE -->|"commit"| GIT
 
@@ -144,7 +148,7 @@ reads it.
 | `roadmap.md` | 1 | `/planning-capture` creates, `/session-close` ticks, `/review-triage` appends | `/next-slice`, `/session-open`, `/session-close` | one per project | rewritten per phase | living, checklist-only |
 | `activeContext.md` | 1,5 | `/session-close` | `/session-open`, `/next-slice` | one per project | replaced every session | ephemeral |
 | `progress.md` | 5 | `/session-close (STEP)` | orientation only — rarely | one per project | forever | **append-only** |
-| `docs/reviews/*.md` | 2,4 | `/plan-review`, `/cross-review` | `/review-triage`, once | one per review event | until triaged | frozen |
+| `docs/reviews/*.md` | 2,4 | `/plan-review`, `/cross-review` | `/review-triage`, then `/next-slice` when a fix slice cites it | one per review event | until the cited fixes land | frozen |
 | `implementation-notes.md` | 3 | `/doc-update` | on-demand when code surprises | one per project | project life | living, sparse |
 | `future-plans.md` | 1,5 | `/planning-capture`, `/session-close` | planning, when a gate clears | one per project | project life | living |
 | code + tests | 3 | implementation | everything | — | project life | living — **implementation truth** |
@@ -161,9 +165,10 @@ A node is **terminal** when no downstream stage consumes it. Three kinds:
 
 - `docs/archive/**` — traceability, explicitly not a source of truth. Correct.
 - `handoff-*.md` — single-use bridge; dead the moment the next session opens.
-- `docs/reviews/*.md` — consumed exactly once by `/review-triage`, then history.
-  The review *conversation* is disposable; only the findings and their
-  consequences survive. Correct.
+- `docs/reviews/*.md` — triaged once, then read once more by any fix slice that
+  cites a finding (`WORKFLOW.md` §4). After that fix lands it is history. The
+  review *conversation* is disposable; only the findings and their consequences
+  survive. Correct.
 
 **Terminal but load-bearing.**
 
@@ -182,7 +187,9 @@ A node is **terminal** when no downstream stage consumes it. Three kinds:
   `/session-close (SESSION)` has an explicit gate for this.
 - A **design section no slice ever cites**. Since implementation reads design
   only when a roadmap slice names it, an uncited section is invisible to the
-  stage that most needs it.
+  stage that most needs it. This is now mechanically detectable: slices cite docs
+  by Markdown link (`WORKFLOW.md` §4), so a doc no roadmap slice links to was
+  either never built or never needed — both are findings.
 
 **The diagnostic:** for every durable doc, ask *which stage reads this, and how
 does it get there?* If the answer is "a human might browse it," it is
@@ -292,14 +299,25 @@ stays ~50 lines while design has no practical cap.
 
 1. *always loaded* — `AGENTS.md`
 2. *state files* — read every session
-3. *roadmap citation* — the main path into design; deterministic only if
-   `/next-slice` opens what the slice names
+3. *roadmap citation by Markdown link* — the main path into design, and now
+   deterministic: a slice links its governing docs, and `/next-slice` opens
+   exactly those plus any ADR they link, with no confidence escape hatch.
+   Citable stages are decision truth (requirements, design, ADR) and
+   post-implementation evidence (reviews); `research/` is not citable, so the
+   only way research reaches implementation is by being captured first
 4. *RAG retrieval* — semantic, no navigation needed; the only path that reaches
    an otherwise-terminal doc
 5. *human navigation* — least reliable; assume it does not happen
 
-Path 3 is the one to strengthen: it is the difference between design being
-authoritative and design being decorative.
+Path 3 was the weak link and is the one that was strengthened: it is the
+difference between design being authoritative and design being decorative. What
+makes it hold is that the citation is *checkable* — an unresolved link stops the
+slice, and a rename that breaks inbound links forces them to be re-reviewed,
+which is usually correct because a renamed heading has often changed meaning.
+
+The remaining risk is not addressing but erosion: `no doc governs: <reason>` is
+the successor to *"stop when confident"* and can decay the same way. Measure its
+rate rather than trusting the rule.
 
 **Authorship** — human-only (`AGENTS.md`, seeds), agent-only (progress,
 activeContext, reviews), collaborative (requirements, design, ADR). Agent-only
@@ -313,7 +331,11 @@ Mechanical, and each maps to a defect above.
 |---|---|---|
 | Orphan ADRs | grep each ADR filename across live docs, excluding the ADR dir | rationale unreachable → §4 |
 | Empty decoy dirs | find empty dirs under `docs/` | tree drift → §7 |
-| Uncited design sections | grep design section anchors in `roadmap.md` | invisible to implementation → §4 |
+| Uncited design docs | grep each `requirements/` + `design/` path in `roadmap.md` | invisible to implementation → §4 |
+| Broken citations | resolve every relative link + `#fragment` in `roadmap.md` | slice cites a doc that moved → §8 |
+| Research cited directly | any `roadmap.md` link into `docs/research/` | implementing from uncaptured planning → §8 |
+| Duplicate headings | duplicate heading text within one file | position-dependent anchors silently repoint → §8 |
+| Escape-hatch rate | slices claiming `no doc governs` ÷ total slices | past ~20%, the citation contract has reverted → §8 |
 | `progress.md` size | `wc -c progress.md` | rotate past ~50 KB → §4 |
 | Roadmap narrative drift | line count per checklist item | roadmap duplicating design → §5 |
 | Uncaptured research | research file newer than the newest requirements/design change | planning about to die → §5 |

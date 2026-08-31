@@ -43,6 +43,7 @@ Do NOT pre-load all docs.
    | Implementation approach / architecture / boundary / algorithm / protocol / tradeoff | `docs/design/` or new `docs/adr/` |
    | Phase or next step                   | `roadmap.md` + `activeContext.md`             |
    | Durable invariant / contract / gotcha| `docs/implementation-notes.md` or ADR                   |
+   | Defect fix restoring documented behavior | No docs — the cited review is the record |
    | Only code internals                  | No docs                                                 |
 
 5. Edit existing docs first. Create new only when a durable category has no home.

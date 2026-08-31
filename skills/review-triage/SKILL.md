@@ -37,7 +37,7 @@ Sort review findings, route accepted ones to durable docs, implement only must-f
    - `backlog` → useful improvement, not needed this phase.
    - `invalid_or_not_worth_doing` → incorrect, already handled, too costly for value, out of scope.
 3. Validate every finding against code, not only docs. Reject vague findings without concrete risk. Reuse the review table's `Risk` / `Value` / `Effort` ratings where they hold; adjust with a one-line reason when they don't.
-4. For accepted findings that change durable behavior, route the change through `/doc-update` after fixing.
+4. Route accepted findings not fixed now into `roadmap.md` as slices, each citing this review file + the finding's heading. Restoring intended behavior needs no other citation; *changing* it goes through `/doc-update` after the fix.
 5. Print the Output.
 6. If the user asked to fix, implement only `must_fix_now` items. Stop.
 

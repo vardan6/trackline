@@ -3,21 +3,15 @@ name: planning-capture
 description: Capture planning results into durable docs. Use for /planning-capture.
 ---
 
-# planning-capture
-
-Turn planning output into durable docs. Classify, route, stop.
-
 ## When to use
 
-- After `/grill-me`, `/grill-with-docs`, external brainstorm, or research.
-- User says: "capture the plan", "save this as requirements", "write this up".
-- User invokes `/planning-capture`.
+- After grilling, brainstorming, or research; or when the user invokes `/planning-capture` or asks to capture/save/write up a plan.
 
 ## Do NOT use when
 
-- Mid-implementation, recording a state change → that goes inline into `activeContext.md` via `/session-close (STEP mode)`.
-- After code is written, updating docs → `/doc-update`.
-- Triaging a review file → `/review-triage`.
+- Mid-implementation state change → `/session-close (STEP)`.
+- Post-code doc update → `/doc-update`.
+- Review triage → `/review-triage`.
 
 ## Inputs (read order)
 
@@ -32,35 +26,35 @@ Turn planning output into durable docs. Classify, route, stop.
 2. Write agent-first docs (human readability is the second reader, nearly free): docs should first help coding agents make correct development decisions, and second give humans a coherent project picture.
 3. Preserve one canonical source of truth per fact. Prefer pointers over copied explanations, and write the smallest doc update that keeps future implementation decisions correct.
 4. For each non-trivial point in the planning output, classify into exactly one bucket:
-   - **Requirement** → agreed finished-project behavior, user expectation, constraint, acceptance criterion, non-goal, overall product picture.
-   - **Design decision** → implementation approach, architecture, boundary, technology, algorithm, protocol, tradeoff.
-   - **ADR** → non-obvious decision, rejected alternative, unusual pattern.
-   - **Roadmap** → phase, milestone, sequencing, next work.
-   - **Open question** → unresolved decision that may affect implementation.
-   - **Risk** → known uncertainty, compatibility issue, correctness concern.
-   - **Implementation note** → durable invariant, protocol, contract, gotcha, navigation hint. Sparse.
-   - **Temporary** → do not document; leave in conversation.
+   - **Requirement** → finished behavior, expectation, constraint, acceptance criterion, non-goal.
+   - **Design** → approach, architecture, boundary, protocol, tradeoff.
+   - **ADR** → non-obvious decision or rejected alternative.
+   - **Roadmap** → phase, sequencing, next work.
+   - **Open question** → unresolved decision.
+   - **Risk** → uncertainty, compatibility, correctness concern.
+   - **Implementation note** → rare invariant, contract, gotcha, navigation hint.
+   - **Temporary** → leave in conversation.
 5. Route each point to the correct doc. Edit existing > create new.
+   - Keep headings unique within a file: duplicates get position-dependent anchors (`#retry`, `#retry-1`), so a later insertion silently repoints existing citations.
+   - Link each new ADR from the design section it governs, in the same pass. An unlinked ADR is unreachable.
 6. Shape implementation work in `roadmap.md` as thin vertical slices, not horizontal layer-by-layer phases:
-   - Each slice delivers the smallest meaningful behavior across all relevant layers and is independently verifiable.
-   - Start with a minimal end-to-end path, then add capability through subsequent slices.
-   - Prefer several small slices over a few large ones.
+   - Deliver the smallest meaningful, independently verifiable behavior across relevant layers; start end-to-end, then add capability in small slices.
    - Mark work **AFK** when it can proceed autonomously and **HITL** when it requires a human decision, review, or approval. Prefer AFK where practical, but do not defer necessary HITL decisions.
-   - Keep roadmap items checklist-first. Store requirements and design decisions in their canonical docs rather than duplicating them in roadmap items.
-   - Leave exact file-level scope and selection of the next atomic code change to `/next-slice`.
+   - Keep roadmap items checklist-first; point to canonical requirements/design instead of copying prose.
+   - Every behavior- or decision-changing slice cites ≥1 doc as a relative Markdown link — whole file by default, `#heading` fragment past ~150 lines. Citable: `requirements/` · `design/` · `adr/` · `reviews/`; never `research/` — capture it (step 4) and cite that. Otherwise record `no doc governs: <reason>`: maintenance, refactor, content-only, or the slice's own output is the doc or decision. Cite links, never paste prose — `/next-slice` opens exactly what is cited.
+   - Leave file scope and selection of the next atomic code change to `/next-slice`.
 7. Status routing: live state → `activeContext.md`; phase/checklist → `roadmap.md`; completed history → `progress.md` — never into requirements or design.
 8. Do NOT create an internals or implementation spec.
 9. If a planning decision conflicts with implementation reality or an existing design/ADR, surface the conflict instead of overwriting it silently.
 10. Print the Output.
 
 ## Output
-
 ```
 Updated:
   docs/requirements/: <files or "none">
   docs/design/:       <files or "none">
-  docs/adr/:          <new ADRs or "none">
-  roadmap.md:    <yes/no>
+  docs/adr/:          <new ADRs + the section each links from, or "none">
+  roadmap.md:    <yes/no — slices claiming "no doc governs": N of M>
   docs/implementation-notes.md: <yes/no>
 Open questions: <list or "none">
 Risks: <list or "none">
@@ -69,6 +63,4 @@ Suggested next skill: <usually /next-slice or /session-close>
 ```
 
 ## Stop conditions
-
-- After printing Output, stop. Do not start implementation.
-- If the plan is too vague to classify → ask the user one specific question, then stop.
+- After Output, stop without implementation; if the plan is too vague to classify, ask one specific question and stop.

@@ -34,14 +34,20 @@ vertical slice per cycle.
 - One canonical home per fact. Never create internals docs that mirror code;
   keep status out of requirements and design.
 
-## Docs — load only when the task needs them
+## Docs — cited links always; the rest on demand
 
+- **A slice cites doc links → open every one, plus any ADR they link, before
+  implementing.** Not discretionary. Fragment link means that section, bare link
+  means the whole file; a link that does not resolve stops the slice. The roadmap
+  cites instead of copying prose.
 - Scope or expected behavior unclear → `docs/requirements/` (finished
   behavior, constraints, acceptance criteria, non-goals, user expectations).
 - Designing across modules → `docs/design/` (architecture, algorithms,
   boundaries, protocols, tradeoffs).
 - Code looks surprising → `docs/adr/` (durable decisions, non-obvious
   rationale).
+- Fixing a reported defect → `docs/reviews/` (finding, analysis, agreed fix).
+  Citable; `docs/research/` is not — capture it first.
 - Rare invariants, contracts, gotchas → `docs/implementation-notes.md`.
 
 ## Non-obvious gotchas
