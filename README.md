@@ -45,6 +45,12 @@ These principles carry the design:
 - **Context is a budget, not a window.** The reliable "smart zone" is an
   absolute token count — roughly 100k — no matter how large the advertised
   window is. Close sessions before the agent enters the dumb zone.
+- **Spec-driven development — every prompt ends up in a spec.** Nothing
+  durable is allowed to die in the conversation. Planning output is written
+  down by `/planning-capture`; in every other mode — implementation, plan
+  review, code review — `/session-close` runs the `/doc-update` decision table
+  and calls it when something durable changed. A prompt that changed the
+  project but left no trace in a doc is a decision the next session cannot see.
 - **Agent-first documentation, fewest possible layers.** Docs exist first for
   the coding agent; well-structured, human-readable docs come almost for free
   as the second reader. Requirements say *what*, design and ADRs say *why*,
@@ -52,9 +58,12 @@ These principles carry the design:
   killed. Fewer layers mean less drift and fewer tokens, and are what makes
   **one source of truth per fact** actually possible. Stale docs mislead an
   agent more than no docs, because the agent trusts them completely.
-- **Status isolated from knowledge.** Current state lives in three small live
-  files — `activeContext.md`, `roadmap.md`, `progress.md` — so moving work
-  forward never means editing requirements or design.
+- **Status stays out of knowledge.** Specs state *agreed finished behavior* in
+  the settled voice and read the same mid-phase or a year later. Current state,
+  sequencing, and one-off implementation instructions live in the live files —
+  `activeContext.md`, `roadmap.md`, `progress.md` — so moving work forward
+  never means editing requirements or design. If a sentence in a spec would
+  become false purely because time passed, it is status in the wrong file.
 - **Atomic vertical slices, written into the roadmap.** Planning breaks the
   work into small end-to-end changes — a sliver of UI + service + data,
   independently verifiable — instead of horizontal layers that only become

@@ -53,10 +53,10 @@ those defaults.
    - Refresh `activeContext.md`: replace the "current task / in progress" section with the next unchecked step from `roadmap.md`.
    - Keep `activeContext.md` tiny. Default shape: mode, phase/slice, one-line state, next atomic step, optional next-after-next, blockers/env. Move history, decision logs, and dead ends to `progress.md`, ADRs, or a handoff only when truly needed.
    - Keep `roadmap.md` checklist-first. Record current phase and unchecked items, but do not let it turn into narrative status reporting.
-   - Do NOT touch `docs/requirements/`, `docs/design/`, `docs/adr/` in STEP mode. If the step changed scope or architecture, stop and tell the user — run `/doc-update` before continuing.
+   - Do NOT touch `docs/requirements/`, `docs/design/`, `docs/adr/` in STEP mode. If the step changed **durable behavior**, scope, or architecture — including an unplanned bug fix that altered documented behavior — stop and tell the user: run `/doc-update` before continuing.
 
 3. **SESSION-only actions** (run after STEP actions when in SESSION mode):
-   - Run the `/doc-update` decision table once: did any durable doc change across the session? Update only those.
+   - **Durable-change test** — safety net for work that skipped `/planning-capture` and `/doc-update`, chiefly mid-session bug fixes. Ask once: did this session change finished behavior, architecture, a contract, or a durable invariant? If no → record "none" and move on. If yes → invoke `/doc-update` and let it classify. Never classify inline; that table is its skill, not this one.
    - Expand the `activeContext.md` update to include:
      - blockers
      - open questions
