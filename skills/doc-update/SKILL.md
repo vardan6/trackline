@@ -12,13 +12,14 @@ Update only docs that have durable value. Never duplicate code.
 - After implementing one or more slices.
 - After applying review fixes.
 - After phase progress is real but not yet reflected in docs.
+- **After unplanned work that changed durable behavior** — a bug fix or issue found and fixed mid-session, outside `/next-slice`. Call it now, not at `/session-close`: the diff is still small and the reasoning is still in the conversation.
 - User says: "update the docs", "refresh documentation".
 - User invokes `/doc-update`.
 
 ## Do NOT use when
 
 - During implementation (state changes go inline via `/session-close (STEP mode)`).
-- Closing a session for handoff → `/session-close`.
+- Ticking roadmap steps, appending to `progress.md`, or writing a `handoff-*.md` → `/session-close` owns the close ritual. This skill may be *called by* a close; it still does only its own job.
 - Capturing planning output → `/planning-capture`.
 - Asked to "document everything" → refuse. That is the anti-pattern this skill replaces.
 

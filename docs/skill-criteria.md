@@ -16,6 +16,11 @@ A skill has two audiences with opposite needs:
 
 Quality is serving each audience without taxing the other.
 
+"Cheap on demand" is not free, and how cheap depends on *when* the skill fires:
+a body loaded at the close of a session is paid once, the same body loaded in
+the middle is paid on every turn that follows. The Edit criteria (21–25) turn
+that into the pricing rule for changing a skill.
+
 ## Description criteria (always loaded)
 
 1. **Trigger-complete, content-free.** The description answers one question:
@@ -117,6 +122,60 @@ Quality is serving each audience without taxing the other.
 20. **Revised against behavior, not taste.** *(external)* Edits cite what a
     session actually did — skipped a step, missed a sibling file, re-derived
     a decided question. Style-only rewrites churn a body that was working.
+
+## Edit criteria (what a change to a skill costs)
+
+The body criteria say what a skill should contain. These say how to price a
+change to one — applied on *every* edit to a description or body, before the
+edit lands.
+
+21. **Price a body by where it loads, not by how long it is.** Context is
+    resent on every turn, so the real unit is *token-turns* — tokens × the
+    turns they stay resident. The same 1,000-token body costs ~2,000
+    token-turns when a terminal skill loads it at the end of a session, and
+    ~25,000 when something loads it in the middle. Consequences: growth in a
+    closing skill (`/session-close`, `/handoff`) is nearly free and is the
+    right place to spend for quality, while growth in a skill that can fire
+    mid-session (`/doc-update`, `/next-slice`) is paid for every remaining
+    turn. Establish where a body loads before optimizing its size.
+22. **Price invocation frequency before word count.** An edit that adds a
+    trigger, or moves a call earlier in the session, changes cost far more
+    than the words it adds. Price the two terms separately with criterion
+    21's turn counts (`end ≈ 2`, `middle ≈ 25`): the prose costs
+    `tokens × turns_resident`, the relocation costs
+    `body_tokens × (turns_after − turns_before)`. Worked case — ~170 tokens
+    of prose that causes an ~1,100-token skill to load mid-session rather
+    than at close: relocation is 1,100 × 23 ≈ 25,300 token-turns, while the
+    prose is 4,250 if it rides in the relocated body and 340 if it sits in a
+    closing skill — so the relocation costs ~6× to ~74× the prose, depending
+    on where the prose itself lands. Do not carry a single ratio; the point
+    is the ordering, not the constant. When an edit changes *when* or *how
+    often* a skill fires, price that first; word count measures the wrong
+    term.
+23. **Every added sentence earns its tokens or leaves.** Judge each addition
+    by what it changes: does the executor decide differently because of it?
+    Instruction earns its place; persuasion, restatement, and background do
+    not. If a passage changes no decision, cut it — and if it must exist for
+    human readers, move it to a file nothing loads. `WORKFLOW.md` and the
+    docs tree cost zero context; skill bodies do not. Keep only the *why*
+    criterion 16 requires — the reason that lets the executor generalize —
+    and put the rest where it is free.
+24. **Compress as a separate pass, with the strongest model available.** Once
+    the content is right, run an explicit compression pass: ask the best
+    model to cut tokens, words, and characters as far as they go *without
+    dropping a single decision, condition, threshold, trigger, stop
+    condition, or output field*. Treat the result as a proposal — diff it
+    against the original and confirm nothing load-bearing vanished.
+    Authoring and compressing in one motion loses rules quietly.
+25. **Delegate the branch; do not inline the sibling.** When a skill needs
+    another skill's content, carry only the *test* that decides whether the
+    branch is taken and invoke the sibling when it fires. Quoting the
+    sibling's table or steps duplicates a canonical fact and invites drift;
+    pointing at a shared file breaks installation, because the installer
+    links skill directories individually and nothing outside a skill
+    directory reaches the project. A cheap in-body test that usually answers
+    "no" keeps the expensive body unloaded in the common case — which is the
+    saving, not the shorter text.
 
 ## The meta-criterion
 

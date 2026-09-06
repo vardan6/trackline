@@ -169,8 +169,8 @@ second copy.
 | `/next-slice` (§3.6) | implementer | state, recent git, cited requirement/design sections + linked ADRs, relevant code | citations resolve exactly once; smallest meaningful, dependency-free, verifiable slice | one proposed slice | implement — after your confirmation |
 | implement + verify (§3.7) | implementer | the confirmed slice | test / manual check / inspectable diff passes | working, verified change | `/doc-update` if durable behavior changed; else `/session-close (STEP)` |
 | `/doc-update` (§3.8) | implementer | git diff of the change | decision table: which durable doc did this touch? | updated docs — or "nothing durable changed" | `/session-close` |
-| `/session-close` STEP (§3.10) | implementer | the finished step | step really finished? scope changed → `/doc-update` first | ticked `roadmap.md`, dated `progress.md`, refreshed `activeContext.md` | `/next-slice` — context light and same territory; SESSION close otherwise |
-| `/session-close` SESSION (§3.10) | any cycle | session state | doc-update table once; blockers, open questions, dead ends | state files (+ `handoff-*.md` only if needed) | next session's `/session-open` |
+| `/session-close` STEP (§3.10) | implementer | the finished step | step really finished? durable behavior, scope, or architecture changed → `/doc-update` first | ticked `roadmap.md`, dated `progress.md`, refreshed `activeContext.md` | `/next-slice` — context light and same territory; SESSION close otherwise |
+| `/session-close` SESSION (§3.10) | any cycle | session state | doc-update table once — delegate to `/doc-update` if the diff is large or mixed; blockers, open questions, dead ends | state files (+ `handoff-*.md` only if needed) | next session's `/session-open` |
 | commit (§7) | you — never the agent | the closed step or session | is this a state worth returning to? | a checkpoint in history, and a review scope for `/cross-review` | next slice / review / PR — optional each time, required before the PR |
 | `/cross-review` (§3.9) | other provider's strongest model | diff since last known-good commit + the docs | misimplementation, gaps, bugs, better options | findings file in `docs/reviews/` | `/review-triage` — always |
 | `/review-triage` on code (§3.9) | implementer | findings + the actual code | validate each; sort must-fix-now / before-phase / backlog / invalid | review items folded into `roadmap.md` | `/next-slice` for fixes; PR when clean |
@@ -179,25 +179,57 @@ second copy.
 
 ## 2. Operating principles
 
-Five ideas justify the steps. They are summarized here and argued in full in
-[WHY.md](WHY.md) and the README's Goals.
+Nine ideas justify the steps. They are summarized here and argued in full in
+[WHY.md](WHY.md) and the README's Goals. Every skill in §3 is one of these
+applied — if you forget the mechanics, keep the principles and you will
+re-derive them.
 
-- **Engineer the workflow, not just the prompt.** The workflow is a specified,
-  pressure-tested artifact — it matters more than the model.
-- **Context is a budget, not a window.** The reliable **smart zone** is an
-  absolute token count; past it lies the **dumb zone**, and avoiding it is the
-  reason the session-close / session-open loop exists at all. Thresholds in §6,
-  evidence in [WHY §2](WHY.md).
-- **Code is the truth; one canonical home per fact.** Re-derive *how* from the
-  code, never duplicate a fact across docs, and apply the deletion test: if
-  removing a line would not make a future session decide worse, delete it. The
-  layer model that follows from this is in [WHY §3](WHY.md); the tree it
-  produces is §4.
-- **Mode discipline.** At any moment the work is in exactly one mode — planning,
-  implementing, reviewing, or closing — and each skill belongs to one mode (§5).
-- **Atomic vertical slices.** Implement one small, end-to-end, independently
-  verifiable change at a time, so the agent never needs the whole project in
-  working memory ([WHY §6](WHY.md)).
+| # | Principle | In one line | Argued in |
+|---|---|---|---|
+| 1 | **Engineer the workflow, not just the prompt** | The workflow is a specified, pressure-tested artifact — it matters more than the model. | [WHY](WHY.md) intro |
+| 2 | **Context is a budget, not a window** | The reliable **smart zone** is an absolute token count; past it lies the **dumb zone**, and avoiding it is why the close / open loop exists at all. | [WHY §2](WHY.md), thresholds in §6 |
+| 3 | **Spec-driven development — every prompt ends up in a spec** | Nothing durable is allowed to die in the conversation. In planning, [`/planning-capture`](skills/planning-capture/SKILL.md) writes it down; in every other mode — implementation, plan review, code review — [`/session-close`](skills/session-close/SKILL.md) runs the [`/doc-update`](skills/doc-update/SKILL.md) decision table and calls it when something durable changed. | §3.3, §3.8, §3.10 |
+| 4 | **Docs are for the agent first, humans second** | Documentation is designed for the best agent decisions; well-structured, human-readable docs come almost for free as the second reader. | [WHY §3](WHY.md) |
+| 5 | **Keep one source of truth** | One fact, one canonical home. Other documents **reference it, never copy it**; apply the deletion test — if removing a line would not make a future session decide worse, delete it. | [WHY §3](WHY.md), tree in §4 |
+| 6 | **Status stays out of knowledge** | Two families, two voices. **Knowledge** — `requirements/` · `design/` · `adr/` · `implementation-notes.md` — states *agreed finished behavior* in the settled voice, and reads the same mid-phase or a year later. **Status** — `activeContext.md` · `roadmap.md` · `progress.md` — holds where the work is now, its sequencing, and its implementation instructions. Moving work forward edits status only; a spec changes when a *decision* changes, never when progress happens. | [WHY §4](WHY.md), files in §4 |
+| 7 | **Minimum, most efficient context load — for best quality first** | Load the leanest context that still carries the decision. Best quality is the goal; lower token usage largely comes with it. | [WHY §3](WHY.md), §6 |
+| 8 | **Mode discipline** | At any moment the work is in exactly one mode — planning, implementing, reviewing, or closing — and each skill belongs to one mode. | §5 |
+| 9 | **Atomic vertical slices** | Implement one small, end-to-end, independently verifiable change at a time, so the agent never needs the whole project in working memory. | [WHY §6](WHY.md) |
+
+Principles 3–6 are one argument in four steps: **3** says the knowledge must be
+written down at all, **4** says who it is written for, **5** says it is written
+once, and **6** says which file family it lands in.
+
+**Principle 3 has two timings, and both are legitimate.** Every important
+behavioral fact reaches the docs either *before* implementation or *after* it:
+
+| | Before implementation | After implementation |
+|---|---|---|
+| **When** | The work was planned — a feature, a phase, anything grilled first | The work was not planned — a bug fix, a small issue found mid-session, a change asked for and done inside an open implementation session |
+| **Written by** | [`/planning-capture`](skills/planning-capture/SKILL.md) (§3.3) | [`/doc-update`](skills/doc-update/SKILL.md) (§3.8) |
+| **Reading from** | the planning conversation | the git diff of what actually shipped |
+| **Safety net** | `/session-close` refuses a clean close when planning ran uncaptured | `/session-close (SESSION)` re-runs the `/doc-update` decision table |
+
+Before is the default and the better path: a spec written from a plan is agreed,
+whereas a spec written from a diff is reconstructed. But the after-path is not a
+fallback for sloppiness — it is the honest answer for work that legitimately
+could not be planned, which is most bug fixes and most small findings. What is
+*not* legitimate is a third option where the change ships and nothing is written.
+
+**Principle 3 is the one most easily lost, because it has no skill of its own:**
+it is a *property* the flow must preserve at every exit, not a step you can tick.
+So call `/doc-update` during the slice, the moment something undocumented is
+asked or found — the close is a net, not the plan, and `/session-close` exists so
+that forgetting is recoverable, not so that forgetting is the plan. Why calling
+early produces the better spec is argued in §3.8.
+
+Principle 6 is what keeps principle 3 from degrading the specs. Because every
+prompt now lands somewhere, the pressure to write *"next we should…"* or *"this
+phase is in progress"* into a requirement is constant — and that is the drift
+that made docs untrustworthy in the first place. Sequencing, sub-tasks, and
+one-off implementation instructions are status; they belong in `roadmap.md`, not
+in a design doc. The test: **if a sentence in a spec would become false purely
+because time passed, it is status in the wrong file.**
 
 ## 3. The steps in detail
 
@@ -426,8 +458,15 @@ point in the loop where real change has outrun the docs. This includes ad-hoc
 work outside `/next-slice`: invoke `/doc-update` directly whenever that work
 changes durable behavior, architecture, or a contract.
 
-**Comes before.** `/session-close`. (SESSION-mode `session-close` also runs the
-`doc-update` decision table once, so you do not always call it separately.)
+**Comes before.** `/session-close`. SESSION-mode `session-close` runs a
+durable-change test and calls this skill if it fires, so a missed call is
+recoverable — but prefer calling it explicitly at the moment the behavior
+changed (§2, principle 3). Called late, it faces a whole session's diff, often
+mixed across unrelated changes, with the reasoning already compacted away;
+called at the moment of change it sees one small diff while the reasoning is
+still in the conversation. Same table, far better input — and cheaper, because
+the body loads late in the session instead of sitting in context for the rest
+of it.
 
 ### 3.9 `/cross-review` and `/review-triage` — cross-model code review
 
@@ -468,13 +507,18 @@ modes:
 - **STEP mode** — finishing one roadmap step and continuing. Ticks the step's
   checkbox in `roadmap.md`, appends one dated bullet to `progress.md`, and
   refreshes `activeContext.md` to point at the next unchecked step. Does **not**
-  touch requirements/design/ADR — if scope or architecture changed it stops and
-  tells you to run `/doc-update` first.
-- **SESSION mode** — ending the session. Does everything STEP does, plus runs the
-  `/doc-update` decision table once, expands `activeContext.md` with blockers,
+  touch requirements/design/ADR — if durable behavior, scope, or architecture
+  changed it stops and tells you to run `/doc-update` first. An unplanned bug fix
+  that altered documented behavior counts.
+- **SESSION mode** — ending the session. Does everything STEP does, plus applies a
+  one-question **durable-change test**, expands `activeContext.md` with blockers,
   open questions, and discarded dead ends, and writes a `handoff-*.md` only if
   `activeContext.md` is not enough. A bare `/session-close` defaults to SESSION
-  mode.
+  mode. The close never classifies inline: it only asks whether finished
+  behavior, architecture, a contract, or an invariant moved, and on a yes it
+  invokes `/doc-update` to do the classification. That split is deliberate on two
+  counts — the decision table stays canonical in one skill, and the common close
+  (nothing durable changed) never pays to load it.
 
 **What it solves.** This is the only step that externalizes state, so it is what
 makes session continuity possible — and it must stay cheap and routine, because
