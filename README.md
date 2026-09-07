@@ -51,13 +51,25 @@ These principles carry the design:
   review, code review — `/session-close` runs the `/doc-update` decision table
   and calls it when something durable changed. A prompt that changed the
   project but left no trace in a doc is a decision the next session cannot see.
-- **Agent-first documentation, fewest possible layers.** Docs exist first for
-  the coding agent; well-structured, human-readable docs come almost for free
-  as the second reader. Requirements say *what*, design and ADRs say *why*,
-  **code says how** — the internals layer that mirrors code is deliberately
-  killed. Fewer layers mean less drift and fewer tokens, and are what makes
-  **one source of truth per fact** actually possible. Stale docs mislead an
-  agent more than no docs, because the agent trusts them completely.
+- **Agent-first documentation.** Docs exist first for the coding agent;
+  well-structured, human-readable docs come almost for free as the second
+  reader. This is not a lowering of the bar — the agent is the harshest reader
+  there is, because it trusts what it reads completely. A stale doc misleads it
+  more than no doc at all.
+- **Fewest possible documentation layers.** Every layer answers exactly one
+  question, and no layer answers a question another one already owns:
+  requirements say **what** must be true, design and ADRs say **why** the
+  system has this shape — the intent and the reasoning behind it — and **code
+  says how**. The internals layer that narrates code back in prose is
+  deliberately killed: it answers *how* a second time, always one commit
+  behind, and it is the layer that taught the same bug back four times. Fewer
+  layers mean less drift, fewer tokens, and one obvious place to look for any
+  given question.
+- **One source of truth per fact.** Each fact has exactly one canonical home;
+  every other document links to it instead of restating it. Two copies of a
+  fact are one copy and one future lie, and nothing tells you which is which.
+  Fewest layers is what makes this achievable — layers that overlap by design
+  force duplication no discipline can hold back.
 - **Status stays out of knowledge.** Specs state *agreed finished behavior* in
   the settled voice and read the same mid-phase or a year later. Current state,
   sequencing, and one-off implementation instructions live in the live files —
@@ -166,6 +178,11 @@ durable knowledge under `docs/`: `requirements/`, `design/`, `adr/`,
 
 > Requirements define what must be true. Design explains why the system has
 > its shape. Code defines how it works.
+
+Installed third-party skills expect documents this workflow does not define —
+`CONTEXT.md` most often. They are listed in
+[WORKFLOW.md §4](WORKFLOW.md#4-the-state-files-and-the-docs-tree), so an
+unfamiliar file can be checked against that list before it is treated as drift.
 
 ## Going deeper
 

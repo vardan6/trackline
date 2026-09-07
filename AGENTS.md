@@ -29,8 +29,10 @@ vertical slice per cycle.
   (`rg` with exact identifiers), read narrow ranges, keep command output small.
 - At ~100k tokens suggest `/session-close` or `/handoff`; no new work past
   ~120k. `hooks/README.md` owns the details.
-- Code is implementation truth; requirements, design, and ADRs are decision
-  truth — report conflicts and ask before changing a standing decision.
+- Code is truth about present behavior; requirements, design, and ADRs are truth
+  about intent. On conflict a grilled-and-captured spec wins and the code is the
+  bug; a spec reconstructed from a diff loses. Surface either and ask before
+  changing a standing decision.
 - One canonical home per fact. Never create internals docs that mirror code;
   keep status out of requirements and design.
 

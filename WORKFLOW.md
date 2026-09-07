@@ -192,7 +192,7 @@ re-derive them.
 | 4 | **Docs are for the agent first, humans second** | Documentation is designed for the best agent decisions; well-structured, human-readable docs come almost for free as the second reader. | [WHY §3](WHY.md) |
 | 5 | **Keep one source of truth** | One fact, one canonical home. Other documents **reference it, never copy it**; apply the deletion test — if removing a line would not make a future session decide worse, delete it. | [WHY §3](WHY.md), tree in §4 |
 | 6 | **Status stays out of knowledge** | Two families, two voices. **Knowledge** — `requirements/` · `design/` · `adr/` · `implementation-notes.md` — states *agreed finished behavior* in the settled voice, and reads the same mid-phase or a year later. **Status** — `activeContext.md` · `roadmap.md` · `progress.md` — holds where the work is now, its sequencing, and its implementation instructions. Moving work forward edits status only; a spec changes when a *decision* changes, never when progress happens. | [WHY §4](WHY.md), files in §4 |
-| 7 | **Minimum, most efficient context load — for best quality first** | Load the leanest context that still carries the decision. Best quality is the goal; lower token usage largely comes with it. | [WHY §3](WHY.md), §6 |
+| 7 | **Same result, less context** | If the same problem can be solved with less loaded, load less. Best quality is the goal; lower token usage largely comes with it. Principle 2 is the ceiling, principle 7 is the rate. | [WHY §3](WHY.md), §6 |
 | 8 | **Mode discipline** | At any moment the work is in exactly one mode — planning, implementing, reviewing, or closing — and each skill belongs to one mode. | §5 |
 | 9 | **Atomic vertical slices** | Implement one small, end-to-end, independently verifiable change at a time, so the agent never needs the whole project in working memory. | [WHY §6](WHY.md) |
 
@@ -209,6 +209,9 @@ behavioral fact reaches the docs either *before* implementation or *after* it:
 | **Written by** | [`/planning-capture`](skills/planning-capture/SKILL.md) (§3.3) | [`/doc-update`](skills/doc-update/SKILL.md) (§3.8) |
 | **Reading from** | the planning conversation | the git diff of what actually shipped |
 | **Safety net** | `/session-close` refuses a clean close when planning ran uncaptured | `/session-close (SESSION)` re-runs the `/doc-update` decision table |
+
+The distinction is not bookkeeping — it decides who wins a conflict with the
+code; §4.1 makes that rule explicit.
 
 Before is the default and the better path: a spec written from a plan is agreed,
 whereas a spec written from a diff is reconstructed. But the after-path is not a
@@ -461,7 +464,7 @@ changes durable behavior, architecture, or a contract.
 **Comes before.** `/session-close`. SESSION-mode `session-close` runs a
 durable-change test and calls this skill if it fires, so a missed call is
 recoverable — but prefer calling it explicitly at the moment the behavior
-changed (§2, principle 3). Called late, it faces a whole session's diff, often
+changed (§2, spec-driven development). Called late, it faces a whole session's diff, often
 mixed across unrelated changes, with the reasoning already compacted away;
 called at the moment of change it sees one small diff while the reasoning is
 still in the conversation. Same table, far better input — and cheaper, because
@@ -600,6 +603,27 @@ docs/
 directory list lives in one `DOCS_DIRS` array in that script, so it stays in sync
 as the tree grows.
 
+#### Documents this workflow does not define
+
+Installed third-party skills expect documents of their own. They are listed here
+because they appear in real project trees and would otherwise look like drift:
+
+| Document | Required by | Role |
+|---|---|---|
+| `CONTEXT.md` | `wait-what`, `improve-codebase-architecture`, and the upstream `grill-with-docs` | Ubiquitous language — the project's domain vocabulary |
+| `CONTEXT-MAP.md` | `wait-what` | Index, when one repository holds more than one `CONTEXT.md` |
+| `CODING_STANDARDS.md`, `CONTRIBUTING.md`, `docs/agents/issue-tracker.md` | `code-review` | Review inputs |
+| `MISSION.md`, `RESOURCES.md`, `NOTES.md`, `GLOSSARY.md` | `teach` | Learning-record set |
+
+`CONTEXT.md` is the one that matters in practice: three installed skills read it,
+and it is the same concept some projects spell `docs/glossary.md`. **A project
+that keeps its glossary under another name should provide `CONTEXT.md` as a
+pointer to it rather than reorganize** — the skill is never edited, so upstream
+updates keep flowing.
+
+None of these names is owned by this workflow. Adding one to `DOCS_DIRS` or to
+the tree above is a decision, not a cleanup.
+
 #### Citations — ordinary Markdown links
 
 A roadmap slice **cites** its governing docs instead of copying their prose. The
@@ -672,12 +696,83 @@ silently repoints every later fragment. Flag duplicate headings, not just
 unresolvable targets.
 
 Rules for the tree: documentation is **agent-first, human-second**. Keep one
-canonical home per fact and prefer pointers over copies. **Code is implementation
-truth; design and ADRs are decision truth** — if they disagree, surface the
-conflict and ask before changing a standing decision. Status never enters
+canonical home per fact and prefer pointers over copies. Status never enters
 requirements or design. Never write function-by-function descriptions, private
 call chains, post-hoc implementation plans, verbatim review history, or
-transcripts.
+transcripts. Which artifact wins when two of them disagree is §4.1.
+
+### 4.1 Which truth wins — spec, code, and provenance
+
+Spec-driven development says every prompt ends up in a spec. Fewest possible
+documentation layers says the layers stay few and code is the *how*. Read carelessly these pull opposite ways: if
+implementation flows *from* the spec, why is code ever the authority? This
+section settles it.
+
+**Where Trackline sits.** Three positions are practiced in the field, and
+naming them prevents drifting between them by accident:
+
+| Position | Claim | Code is | Practiced by |
+|---|---|---|---|
+| **Spec-as-source** | The spec is the sole source of truth. | A generated byproduct, not maintained by hand. | Tessl and similar spec-compilation tools |
+| **Spec-anchored** | Specs drive the work and coexist with hand-maintained code. | Maintained, and authoritative about itself. | **Trackline** |
+| **Code-as-truth** | Executable code is the source of truth; specs assist. | The only thing that cannot lie. | Thoughtworks' stated position |
+
+**Trackline is spec-anchored, deliberately, and will not move to
+spec-as-source.** The proof is already in spec-driven development: it admits two timings —
+captured *before* implementation, or reconstructed *after* it from the diff.
+Under spec-as-source the after-path could not exist, because there would be no
+hand-written code to reconstruct from. Under code-as-truth the before-path
+would be optional, which it is not. Both paths are load-bearing, so the middle
+position is the one being held.
+
+References for the three positions: [Spec-driven development, an AI-native
+approach](https://developer.microsoft.com/blog/spec-driven-development-ai-native-engineering/)
+(Microsoft) · [Spec-Driven Development in
+2026](https://dev.to/krlz/spec-driven-development-in-2026-what-it-is-the-tooling-and-how-teams-actually-use-it-2fk2)
+· [The Spec Growth Engine](https://arxiv.org/pdf/2606.27045) (arXiv).
+
+**Rule 1 — truth splits by question, not by seniority.**
+
+- *"What must be true, and why does the system have this shape?"* → the spec
+  answers, and **the spec wins**. Code that disagrees with an agreed requirement
+  is a bug, not a correction.
+- *"What does the system do right now?"* → the code answers, and **the code
+  wins**, without exception. No document is evidence about present behavior.
+
+This is diagnostic rather than a tie-break. A conflict between spec and code is
+almost always one of two known failures wearing a costume: either a decision
+changed and the spec was not updated — spec-driven development failing — or the spec was
+describing behavior nobody built, which is status prose sitting inside a
+knowledge file — status-stays-out-of-knowledge failing. Name the failure before
+picking a winner.
+
+**Rule 2 — a spec's authority depends on how it was produced.**
+
+The honest objection to spec priority is that a human validates code by testing
+it and does not read every generated document, so specs are the less-verified
+artifact. True — but that makes code better *validated*, not more *authoritative
+about intent*. The answer is to raise the verification rate of specs, which is
+exactly what grilling does. So authority follows provenance:
+
+| Provenance | Human-validated? | On conflict with code |
+|---|---|---|
+| Captured **before** implementation, after grilling (§3.2 → §3.3) | Yes — at the grilling | **The spec wins.** The code is the bug; fix the code. |
+| Reconstructed **after** implementation from the diff (§3.8) | No — nobody read it | **The code wins.** The spec is the bug; fix the spec. |
+
+Either way, surface the conflict and ask before changing a standing decision.
+The rule tells you which artifact is presumed correct, not that you may edit the
+other one silently.
+
+**The corollary that matters most in practice:** capturing a long unstructured
+prompt into well-structured documents makes it *structured*, not *agreed*.
+Structure alone earns no authority over code. The loop that earns it is **dump →
+grill → capture → implement**, not dump → capture → implement.
+
+**Where this would collide with fewest-possible-layers, and the tripwire.** Spec-driven
+development adds no layers — it changes *when* the existing layers are written,
+not how many exist. Watch document *types*, not spec volume: more words inside
+`requirements/` is the principle working; a new directory or a new kind of
+document is the principle leaking.
 
 ## 5. Mode discipline
 
@@ -889,6 +984,21 @@ The eight canonical skills live at `skills/<name>/SKILL.md` and are described st
 by step in §3. Three more are vendored from Matt Pocock (MIT — see `CREDITS.md`):
 `grill-me`, `grill-with-docs`, and `handoff`; they keep their upstream format
 rather than the six-section skeleton the canonical skills use.
+
+**External skills carry document contracts.** They expect files this workflow
+does not define; the list is in §4, *Documents this workflow does not define*.
+Consuming an external skill therefore adopts its document names as well as its
+behavior — check that list before assuming an unfamiliar file is drift.
+
+**The vendored copies are not the ones that run.** `install-workflow.sh` treats
+`grill-me`, `grill-with-docs` and `handoff` as `EXTERNAL_SKILLS` and skips them
+per project whenever user scope already provides them, which it normally does.
+So the pinned copies here are source and attribution, not the executed version,
+and upstream can change behavior and document contracts without touching this
+repository. Observed: upstream rewrote `grill-with-docs` from a self-contained
+skill with `CONTEXT-FORMAT.md` and `ADR-FORMAT.md` into a short delegator that
+calls a `domain-modeling` skill; the two format documents no longer ship. Verify
+the installed version before relying on the description above.
 
 Two name clashes are worth keeping straight: `/triage` is issue triage (Linear /
 GitHub), **not** `/review-triage` (plan / code review); and `/handoff` is

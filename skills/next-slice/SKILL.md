@@ -38,7 +38,7 @@ description: Pick the next small implementation slice. Use when the user asks wh
    - tiebreak: prefer autonomous work, then whatever unblocks roadmap progress
 4. Before implementing, open every doc the slice cites, plus ADRs those pages link, one hop. Fragment link means that section; bare link means the whole file. However self-sufficient the roadmap line looks, it is a pointer, not a substitute. Citable: `requirements/` · `design/` · `adr/` · `reviews/` — never `research/`, capture it first. Accept `no doc governs: <reason>` only when nothing durable is at stake (maintenance, refactor, content-only), or the doc or decision is the slice's own output.
 5. Print the Output. Wait for user confirmation, then implement.
-6. Code is implementation truth; durable docs are decision truth. Surface conflicts.
+6. Code is truth about present behavior; durable docs are truth about intent. Surface conflicts — a captured spec wins over code, a spec reconstructed from a diff does not.
 
 ## Output
 

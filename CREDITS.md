@@ -30,3 +30,7 @@ in this repository.
 - Vendored copies are pinned and may drift from upstream. To refresh, re-copy
   from [`mattpocock/skills`](https://github.com/mattpocock/skills) and keep this
   file and `skills/LICENSE-mattpocock` in sync.
+- **Pinning here does not pin what executes.** The installer skips these three
+  per project when user scope provides them, so the user-scope copy is normally
+  the one that runs and it tracks upstream. Upstream has already rewritten
+  `grill-with-docs`; see `WORKFLOW.md` §9.
