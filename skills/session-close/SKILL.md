@@ -49,11 +49,30 @@ only when the user's wording directly conflicts with these defaults.
      - blockers
      - open questions
      - "discarded as noise" — failed hypotheses or dead ends likely to be retried this session
-   - Write a handoff whenever work is unfinished, `/handoff` requested a packet, or loose ends exceed `activeContext.md`. Use `handoff-<YYYY-MM-DD-HHMM>.md` at repo root; choose a unique suffix if an unrelated file already occupies that path.
+   - **Planning-capture check:** when planning, grilling, or research remains
+     uncaptured, run `/planning-capture` if authorized. Otherwise treat the
+     uncaptured rationale as missing continuation context in the handoff test and
+     report durable capture as pending. Incomplete planning must not prevent saving
+     session state.
+   - **Handoff test:** put state-shaped information in its canonical home first:
+     unfinished slices, ordering, and dependencies in `roadmap.md`; the exact next
+     action and blockers in `activeContext.md`; completed outcomes in `progress.md`;
+     settled intent in durable docs. Then ask: can a fresh session identify and
+     execute the correct next action from those files and their citations without
+     relying on this conversation?
+     - **Yes:** do not create or update a handoff, even when many slices remain.
+     - **No:** write a handoff containing only the continuation context still
+       missing. This includes an explicit `/handoff` request, a cross-tool/model
+       transfer that needs a tailored bridge, or uncaptured planning or partial
+       work whose rationale would lose meaning if forced into a state file. Use
+       `handoff-<YYYY-MM-DD-HHMM>.md` at repo root; choose a unique suffix if an
+       unrelated file already occupies that path.
    - Keep the handoff tiny by default. It should bridge the next session, not replay the whole one. Prefer pointers to `activeContext.md`, `roadmap.md`, `progress.md`, commits, or exact files over restating large narratives.
    - Read [HANDOFF-TEMPLATE.md](HANDOFF-TEMPLATE.md) when writing a packet. Link it from `activeContext.md`. Include unfinished work, verification gaps, settled decisions, unresolved questions, and a concrete next action; tailor to the requested recipient or focus.
-   - If a handoff already exists from this session, inspect and reuse/update it instead of creating a duplicate. A legacy vendor packet outside the repo is input: preserve its original and write the reconciled packet at repo root. A packet alone never proves state files were updated.
-   - **Planning-capture check:** Preserve uncaptured planning in the handoff, separating settled decisions from open questions. Run `/planning-capture` if authorized; otherwise report durable capture as pending. Incomplete planning must not prevent saving session state.
+   - If a handoff is required and one already exists from this session, inspect and
+     reuse/update it instead of creating a duplicate. A legacy vendor packet
+     outside the repo is input: preserve its original and write the reconciled
+     packet at repo root. A packet alone never proves state files were updated.
 
 4. **Commit boundary:** never commit automatically. If the user requested a
    commit or a substantial phase/checkpoint just completed, ask whether to
@@ -72,7 +91,7 @@ activeContext.md: next step → <one sentence>
 Scope/arch changes detected: yes | no — <if yes, recommend /doc-update before continuing>
 docs updated this session: <SESSION only — list or "none">
 docs intentionally not updated: <SESSION only — list with reason>
-handoff file: <SESSION only — handoff-*.md path or "not needed — activeContext.md is enough">
+handoff file: <SESSION only — handoff-*.md path or "not needed — state files are sufficient">
 Uncaptured planning: <SESSION only — none | captured | preserved in handoff; durable capture pending>
 Commit: <"not requested" or "ask user — <suggested message>">
 Suggested next skill: /next-slice (implement) | /session-open (orient)
@@ -82,7 +101,9 @@ Suggested next skill: /next-slice (implement) | /session-open (orient)
 
 - After printing Output, stop. Do not auto-commit, do not chain into the next slice.
 - If mode is STEP but scope/architecture changed → stop and suggest `/doc-update` before `/next-slice`.
-- If completion is uncertain, leave the item unchecked and record the uncertainty in the handoff. Save known state before asking for missing information.
+- If completion is uncertain, leave the item unchecked and record the uncertainty
+  in the state files or required handoff. Save known state before asking for missing
+  information.
 - If `activeContext.md` does not exist → SESSION mode creates it with the template content (this is the one creation exception — every project needs this file). STEP mode tells the user to invoke SESSION mode first.
 - If the user has uncommitted changes, mention them in Output but do not commit unless asked.
 - If `activeContext.md`, the latest handoff, or `roadmap.md` have grown into narrative documents, trim them as part of the close-out instead of preserving repeated context.
