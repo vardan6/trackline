@@ -14,6 +14,20 @@
 
 ---
 
+## Find the relevant section
+
+| Task | Section |
+|---|---|
+| Understand how sessions connect | [Flow](#1-the-generic-flow) |
+| Understand the design statements | [Principles](#2-operating-principles) |
+| Run a particular step | [Procedures](#3-the-steps-in-detail) |
+| Place a fact or resolve a spec/code conflict | [Documents and authority](#4-the-state-files-and-the-docs-tree) |
+| Choose the working mode | [Mode discipline](#5-mode-discipline) |
+| Decide when to close | [Context budget](#6-context-budget-and-working-zones) |
+| Branch, review, and checkpoint | [Version control](#7-version-control) |
+| Install or maintain the kit | [Setup](#8-setup-and-meta) |
+| Check third-party skill provenance | [Attribution](#9-skill-names-and-attribution) |
+
 ## 1. The generic flow
 
 The workflow is not one long pipeline. It is a small set of **self-contained
@@ -179,12 +193,12 @@ second copy.
 
 ## 2. Operating principles
 
-Nine ideas justify the steps. They are summarized here and argued in full in
-[WHY.md](WHY.md) and the README's Goals. Every skill in §3 is one of these
-applied — if you forget the mechanics, keep the principles and you will
-re-derive them.
+These nine design statements connect the rationale to the operating steps.
+They include guiding rules and named practices; their numbers identify this
+list, not the failure-mode numbers in [WHY.md](WHY.md). The
+[README](README.md) gives a shorter, task-oriented introduction.
 
-| # | Principle | In one line | Argued in |
+| # | Design statement | In one line | Rationale / procedure |
 |---|---|---|---|
 | 1 | **Engineer the workflow, not just the prompt** | The workflow is a specified, pressure-tested artifact — it matters more than the model. | [WHY](WHY.md) intro |
 | 2 | **Context is a budget, not a window** | The reliable **smart zone** is an absolute token count; past it lies the **dumb zone**, and avoiding it is why the close / open loop exists at all. | [WHY §2](WHY.md), thresholds in §6 |
@@ -200,39 +214,8 @@ Principles 3–6 are one argument in four steps: **3** says the knowledge must b
 written down at all, **4** says who it is written for, **5** says it is written
 once, and **6** says which file family it lands in.
 
-**Principle 3 has two timings, and both are legitimate.** Every important
-behavioral fact reaches the docs either *before* implementation or *after* it:
-
-| | Before implementation | After implementation |
-|---|---|---|
-| **When** | The work was planned — a feature, a phase, anything grilled first | The work was not planned — a bug fix, a small issue found mid-session, a change asked for and done inside an open implementation session |
-| **Written by** | [`/planning-capture`](skills/planning-capture/SKILL.md) (§3.3) | [`/doc-update`](skills/doc-update/SKILL.md) (§3.8) |
-| **Reading from** | the planning conversation | the git diff of what actually shipped |
-| **Safety net** | `/session-close` refuses a clean close when planning ran uncaptured | `/session-close (SESSION)` re-runs the `/doc-update` decision table |
-
-The distinction is not bookkeeping — it decides who wins a conflict with the
-code; §4.1 makes that rule explicit.
-
-Before is the default and the better path: a spec written from a plan is agreed,
-whereas a spec written from a diff is reconstructed. But the after-path is not a
-fallback for sloppiness — it is the honest answer for work that legitimately
-could not be planned, which is most bug fixes and most small findings. What is
-*not* legitimate is a third option where the change ships and nothing is written.
-
-**Principle 3 is the one most easily lost, because it has no skill of its own:**
-it is a *property* the flow must preserve at every exit, not a step you can tick.
-So call `/doc-update` during the slice, the moment something undocumented is
-asked or found — the close is a net, not the plan, and `/session-close` exists so
-that forgetting is recoverable, not so that forgetting is the plan. Why calling
-early produces the better spec is argued in §3.8.
-
-Principle 6 is what keeps principle 3 from degrading the specs. Because every
-prompt now lands somewhere, the pressure to write *"next we should…"* or *"this
-phase is in progress"* into a requirement is constant — and that is the drift
-that made docs untrustworthy in the first place. Sequencing, sub-tasks, and
-one-off implementation instructions are status; they belong in `roadmap.md`, not
-in a design doc. The test: **if a sentence in a spec would become false purely
-because time passed, it is status in the wrong file.**
+The capture timings and status boundary are defined together in
+[§4.2](#42-capturing-durable-decisions).
 
 ## 3. The steps in detail
 
@@ -603,7 +586,7 @@ docs/
 directory list lives in one `DOCS_DIRS` array in that script, so it stays in sync
 as the tree grows.
 
-#### Documents this workflow does not define
+### Documents this workflow does not define
 
 Installed third-party skills expect documents of their own. They are listed here
 because they appear in real project trees and would otherwise look like drift:
@@ -624,7 +607,7 @@ updates keep flowing.
 None of these names is owned by this workflow. Adding one to `DOCS_DIRS` or to
 the tree above is a decision, not a cleanup.
 
-#### Citations — ordinary Markdown links
+### Citations — ordinary Markdown links
 
 A roadmap slice **cites** its governing docs instead of copying their prose. The
 citation is a plain relative Markdown link:
@@ -703,34 +686,6 @@ transcripts. Which artifact wins when two of them disagree is §4.1.
 
 ### 4.1 Which truth wins — spec, code, and provenance
 
-Spec-driven development says every prompt ends up in a spec. Fewest possible
-documentation layers says the layers stay few and code is the *how*. Read carelessly these pull opposite ways: if
-implementation flows *from* the spec, why is code ever the authority? This
-section settles it.
-
-**Where Trackline sits.** Three positions are practiced in the field, and
-naming them prevents drifting between them by accident:
-
-| Position | Claim | Code is | Practiced by |
-|---|---|---|---|
-| **Spec-as-source** | The spec is the sole source of truth. | A generated byproduct, not maintained by hand. | Tessl and similar spec-compilation tools |
-| **Spec-anchored** | Specs drive the work and coexist with hand-maintained code. | Maintained, and authoritative about itself. | **Trackline** |
-| **Code-as-truth** | Executable code is the source of truth; specs assist. | The only thing that cannot lie. | Thoughtworks' stated position |
-
-**Trackline is spec-anchored, deliberately, and will not move to
-spec-as-source.** The proof is already in spec-driven development: it admits two timings —
-captured *before* implementation, or reconstructed *after* it from the diff.
-Under spec-as-source the after-path could not exist, because there would be no
-hand-written code to reconstruct from. Under code-as-truth the before-path
-would be optional, which it is not. Both paths are load-bearing, so the middle
-position is the one being held.
-
-References for the three positions: [Spec-driven development, an AI-native
-approach](https://developer.microsoft.com/blog/spec-driven-development-ai-native-engineering/)
-(Microsoft) · [Spec-Driven Development in
-2026](https://dev.to/krlz/spec-driven-development-in-2026-what-it-is-the-tooling-and-how-teams-actually-use-it-2fk2)
-· [The Spec Growth Engine](https://arxiv.org/pdf/2606.27045) (arXiv).
-
 **Rule 1 — truth splits by question, not by seniority.**
 
 - *"What must be true, and why does the system have this shape?"* → the spec
@@ -773,6 +728,72 @@ development adds no layers — it changes *when* the existing layers are written
 not how many exist. Watch document *types*, not spec volume: more words inside
 `requirements/` is the principle working; a new directory or a new kind of
 document is the principle leaking.
+
+#### Why Trackline takes this position
+
+Spec-driven development says every prompt ends up in a spec. Fewest possible
+documentation layers says the layers stay few and code is the *how*. Read carelessly these pull opposite ways: if
+implementation flows *from* the spec, why is code ever the authority? This
+section settles it.
+
+**Where Trackline sits.** Three positions are practiced in the field, and
+naming them prevents drifting between them by accident:
+
+| Position | Claim | Code is | Practiced by |
+|---|---|---|---|
+| **Spec-as-source** | The spec is the sole source of truth. | A generated byproduct, not maintained by hand. | Tessl and similar spec-compilation tools |
+| **Spec-anchored** | Specs drive the work and coexist with hand-maintained code. | Maintained, and authoritative about itself. | **Trackline** |
+| **Code-as-truth** | Executable code is the source of truth; specs assist. | The only thing that cannot lie. | Thoughtworks' stated position |
+
+**Trackline is spec-anchored, deliberately, and will not move to
+spec-as-source.** The proof is already in spec-driven development: it admits two timings —
+captured *before* implementation, or reconstructed *after* it from the diff.
+Under spec-as-source the after-path could not exist, because there would be no
+hand-written code to reconstruct from. Under code-as-truth the before-path
+would be optional, which it is not. Both paths are load-bearing, so the middle
+position is the one being held.
+
+References for the three positions: [Spec-driven development, an AI-native
+approach](https://developer.microsoft.com/blog/spec-driven-development-ai-native-engineering/)
+(Microsoft) · [Spec-Driven Development in
+2026](https://dev.to/krlz/spec-driven-development-in-2026-what-it-is-the-tooling-and-how-teams-actually-use-it-2fk2)
+· [The Spec Growth Engine](https://arxiv.org/pdf/2606.27045) (arXiv).
+
+### 4.2 Capturing durable decisions
+
+**Principle 3 has two timings, and both are legitimate.** Every important
+behavioral fact reaches the docs either *before* implementation or *after* it:
+
+| | Before implementation | After implementation |
+|---|---|---|
+| **When** | The work was planned — a feature, a phase, anything grilled first | The work was not planned — a bug fix, a small issue found mid-session, a change asked for and done inside an open implementation session |
+| **Written by** | [`/planning-capture`](skills/planning-capture/SKILL.md) (§3.3) | [`/doc-update`](skills/doc-update/SKILL.md) (§3.8) |
+| **Reading from** | the planning conversation | the git diff of what actually shipped |
+| **Safety net** | `/session-close` refuses a clean close when planning ran uncaptured | `/session-close (SESSION)` re-runs the `/doc-update` decision table |
+
+The distinction is not bookkeeping — it decides who wins a conflict with the
+code; §4.1 makes that rule explicit.
+
+Before is the default and the better path: a spec written from a plan is agreed,
+whereas a spec written from a diff is reconstructed. But the after-path is not a
+fallback for sloppiness — it is the honest answer for work that legitimately
+could not be planned, which is most bug fixes and most small findings. What is
+*not* legitimate is a third option where the change ships and nothing is written.
+
+**Principle 3 is the one most easily lost, because it has no skill of its own:**
+it is a *property* the flow must preserve at every exit, not a step you can tick.
+So call `/doc-update` during the slice, the moment something undocumented is
+asked or found — the close is a net, not the plan, and `/session-close` exists so
+that forgetting is recoverable, not so that forgetting is the plan. Why calling
+early produces the better spec is argued in §3.8.
+
+Principle 6 is what keeps principle 3 from degrading the specs. Because every
+prompt now lands somewhere, the pressure to write *"next we should…"* or *"this
+phase is in progress"* into a requirement is constant — and that is the drift
+that made docs untrustworthy in the first place. Sequencing, sub-tasks, and
+one-off implementation instructions are status; they belong in `roadmap.md`, not
+in a design doc. The test: **if a sentence in a spec would become false purely
+because time passed, it is status in the wrong file.**
 
 ## 5. Mode discipline
 
@@ -876,29 +897,39 @@ a commit after a substantial checkpoint, and Git mechanics stay out of
 
 ## 8. Setup and meta
 
-**The meta-project.** This `trackline/` directory is the source of truth for
+### Source repository
+
+This `trackline/` directory is the source of truth for
 both the workflow docs and the canonical skills. The skills in `skills/` are the
 installable artifacts, not just descriptions of them.
 
-**Skill shape.** Every canonical skill uses the same six-section skeleton —
+### Skill authoring
+
+Every canonical skill uses the same six-section skeleton —
 *When to use · Do NOT use when · Inputs (read order) · Steps · Output · Stop
 conditions* — budgeted ~40 lines, hard cap 60. The fixed shape is what makes the
 workflow predictable enough to follow yourself. The design criteria behind the
 shape live in [docs/skill-criteria.md](docs/skill-criteria.md).
 
-**`AGENTS.md`.** A ~50-line router symlinked into each project (with `CLAUDE.md →
+### Instruction router
+
+A ~50-line router symlinked into each project (with `CLAUDE.md →
 AGENTS.md` so both names resolve to it). It answers: where am I, what's the
 workflow, where are the docs, what gotchas. Keep it thin — it loads into every
 session, so every line competes for attention. Add per-project gotchas at the
 bottom; keep workflow detail (this document) and Git mechanics out of it.
 
-**Supported coding agents.** Tested on **Claude Code and Codex** (primary), with
+### Supported coding agents
+
+Tested on **Claude Code and Codex** (primary), with
 **limited testing on OpenCode and Qwen Code**. All four read the `SKILL.md`
 standard; OpenCode and Qwen also read project `.agents/skills`. The context-zone
 hook is exercised on Claude Code and Codex only. Each agent looks for skills in a
 different directory, which the installer handles (below).
 
-**Single source of truth — link, never copy.** `trackline/` lives in one common
+### Distribution by links
+
+`trackline/` lives in one common
 location and holds the only real copy of every artifact — each skill, the hook
 script, `AGENTS.md`, the docs conventions. A real development project never
 contains its own copy: it **symlinks each skill and each shared file back into
@@ -910,7 +941,9 @@ anything: one `context-zone.sh` serves both, invoked by an identical command
 string. `install-workflow.sh` is simply the tool that creates and maintains those
 links.
 
-**Harness hooks** (`hooks/README.md` owns the detail):
+### Hooks and environment controls
+
+[Hook setup and behavior](hooks/README.md) owns the detail:
 
 - **Stop hook — context-zone** (`hooks/context-zone.sh`) compares the live
   transcript token count against the fixed thresholds in §6 (not the model
@@ -927,7 +960,9 @@ links.
 - **MCP audit** — disable unused servers per project; each adds tool schemas to
   every turn.
 
-**Bootstrap a new project — `./install-workflow.sh <project>`.** One idempotent
+### Bootstrap a project
+
+Run `./install-workflow.sh <project>`. One idempotent
 command wires everything; re-run it any time to reconcile a project (repair
 drifted or broken links) after the canonical set changes. It:
 
@@ -949,7 +984,9 @@ list of what to install changes freely while the mechanism stays fixed. Flags:
 `-n` preview, `-f` repair drifted links, `--with-external` pin the third-party
 skills per-project instead of relying on user scope.
 
-**Third-party skills stay in user scope by default.** `grill-me`,
+### Third-party skill scope
+
+`grill-me`,
 `grill-with-docs`, and `handoff` are vendored from Matt Pocock and typically
 already installed globally (`~/.agents/skills/`). Installing them per-project too
 would be a second copy — the anti-pattern this workflow exists to avoid — so the
@@ -961,7 +998,9 @@ is still open.)
 After bootstrap: audit MCP servers and disable unused ones; run `/session-open` to
 inspect state, or `/next-slice` to start coding.
 
-**Recommended agent environment.** Install these tools in the environment where
+### Agent environment
+
+Install these tools in the environment where
 the coding agent actually runs, which may not be the same as your interactive
 shell:
 

@@ -9,12 +9,28 @@
 > WORKFLOW.md owns the procedure. This owns the information flow. Neither repeats
 > the other.
 >
-> The questions, evidence, and decisions that produced this document — plus the
-> open threads still to act on — live in
 > The source inquiry contains private reference-project evidence and is retained
 > outside this public repository.
 
 ---
+
+## Read by question
+
+| Question | Section |
+|---|---|
+| At which stage is information produced? | [Timeline](#1-stages-as-a-timeline) |
+| How do artifacts connect? | [Flow graph](#2-the-information-flow-graph) |
+| Who writes and reads a document? | [Contracts](#3-per-document-contracts) |
+| Why does information stop being used? | [Terminal nodes](#4-terminal-node-analysis) |
+| What is lost during capture? | [Compression](#5-the-compression-ladder) |
+| When does a decision need an ADR? | [ADR boundary](#6-when-planning-capture-writes-an-adr) |
+| How do project layouts differ? | [Tree shapes](#7-two-tree-shapes) |
+| What should an audit inspect? | [Axes](#8-cross-cutting-axes-worth-tracking) and [health checks](#9-health-checks) |
+
+The graph includes reference-project cases as well as shared workflow artifacts.
+Use the [manual's installed tree](../WORKFLOW.md#4-the-state-files-and-the-docs-tree)
+to identify what the installer defines; this analytical map is not an
+installation inventory.
 
 ## 1. Stages as a timeline
 
@@ -287,15 +303,21 @@ Never leave an empty directory at a path the router names.
 
 Beyond producer/consumer, four axes explain most doc-hygiene decisions:
 
-**Mutability** — *frozen* (ADR, reviews, research), *living* (requirements,
+### Mutability
+
+ *frozen* (ADR, reviews, research), *living* (requirements,
 design), *append-only* (progress, git), *ephemeral* (activeContext). Editing a
 frozen doc is always a mistake; supersede instead.
 
-**Attention cost** — `AGENTS.md` loads into every session, so every line competes
+### Attention cost
+
+ `AGENTS.md` loads into every session, so every line competes
 with the task. Everything else is on-demand. This asymmetry is why the router
 stays ~50 lines while design has no practical cap.
 
-**Retrieval path** — how a fact actually reaches an agent:
+### Retrieval path
+
+ how a fact actually reaches an agent:
 
 1. *always loaded* — `AGENTS.md`
 2. *state files* — read every session
@@ -319,7 +341,9 @@ The remaining risk is not addressing but erosion: `no doc governs: <reason>` is
 the successor to *"stop when confident"* and can decay the same way. Measure its
 rate rather than trusting the rule.
 
-**Authorship** — human-only (`AGENTS.md`, seeds), agent-only (progress,
+### Authorship
+
+ human-only (`AGENTS.md`, seeds), agent-only (progress,
 activeContext, reviews), collaborative (requirements, design, ADR). Agent-only
 files are the ones that silently grow; audit them on size, not content.
 

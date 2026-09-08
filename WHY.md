@@ -62,9 +62,22 @@ agent quietly made.
 
 ![Problem map](docs/assets/diag-problem-map.svg)
 
-Nine problems, in the priority order the pain actually surfaced. Each section
-below states the problem, why it happens, the solution, and the exact mechanism
-in this repository that implements it.
+The map names nine areas addressed by the workflow. Some labels name a problem;
+others name the response. The sections below explain the failure behind each
+area and connect it to the operating practice. Their numbers are local to this
+document, not principle IDs.
+
+| Failure or cost | Response section |
+|---|---|
+| The developer loses the intended direction | [Stay on track](#1-stay-on-track--developer-awareness-and-project-alignment) |
+| Growing context reduces useful performance | [Context budget](#2-context-is-a-budget-not-a-window) |
+| Competing documents preserve stale answers | [One source of truth](#3-documentation-with-one-source-of-truth) |
+| Every session re-derives state | [Session continuity](#4-session-continuity--externalized-state-status-separate-from-knowledge) |
+| Repeated prompts produce inconsistent procedure | [Reusable skills](#5-reusable-skills-instead-of-repeated-prompts) |
+| Large or horizontal changes delay verification | [Vertical slices](#6-atomic-vertical-slices) |
+| The implementing model misses defects | [Cross-model review](#7-cross-model-code-review) |
+| Broad instructions and vague requests waste attention | [Thin router and exact names](#8-thin-instruction-files-exact-names) |
+| Implicit review scope and poor history hide changes | [Git discipline](#9-the-ai-agent-is-a-heavy-git-user) |
 
 ## 1. Stay on track — developer awareness and project alignment
 
@@ -222,7 +235,7 @@ unpredictable session end will make you skip it and lose the thread.
 **In this workflow.** [`/session-close`](skills/session-close/SKILL.md) is the
 only writer of the state files and [`/session-open`](skills/session-open/SKILL.md)
 opens the next session already oriented — the file-by-file contract is
-[WORKFLOW.md §4](WORKFLOW.md). The close also records blockers, open questions,
+[document contracts](WORKFLOW.md#4-the-state-files-and-the-docs-tree). The close also records blockers, open questions,
 and **discarded dead ends** — the most commonly omitted part of a handoff, and
 one of the most valuable, because the next session never re-litigates a path
 that already failed.
@@ -373,7 +386,7 @@ review's "diff since the last known-good commit" scope stands entirely on that
 discipline. But the commits are the one part of the workflow no skill performs:
 each stage is a checkpoint you take, batch, or skip, and only the one before
 the PR is binding. The branch and pull-request flow as practiced is
-[WORKFLOW.md §7](WORKFLOW.md).
+[version-control procedure](WORKFLOW.md#7-version-control).
 
 ## Not solved — and the automation that guards the discipline
 
