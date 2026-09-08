@@ -1,13 +1,9 @@
 ---
 name: planning-capture
-description: Capture planning results into durable docs. Use for /planning-capture.
+description: Capture planning, grilling, or research outcomes in durable project docs.
 ---
 
-## When to use
-
-- After grilling, brainstorming, or research; or when the user invokes `/planning-capture` or asks to capture/save/write up a plan.
-
-## Do NOT use when
+## Not this skill
 
 - Mid-implementation state change → `/session-close (STEP)`.
 - Post-code doc update → `/doc-update`.
@@ -39,14 +35,15 @@ description: Capture planning results into durable docs. Use for /planning-captu
    - Link each new ADR from the design section it governs, in the same pass. An unlinked ADR is unreachable.
 6. Shape implementation work in `roadmap.md` as thin vertical slices, not horizontal layer-by-layer phases:
    - Deliver the smallest meaningful, independently verifiable behavior across relevant layers; start end-to-end, then add capability in small slices.
-   - Mark work **AFK** when it can proceed autonomously and **HITL** when it requires a human decision, review, or approval. Prefer AFK where practical, but do not defer necessary HITL decisions.
+   - Every slice carries exactly one of **AFK** (proceeds autonomously) or **HITL** (needs a human decision, review, or approval) — mandatory, never both and never neither, because a partition and a fan-out both read that mark. Prefer AFK where practical, but do not defer necessary HITL decisions.
    - Keep roadmap items checklist-first; point to canonical requirements/design instead of copying prose.
    - Every behavior- or decision-changing slice cites ≥1 doc as a relative Markdown link — whole file by default, `#heading` fragment past ~150 lines. Citable: `requirements/` · `design/` · `adr/` · `reviews/`; never `research/` — capture it (step 4) and cite that. Otherwise record `no doc governs: <reason>`: maintenance, refactor, content-only, or the slice's own output is the doc or decision. Cite links, never paste prose — `/next-slice` opens exactly what is cited.
    - Leave file scope and selection of the next atomic code change to `/next-slice`.
 7. Status routing: live state → `activeContext.md`; phase/checklist → `roadmap.md`; completed history → `progress.md` — never into requirements or design.
 8. Do NOT create an internals or implementation spec.
 9. If a planning decision conflicts with implementation reality or an existing design/ADR, surface the conflict instead of overwriting it silently.
-10. Print the Output.
+10. Only if the session asked for parallel work: invoke `/roadmap-split` on the section just written. Its stop-on-uncommitted-roadmap rule is scoped to changes it did not write, so this hand-off does not need an intervening commit — but the fan-out that follows does, and `/next-slice all` will ask for one. Neither skill commits.
+11. Print the Output.
 
 ## Output
 ```
@@ -54,12 +51,13 @@ Updated:
   docs/requirements/: <files or "none">
   docs/design/:       <files or "none">
   docs/adr/:          <new ADRs + the section each links from, or "none">
-  roadmap.md:    <yes/no — slices claiming "no doc governs": N of M>
+  roadmap.md:    <yes/no — slices claiming "no doc governs": N of M; unmarked AFK/HITL: N (must be 0)>
+Tracks: <partitioned into N — or "not requested">
   docs/implementation-notes.md: <yes/no>
 Open questions: <list or "none">
 Risks: <list or "none">
 Intentionally not documented: <list with reason>
-Suggested next skill: <usually /next-slice or /session-close>
+Suggested next skill: <usually /next-slice or /session-close; /roadmap-split if slices were written and the session wants parallel work>
 ```
 
 ## Stop conditions

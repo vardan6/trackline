@@ -1,20 +1,15 @@
 ---
 name: cross-review
-description: Cross-model review of implemented work against the docs by the other provider's strongest model; writes a rated findings table to docs/reviews/. Use for /cross-review or when asked to review implemented work.
+description: Review implemented work against its specs using another provider’s strongest model.
 ---
 
 # cross-review
 
 Review implemented work as the second-provider model — ideally the strongest model available from a provider *different* from the implementer. Findings file only; never fix anything.
 
-## When to use
+## Not this skill
 
-- After a slice, a slice sequence, or a phase is implemented, in a session with a *different provider's* model than the implementer — ideally stronger.
-- Before opening a pull request on a topic branch.
-- User invokes `/cross-review`.
-
-## Do NOT use when
-
+- Running in the *same provider's* model as the implementer → say so and stop; a same-model review is not a cross-review.
 - Reviewing a plan instead of code → `/plan-review`.
 - Triaging an existing findings file → `/review-triage`.
 - Asked to fix issues directly — that is implementation, not review.

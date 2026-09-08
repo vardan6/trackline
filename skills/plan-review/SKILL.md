@@ -1,19 +1,15 @@
 ---
 name: plan-review
-description: Cross-model review of a captured plan by the other provider's strongest model; writes a rated findings table to docs/reviews/. Use for /plan-review or when asked to review the plan.
+description: Review captured plans using another provider’s strongest model.
 ---
 
 # plan-review
 
 Cross-validate the captured plan docs. Findings file only; never edit the plan.
 
-## When to use
+## Not this skill
 
-- After `/planning-capture` wrote requirements / design / ADRs / roadmap, in a session with a *different provider's* strongest model than the one that planned.
-- User invokes `/plan-review`.
-
-## Do NOT use when
-
+- Running in the *same provider's* model as the planner → say so and stop; a same-model review is not a cross-review.
 - Reviewing implemented code → `/cross-review`.
 - Triaging an existing findings file → `/review-triage`.
 - The plan is still being discussed → `/grill-me`.
