@@ -1,13 +1,30 @@
 ---
 name: handoff
-description: Compact the current conversation into a handoff document for another agent to pick up.
+description: Close session state and prepare a continuation packet for another session, agent, or tool.
 argument-hint: "What will the next session be used for?"
 ---
 
-Write a handoff document summarizing the current conversation so a fresh agent can continue the work. Save it to a path produced by `mktemp -t handoff-XXXXXX.md` (read the file before you write to it).
+# handoff
 
-Suggest the skills to be used, if any, by the next session.
+## Not this skill
 
-Do not duplicate content already captured in other artifacts (PRDs, plans, ADRs, issues, commits, diffs). Reference them by path or URL instead.
+- Ending without requesting a transfer packet → `/session-close`.
 
-If the user passed arguments, treat them as a description of what the next session will focus on and tailor the doc accordingly.
+## Inputs (read order)
+
+1. Requested recipient or next-session focus, if provided.
+2. Installed `/session-close` skill; required dependency, shipped alongside this skill.
+
+## Steps
+
+1. Run `/session-close` in SESSION mode with a handoff packet required. Pass the recipient/focus and any existing packet from this session. Its procedure owns state reconciliation and the handoff template; do not duplicate either here.
+2. Confirm its output accounts for roadmap completion, progress history, current state, unfinished work, and the repository-root packet. A separate user invocation of `/session-close` is unnecessary.
+
+## Output
+
+Return the session-close summary and the handoff path, including any deferred documentation or unresolved work.
+
+## Stop conditions
+
+- If `/session-close` is unavailable, report the missing dependency; do not claim state was saved.
+- Stop after the summary. Do not commit or start the next session's work.

@@ -1,18 +1,13 @@
 ---
 name: session-open
-description: Orient a resumed project when the user asks to continue, recover state, or identify the next workflow action. Use for /session-open.
+description: Recover project state and the next workflow action for ambiguous continuation.
 ---
 
 # session-open
 
 Recover project state and route to the correct workflow. Do not select an implementation slice.
 
-## When to use
-
-- User says: "let's continue", "where were we", "what's next", "pick up".
-- User invokes `/session-open`.
-
-## Do NOT use when
+## Not this skill
 
 - The user gave a direct task that does not require roadmap state.
 - The user explicitly invoked another applicable skill.
@@ -34,7 +29,7 @@ If `activeContext.md`, the newest handoff, or `roadmap.md` are long and narrativ
 1. Reuse current state already in the conversation; do not reread unchanged files.
 2. Read inputs 1–2 only when needed. Stop if they establish clear state.
 3. Use inputs 3–5 only under their stated conditions.
-4. Identify the project mode, including any mode explicitly named by the project.
+4. Identify the project mode, including any mode explicitly named by the project. On a `track-<letter>/` branch, recover the Track from that prefix and report it — a worker restarting cold has no other signal for which slices are its own.
 5. Name the next workflow action. For implementation, route to `/next-slice`.
 6. Print the Output. Stop.
 
@@ -43,6 +38,7 @@ If `activeContext.md`, the newest handoff, or `roadmap.md` are long and narrativ
 ```
 Mode: <mode>
 Phase: <phase from roadmap>
+Track: <letter — name, omit this line entirely when not on a track branch>
 State: <one sentence on real current state>
 Next: <one sentence workflow action>
 Blocker: <if any, else "none">

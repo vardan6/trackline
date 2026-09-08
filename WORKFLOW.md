@@ -66,9 +66,9 @@ REVIEW  (its own step — run after a slice or phase, often in a separate sessio
     → commit                             the one commit you cannot skip — the branch must be clean before the PR
 ```
 
-Every cycle ends with `/session-close` — the only step that writes the live state
-files (`roadmap.md`, `progress.md`, `activeContext.md`), which is why it is never
-optional. `/handoff` is a separate option for moving work to a *different* tool or
+Every cycle ends with `/session-close` — the safety net for keeping the live state
+files (`roadmap.md`, `progress.md`, `activeContext.md`) current, even when other
+skills update them during the session. `/handoff` is a separate option for moving work to a *different* tool or
 model; it is not a stage in this flow.
 
 The `commit` closing each cycle is the opposite kind of step: no skill runs it
@@ -193,7 +193,7 @@ second copy.
 
 ## 2. Operating principles
 
-These nine design statements connect the rationale to the operating steps.
+These ten design statements connect the rationale to the operating steps.
 They include guiding rules and named practices; their numbers identify this
 list, not the failure-mode numbers in [WHY.md](WHY.md). The
 [README](README.md) gives a shorter, task-oriented introduction.
@@ -209,6 +209,7 @@ list, not the failure-mode numbers in [WHY.md](WHY.md). The
 | 7 | **Same result, less context** | If the same problem can be solved with less loaded, load less. Best quality is the goal; lower token usage largely comes with it. Principle 2 is the ceiling, principle 7 is the rate. | [WHY §3](WHY.md), §6 |
 | 8 | **Mode discipline** | At any moment the work is in exactly one mode — planning, implementing, reviewing, or closing — and each skill belongs to one mode. | §5 |
 | 9 | **Atomic vertical slices** | Implement one small, end-to-end, independently verifiable change at a time, so the agent never needs the whole project in working memory. | [WHY §6](WHY.md) |
+| 10 | **Cheapest check first, with a floor** | Run the cheapest check that could answer the question, and escalate only when it cannot. Cheaper may trade *cosmetic* properties — never the quality of the shipped product, which is why an expensive check that guards correctness stays mandatory. Where 7 governs how much is **loaded**, 10 governs how much work is **done**, and 10 carries a floor that 7 does not. Enforced in [`/roadmap-split`](skills/roadmap-split/SKILL.md)'s tiered independence test. | §3.12 |
 
 Principles 3–6 are one argument in four steps: **3** says the knowledge must be
 written down at all, **4** says who it is written for, **5** says it is written
@@ -465,7 +466,9 @@ implementer — scoped to the diff since the last known-good commit. Run
 misimplementation, missing implementation, bugs, gaps, incorrect logic, and
 things that could simply be done better, and writes findings into a Markdown
 file under `docs/reviews/`, one entry per finding with a severity guess.
-Second, `/review-triage` takes that file back to the original agent, validates
+Second, `/review-triage` accepts concrete, checkable findings from a file, pasted
+review, or conversation. Casual feedback is handled directly unless structured
+triage is requested. The original agent validates
 every finding against the actual code, and sorts the survivors into
 `must_fix_now`, `should_fix_before_phase_complete`, `backlog`, or `invalid` —
 implementing only `must_fix_now`, and routing durable changes through
@@ -506,8 +509,8 @@ modes:
   counts — the decision table stays canonical in one skill, and the common close
   (nothing durable changed) never pays to load it.
 
-**What it solves.** This is the only step that externalizes state, so it is what
-makes session continuity possible — and it must stay cheap and routine, because
+**What it solves.** This is the final safety net for externalizing session state,
+including updates other skills may have missed. It must stay cheap and routine, because
 session end is unpredictable and a heavy close gets skipped. It never commits
 automatically; it may *ask* about a commit after a substantial checkpoint.
 
@@ -545,6 +548,53 @@ model.
 **`/handoff` vs `/session-close`.** Use `/session-close` by default — it is the
 workflow-native ending and writes the state files. Reach for `/handoff` only when
 the receiver is not another Claude session running this workflow.
+
+### 3.12 `/roadmap-split` — partition the roadmap into parallel Tracks
+
+**What it does.** Groups the open slices of one roadmap section into **Tracks** —
+ordered groups that are prerequisite-free and file-disjoint with respect to each
+other, so each can run in its own session or agent, in any order, with no
+coordination. It rewrites that section in place, proposes a `track-<letter>/`
+branch per Track, and never commits and never implements. `/next-slice all` is
+the separate, explicit act that dispatches the result.
+
+**What it solves.** The roadmap already orders work, but nothing in it says which
+items may run *at the same time*. Without that, parallel sessions are guesswork:
+two agents pick overlapping slices and one silently overwrites the other's file.
+
+**The tiered test — principle 10 in practice.** Independence is proved with the
+cheapest check that can prove it: tier 0 reads roadmap text alone, tier 1 tests
+file-disjointness, tier 1.5 greps for symbol overlap, and tier 2 — in a sibling
+file that loads only on escalation — does real interface analysis. The run stops
+at the first tier that yields the requested count, and reports the depth it paid
+for. **Tier 1.5 is mandatory whenever a Track holds a code slice**, even though
+it costs more than stopping at tier 1: cheapest-first may give up Track balance,
+which is cosmetic, but not a moved signature under three running agents, which is
+a defect. That floor is the whole content of principle 10.
+
+**File-disjointness is a hard blocker, not a preference.** Two Tracks never
+change one file at any tier. Tier 2 exists to overturn tier 1's *conservative*
+verdict with evidence — proving a file set was read wrongly, or naming the one
+slice whose reorder frees a split — never to argue that sharing a file is
+harmless. The reason is the failure mode: a whole-file rewrite loses the other
+Track's work with no error and no conflict marker.
+
+**HITL slices park; they do not gate.** Roughly half a mature roadmap's slices
+need a human. Letting one pending decision stop every Track would invert the
+point, since the HITL list is longest exactly after a long planning session. So
+they collect in a "Needs you" list outside the Tracks and fan-out proceeds over
+everything runnable now. Where an **AFK** slice genuinely depended on a parked
+one, the Track keeps a **Barrier** line at that position pointing back at it: the
+Track runs up to the barrier and stops with a report, and no other Track is
+affected. The parked slice's text stays canonical in one place.
+
+**Comes after.** `/planning-capture`, when the session asked for parallel work,
+or any point where a roadmap section has accumulated independent slices.
+
+**Comes before.** `/next-slice all`, which prints the fan-out plan always and
+starts agents only on an explicit implement instruction. Because workers branch
+from a revision, the partition must be committed before fan-out — the dispatcher
+asks; it does not commit.
 
 ## 4. The state files and the docs tree
 
@@ -905,11 +955,16 @@ installable artifacts, not just descriptions of them.
 
 ### Skill authoring
 
-Every canonical skill uses the same six-section skeleton —
-*When to use · Do NOT use when · Inputs (read order) · Steps · Output · Stop
-conditions* — budgeted ~40 lines, hard cap 60. The fixed shape is what makes the
-workflow predictable enough to follow yourself. The design criteria behind the
-shape live in [docs/skill-criteria.md](docs/skill-criteria.md).
+Every canonical skill uses the same five-section skeleton —
+*Not this skill · Inputs (read order) · Steps · Output · Stop conditions* —
+budgeted ~40 lines, hard cap 60. The fixed shape is what makes the workflow
+predictable enough to follow yourself. A skill body carries no *When to use*
+section: the body loads only after the skill has already been chosen, so trigger
+conditions belong in the `description` and in `AGENTS.md`, where the choice is
+actually made. *Not this skill* survives because it fires **after** invocation —
+it is the bail-out for a skill invoked on a mis-read, and it names the sibling to
+go to instead. The design criteria behind the shape live in
+[docs/skill-criteria.md](docs/skill-criteria.md).
 
 ### Instruction router
 
@@ -992,7 +1047,7 @@ already installed globally (`~/.agents/skills/`). Installing them per-project to
 would be a second copy — the anti-pattern this workflow exists to avoid — so the
 installer detects them in user scope and **skips** them, printing a notice.
 `--with-external` overrides this for a project that must pin its own copy.
-(Whether `/handoff` stays vendored or gets rewritten to the six-section skeleton
+(Whether `/handoff` stays vendored or gets rewritten to the canonical skeleton
 is still open.)
 
 After bootstrap: audit MCP servers and disable unused ones; run `/session-open` to
@@ -1019,10 +1074,10 @@ runtime dependency and fallback behavior are owned by
 
 ## 9. Skill names and attribution
 
-The eight canonical skills live at `skills/<name>/SKILL.md` and are described step
+The nine canonical skills live at `skills/<name>/SKILL.md` and are described step
 by step in §3. Three more are vendored from Matt Pocock (MIT — see `CREDITS.md`):
 `grill-me`, `grill-with-docs`, and `handoff`; they keep their upstream format
-rather than the six-section skeleton the canonical skills use.
+rather than the five-section skeleton the canonical skills use.
 
 **External skills carry document contracts.** They expect files this workflow
 does not define; the list is in §4, *Documents this workflow does not define*.

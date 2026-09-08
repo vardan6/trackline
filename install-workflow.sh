@@ -24,10 +24,10 @@ set -euo pipefail
 WORKFLOW="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # My skills — always installed into a project.
-SKILLS=(cross-review doc-update next-slice plan-review planning-capture review-triage session-close session-open)
+SKILLS=(cross-review doc-update handoff next-slice plan-review planning-capture review-triage roadmap-split session-close session-open)
 # Third-party skills — live in user scope by default; not installed per-project
 # unless --with-external is given.
-EXTERNAL_SKILLS=(grill-me grill-with-docs handoff)
+EXTERNAL_SKILLS=(grill-me grill-with-docs)
 # Tool skill directories that funnel through .agents/skills.
 FUNNEL_DIRS=(.claude/skills .codex/skills)
 # Docs subdirectories to scaffold (created if missing; content files are left

@@ -17,7 +17,10 @@
 - Planning output after research or grilling → `/planning-capture`.
 - Review a plan → `/plan-review`; code → `/cross-review`; findings →
   `/review-triage`.
-- Durable documentation check → `/doc-update`.
+- Durable documentation check → `/doc-update`. Unplanned work that changed
+  durable behavior (a mid-session bug fix outside `/next-slice`) calls it right
+  then, not at `/session-close`: the diff is small and the reasoning is still in
+  the conversation.
 - Cross-tool or cross-model transfer → `/handoff`.
 
 Direct tasks and explicit skill requests skip `/session-open`. One atomic
