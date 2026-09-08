@@ -1,16 +1,11 @@
 ---
 name: next-slice
-description: Pick the next small implementation slice. Use when the user asks what to implement, says let's code, or invokes /next-slice.
+description: Select the next implementation slice; dispatch existing Tracks for parallel implementation.
 ---
 
 # next-slice
 
-## When to use
-
-- Implementation mode is established, or explicit `/next-slice` starts it from minimal state.
-- User says: "what should I implement", "pick the next step", "let's code".
-
-## Do NOT use when
+## Not this skill
 
 - State indicates another mode and the user has not explicitly redirected it.
 - After finishing a step → `/session-close (STEP mode)`.
@@ -25,8 +20,11 @@ description: Pick the next small implementation slice. Use when the user asks wh
 
 ## Steps
 
-1. If mode is unknown, confirm implementation from inputs 1; otherwise stop.
+1. Establish implementation mode: an explicit `/next-slice` sets it from minimal state; otherwise confirm it from input 1, and stop if it does not hold.
 2. Identify candidate implementation slices from the current roadmap item.
+   - `all` or `parallel` in the invocation → read [PARALLEL.md](PARALLEL.md) and follow it instead of steps 3–6.
+   - On a `track-<letter>/` branch, candidates come only from that Track. Never pick a slice from another Track or from `Needs you`, however well it fits — crossing Tracks destroys the isolation the partition bought and is the failure that voids the feature.
+   - A Track's **Barrier** line ends its candidate list: the slices below it wait on the parked slice it names.
 3. Pick one slice that satisfies all of:
    - vertical: smallest meaningful behavior across relevant layers
    - all dependencies and required HITL decisions, reviews, or approvals are resolved

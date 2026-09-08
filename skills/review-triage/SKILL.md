@@ -1,29 +1,21 @@
 ---
 name: review-triage
-description: Triage review findings. Use for review output or /review-triage.
+description: Validate and prioritize findings from plan or code reviews.
 ---
 
 # review-triage
 
 Sort review findings, route accepted ones to durable docs, implement only must-fix-now.
 
-## When to use
-
-- After `/plan-review` or `/cross-review` produced a findings file.
-- After `/review` or `/security-review` produced a findings file.
-- After another agent reviewed a plan or implementation.
-- User pastes review notes.
-- User invokes `/review-triage`.
-
-## Do NOT use when
+## Not this skill
 
 - Triaging issues (Linear, GitHub) → `/triage`.
 - Capturing planning output → `/planning-capture`.
-- The "review" is informal feedback in conversation — apply judgment, don't run this skill.
+- Feedback has no concrete, checkable findings → handle directly unless the user requests structured triage.
 
 ## Inputs (read order)
 
-1. The review file or pasted findings.
+1. Concrete review findings from a file, pasted review, or conversation; the delivery format does not determine eligibility.
 2. Relevant code paths cited in the findings.
 3. Relevant requirement / design / ADR — only if a finding disputes them.
 4. `activeContext.md` and `roadmap.md`.
