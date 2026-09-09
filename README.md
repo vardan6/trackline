@@ -38,19 +38,63 @@ Work happens in three **self-contained cycles** — *plan*, *implement*,
 close-out step that synchronizes the project's live state. The next session
 opens from a few small state files instead of a long transcript.
 
-The discipline connects four recurring needs:
+These principles carry the design:
 
-| Need | Practice | Read more |
-|---|---|---|
-| Keep the developer aligned | Challenge the plan, capture the decisions, and work in independently verifiable slices. | [Planning](WORKFLOW.md#32-grill-me-and-grill-with-docs--plan-by-being-challenged) |
-| Preserve knowledge | Give each fact one home; keep current state separate from agreed behavior and design. | [Document roles](WORKFLOW.md#4-the-state-files-and-the-docs-tree) |
-| Sustain work across sessions | Load only relevant context, close deliberately, and resume from small state files. | [Session close](WORKFLOW.md#310-session-close--the-non-optional-close) |
-| Check and recover work | Review plans and code with another provider, validate findings, and keep meaningful Git history. | [Review](WORKFLOW.md#39-cross-review-and-review-triage--cross-model-code-review) |
+- **Plan by being challenged.** Planning is done not when the agent understands
+  the task, but when *you* can defend it. A grilling session interrogates the
+  plan branch by branch before any code exists — this is how the human stays
+  on track.
+- **Context is a budget, not a window.** The reliable "smart zone" is an
+  absolute token count — roughly 100k — no matter how large the advertised
+  window is. Close sessions before the agent enters the dumb zone.
+- **Spec-driven development — every prompt ends up in a spec.** Nothing
+  durable is allowed to die in the conversation. Planning output is written
+  down by `/planning-capture`; in every other mode — implementation, plan
+  review, code review — `/session-close` runs the `/doc-update` decision table
+  and calls it when something durable changed. A prompt that changed the
+  project but left no trace in a doc is a decision the next session cannot see.
+- **Agent-first documentation.** Docs exist first for the coding agent;
+  well-structured, human-readable docs come almost for free as the second
+  reader. This is not a lowering of the bar — the agent is the harshest reader
+  there is, because it trusts what it reads completely. A stale doc misleads it
+  more than no doc at all.
+- **Fewest possible documentation layers.** Every layer answers exactly one
+  question, and no layer answers a question another one already owns:
+  requirements say **what** must be true, design and ADRs say **why** the
+  system has this shape — the intent and the reasoning behind it — and **code
+  says how**. The internals layer that narrates code back in prose is
+  deliberately killed: it answers *how* a second time, always one commit
+  behind, and it is the layer that taught the same bug back four times. Fewer
+  layers mean less drift, fewer tokens, and one obvious place to look for any
+  given question.
+- **One source of truth per fact.** Each fact has exactly one canonical home;
+  every other document links to it instead of restating it. Two copies of a
+  fact are one copy and one future lie, and nothing tells you which is which.
+  Fewest layers is what makes this achievable — layers that overlap by design
+  force duplication no discipline can hold back.
+- **Status stays out of knowledge.** Specs state *agreed finished behavior* in
+  the settled voice and read the same mid-phase or a year later. Current state,
+  sequencing, and one-off implementation instructions live in the live files —
+  `activeContext.md`, `roadmap.md`, `progress.md` — so moving work forward
+  never means editing requirements or design. If a sentence in a spec would
+  become false purely because time passed, it is status in the wrong file.
+- **Atomic vertical slices, written into the roadmap.** Planning breaks the
+  work into small end-to-end changes — a sliver of UI + service + data,
+  independently verifiable — instead of horizontal layers that only become
+  testable when the UI finally appears.
+- **Skills instead of repeated prompts.** The prompts you retype every session
+  become named slash commands that also manage the flow — and the always-loaded
+  `AGENTS.md` stays a thin router, never an encyclopedia.
+- **The agent is a heavy Git user.** It reads history to orient itself, so
+  small meaningful commits are context boundaries — clean history is fuel, not
+  hygiene.
+- **Cross-model review.** A second model from a *different provider* reviews
+  both the plan and the code against the docs; the original agent validates
+  each finding before anything changes. Two models agreeing is signal.
 
-This is a reader's overview of the practices, not another numbered principle
-list. The [design statements](WORKFLOW.md#2-operating-principles) explain the
-rules behind them; [WHY.md](WHY.md) connects the observed failures to the
-responses.
+The full argument — each failure mode, why it happens, and the mechanism that
+answers it, with diagrams — is in [WHY.md](WHY.md). The complete operating
+manual is [WORKFLOW.md](WORKFLOW.md).
 
 ## Quick start
 
