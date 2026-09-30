@@ -7,3 +7,5 @@ progress.md
 roadmap.md
 activeContext.md
 content/
+# Python installer/test bytecode
+__pycache__/

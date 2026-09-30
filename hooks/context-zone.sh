@@ -52,6 +52,20 @@ DUMB_TOKENS="${CONTEXT_DUMB_TOKENS:-120000}"
 FORCE_TOKENS="${CONTEXT_FORCE_TOKENS:-180000}"
 REFERENCE_WINDOW="${CONTEXT_REFERENCE_WINDOW:-200000}"
 
+# Invalid overrides fall back identically in the Bash and Windows launchers.
+positive_or_default() {
+  if [[ "$1" =~ ^[0-9]+$ ]] && [ "$1" -gt 0 ] 2>/dev/null; then
+    printf '%s' "$((10#$1))"
+  else
+    printf '%s' "$2"
+  fi
+}
+WARN_TOKENS=$(positive_or_default "$WARN_TOKENS" 80000)
+ASK_TOKENS=$(positive_or_default "$ASK_TOKENS" 100000)
+DUMB_TOKENS=$(positive_or_default "$DUMB_TOKENS" 120000)
+FORCE_TOKENS=$(positive_or_default "$FORCE_TOKENS" 180000)
+REFERENCE_WINDOW=$(positive_or_default "$REFERENCE_WINDOW" 200000)
+
 payload="$(cat || true)"
 transcript=""
 display_window=""

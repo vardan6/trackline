@@ -98,21 +98,39 @@ manual is [WORKFLOW.md](WORKFLOW.md).
 
 ## Quick start
 
-```sh
-./install-workflow.sh /path/to/your/project
+Run this from the target project's Git root. Replace the source checkout path
+with yours; the final `.` selects the current project:
+
+```bash
+bash /path/to/trackline/install-workflow.sh --replace-links .
 ```
 
-Idempotent — re-run any time to reconcile. It links `AGENTS.md` (and
-`CLAUDE.md` → `AGENTS.md`), wires the skills into `.agents/`, `.claude/`, and
-`.codex/`, registers the context-zone hook for both tools, and scaffolds the
-`docs/` tree. Flags: `-n` preview, `-f` repair links, `--with-external` pin
-third-party skills per-project. Git and `jq` are prerequisites; without `jq`,
-the installer leaves the Claude hook unregistered. See the
-[hook dependencies](hooks/README.md#dependencies) for setup details.
+One Bash entry automatically selects ordinary Linux links on native Linux or
+WSL Linux filesystems, and Windows-native links for Windows-drive projects in
+WSL. A WSL Linux-filesystem installation does not promise native Windows access.
+Windows-drive source and project may be on different drives; the installer
+checks native and WSL link readability before migration.
+
+Prerequisites: **Bash, Git, Python 3, and jq**. Windows sharing additionally
+requires WSL interoperability, Windows PowerShell, and Developer Mode or Windows
+symlink privilege. `sudo` in WSL does not grant Windows privileges. Native
+Windows Claude hooks require Git Bash and jq in that Windows Bash environment.
+
+Options: `--dry-run` (`-n`) previews without writes; `--replace-links`
+(`--force`, `-f`) migrates recognized Trackline links while preserving unrelated
+links and real files; `--source DIR` uses another complete Trackline source;
+`--with-external` also installs optional third-party skills. Reinstalling does
+not duplicate hooks or rewrite unchanged JSON. Source and installed hook files
+must remain available. The old `install-workflow-winlinks.sh` name forwards to
+this same installer.
+
+Installation keeps backups during migration and restores links/settings if a
+later operation fails. Dry run does not probe Windows link privilege. Enable
+Developer Mode or launch an elevated WSL terminal if the actual probe fails.
 
 ### Windows-native links from WSL
 
-For the unified installer candidate in the prototype worktree, **Windows Developer Mode is mandatory for an unelevated install
+For the unified installer in the permanent Trackline checkout, **Windows Developer Mode is mandatory for an unelevated install
 unless the process already has Windows symlink privilege**. In Windows Settings,
 search for **Developer Mode** and enable it before running the installer. As an
 alternative, launch your WSL terminal **as Administrator**. Running `sudo` inside
@@ -121,23 +139,23 @@ WSL does not grant Windows symlink privilege.
 The Trackline source and target project must both be on Windows drives;
 absolute native links can span drives. The installer probes Windows and WSL
 link readability before migration.
-For the current prototype in this workflow-hub checkout, open a WSL terminal
-in the target project's Git root (for example, `remote-uxv`) and run:
+For the current workflow-hub checkout, open a WSL terminal in the target
+project's Git root (for example, `remote-uxv`) and run:
 
 ```bash
-bash /mnt/c/Users/vardana/Documents/Proj/workflow-hub/.worktrees/trackline-winlinks/install-workflow.sh \
+bash /mnt/c/Users/vardana/Documents/Proj/workflow-hub/trackline/install-workflow.sh \
   --replace-links \
   .
 ```
 
 The final `.` installs into the current project. Add `--dry-run` to preview.
-The candidate requires Bash, Git, Python 3, and jq. The source worktree now
-contains the maintained skills and both hooks, so no `--source` override is
+The installer requires Bash, Git, Python 3, and jq. The permanent Trackline
+checkout contains the maintained skills and both hooks, so no `--source` override is
 needed. `install-workflow-winlinks.sh` remains a compatibility alias.
 `--replace-links` also supports migration from the old Trackline links; real
 files and directories are not replaced. These absolute paths are specific to
-this checkout: adjust them if you move it, and keep the prototype worktree
-available because the installed router, skills, and hooks link into it.
+this checkout: adjust them if you move it. Installed router, skills, and hooks
+link into the Trackline checkout, so keep that checkout available.
 
 Preview with `--dry-run`, then run without that flag; use `--replace-links` when
 migrating existing Trackline links. A dry run does not check symlink privilege.
