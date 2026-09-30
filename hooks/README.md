@@ -91,8 +91,11 @@ shell Claude uses before relying on its hook.
 into `.claude/settings.json` (project) or `~/.claude/settings.json` (global),
 then restart Claude Code.
 
-**Manual Codex:** symlink `codex.hooks.json` to `<project>/.codex/hooks.json`
-and create the `.agents/hooks/context-zone.sh` link. Start Codex from anywhere
+**Manual Codex:** merge the `hooks` block from `codex.hooks.json` into
+`<project>/.codex/hooks.json` (do not symlink it; the installer migrates such a
+link) and create the `.agents/hooks/context-zone.sh` link. Native Windows Codex
+needs a `commandWindows` entry for `context-zone.ps1` and Git for Windows on the
+Windows PATH; let the installer write it. Start Codex from anywhere
 in the git worktree; approve the project hook once if prompted.
 
 ### Tested on

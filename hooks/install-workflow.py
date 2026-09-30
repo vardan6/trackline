@@ -114,24 +114,30 @@ ConvertTo-Json -InputObject @($result) -Compress
     return {item['path']: item for item in json.loads(output)}
 
 
-def windows_claude_dependencies(powershell):
+def windows_hook_dependencies(powershell):
+    """Return (git, claude): Git on the Windows PATH, and Git Bash with jq."""
     script = """
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
+$git = Get-Command git.exe -ErrorAction SilentlyContinue
 $bash = $env:CLAUDE_CODE_GIT_BASH_PATH
-if (-not $bash) {
-    $git = Get-Command git.exe -ErrorAction SilentlyContinue
-    if ($git) { $bash = Join-Path (Split-Path (Split-Path $git.Source -Parent) -Parent) 'bin\\bash.exe' }
+if (-not $bash -and $git) {
+    # Ask Git where it lives: shims and Git\\mingw64\\bin\\git.exe hide the
+    # installation root, so walk up from the exec path to bin\\bash.exe.
+    $dir = (& $git.Source --exec-path 2>$null) -replace '/', '\\'
+    while ($dir -and -not (Test-Path -LiteralPath (Join-Path $dir 'bin\\bash.exe'))) { $dir = Split-Path $dir -Parent }
+    if ($dir) { $bash = Join-Path $dir 'bin\\bash.exe' }
 }
-$available = $false
+$claude = $false
 if ($bash -and (Test-Path -LiteralPath $bash)) {
     & $bash --noprofile --norc -c 'command -v jq >/dev/null 2>&1' *> $null
-    $available = ($LASTEXITCODE -eq 0)
+    $claude = ($LASTEXITCODE -eq 0)
 }
-if ($available) { 'ready' } else { 'missing' }
+'git=' + [bool]$git + ';claude=' + $claude
 """
-    return run(powershell, '-NoProfile', '-NonInteractive', '-EncodedCommand',
-               base64.b64encode(script.encode('utf-16le')).decode()) == 'ready'
+    output = run(powershell, '-NoProfile', '-NonInteractive', '-EncodedCommand',
+                 base64.b64encode(script.encode('utf-16le')).decode())
+    return 'git=True' in output, 'claude=True' in output
 
 
 def checkout(root):
@@ -139,7 +145,12 @@ def checkout(root):
 
 
 def wsl_runtime():
-    return bool(os.environ.get('WSL_DISTRO_NAME')) or 'microsoft' in Path('/proc/sys/kernel/osrelease').read_text().lower()
+    if os.environ.get('WSL_DISTRO_NAME'):
+        return True
+    try:
+        return 'microsoft' in Path('/proc/sys/kernel/osrelease').read_text().lower()
+    except OSError:
+        return False  # Not Linux (for example macOS): ordinary symbolic links.
 
 
 def owned(path, relative):
@@ -149,7 +160,10 @@ def owned(path, relative):
     try:
         target = path.resolve(strict=True)
     except (OSError, RuntimeError):
-        return False
+        # A moved or deleted checkout leaves the link dangling. Recognize it by
+        # its lexical target so --replace-links can repair it.
+        target = Path(os.path.normpath(path.parent / os.readlink(path)))
+        return target.parts[-len(Path(relative).parts):] == Path(relative).parts
     root = target
     for _ in Path(relative).parts:
         root = root.parent
@@ -157,7 +171,7 @@ def owned(path, relative):
 
 
 def read_json(path):
-    if not os.path.lexists(path):
+    if not path.exists():  # Also a dangling legacy settings link.
         return {}
     with path.open(encoding='utf-8-sig') as stream:
         data = json.load(stream, parse_float=Decimal)
@@ -193,6 +207,7 @@ def merge(data, windows=False):
     if not isinstance(stops, list):
         raise ValueError('hooks.Stop must be an array')
     found = False
+    emptied = []
     for group in stops:
         if not isinstance(group, dict) or not isinstance(group.get('hooks', []), list):
             raise ValueError('Stop groups must contain a hooks array')
@@ -209,7 +224,10 @@ def merge(data, windows=False):
                 else:
                     hook.pop('commandWindows', None)
             kept.append(hook)
+        if group.get('hooks') and not kept:
+            emptied.append(group)
         group['hooks'] = kept
+    stops[:] = [group for group in stops if not any(group is e for e in emptied)]
     if not found:
         hook = {'type': 'command', 'command': BASH_COMMAND, 'timeout': 30}
         if windows:
@@ -304,10 +322,14 @@ def main():
     if is_wsl and not windows:
         print('WSL Linux-filesystem project: native Windows sharing is not supported by this installation.')
     if windows:
-        if windows_claude_dependencies(powershell):
+        git, claude = windows_hook_dependencies(powershell)
+        if not git:
+            attention.append('Native Windows Codex: its PowerShell Stop hook runs git.exe; install Git for Windows and put it on the Windows PATH.')
+            print('ATTENTION: ' + attention[-1])
+        if claude:
             print('Native Windows Claude hook dependencies: Git Bash and jq found.')
         else:
-            attention.append('Native Windows Claude: install jq in Git Bash or set CLAUDE_CODE_GIT_BASH_PATH; verify dependencies before relying on its Stop hook. Windows Codex uses PowerShell.')
+            attention.append('Native Windows Claude: install jq in Git Bash or set CLAUDE_CODE_GIT_BASH_PATH; verify dependencies before relying on its Stop hook.')
             print('ATTENTION: ' + attention[-1])
     if not shutil.which('jq'):
         raise ValueError('jq is required by the Bash Stop hook; install it before installation')
@@ -330,54 +352,70 @@ def main():
                 break
             inspect.add(parent)
     inventory = windows_inventory(powershell, sorted(inspect)) if windows else {}
+    # Report every problem in one pass; nothing is written until all are clear.
+    problems = []
     for name, item in inventory.items():
         # A cloud placeholder or junction is not an owned symbolic link,
         # even if Windows reports the generic ReparsePoint attribute.
         if item['reparse'] and (not (item['native'] or item['lx']) or not Path(name).is_symlink()):
-            raise ValueError(f'CONFLICT non-symbolic reparse point: {name}')
+            problems.append(f'CONFLICT non-symbolic reparse point: {name}')
     planned = []
-    def check_parents(path):
+    repairs = set()
+    def parents_clear(path):
         for parent in path.parents:
             if parent == project:
-                break
+                return True
             if parent.is_symlink() or (os.path.lexists(parent) and not parent.is_dir()):
-                raise ValueError(f'CONFLICT parent is a link or non-directory: {parent}')
+                message = f'CONFLICT parent is a link or non-directory: {parent}'
+                if message not in problems:
+                    problems.append(message)
+                return False
+        return True
     for path, target, relative in links:
-        check_parents(path)
         if not target.exists():
             raise ValueError(f'Missing source: {target}')
+        if not parents_clear(path):
+            continue
         if os.path.lexists(path):
             if not owned(path, relative):
-                raise ValueError(f'CONFLICT unrelated or real artifact: {path}')
+                problems.append(f'CONFLICT unrelated or real artifact: {path}')
+                continue
             if path.resolve() == target and (not windows or inventory[str(path)]['native']):
                 continue
             if not args.replace:
-                raise ValueError(f'Existing managed link needs --replace-links: {path}')
+                problems.append(f'Existing managed link needs --replace-links: {path}')
+                continue
+            if not path.exists():
+                repairs.add(path)
         planned.append((path, target))
     settings = []
     for relative, native in (('.codex/hooks.json', windows), ('.claude/settings.json', False)):
         path = project / relative
-        check_parents(path)
+        if not parents_clear(path):
+            continue
         linked = path.is_symlink()
         if linked and (relative != '.codex/hooks.json' or not owned(path, 'hooks/codex.hooks.json')):
-            raise ValueError(f'CONFLICT unrelated settings link: {path}')
+            problems.append(f'CONFLICT unrelated settings link: {path}')
+            continue
         if linked and not args.replace:
-            raise ValueError(f'Existing managed settings link needs --replace-links: {path}')
+            problems.append(f'Existing managed settings link needs --replace-links: {path}')
+            continue
         original = read_json(path)
         updated = merge(original, native)
         if updated != original or linked or not path.exists():
             settings.append((path, json_settings(updated) + '\n'))
-    check_parents(legacy)
-    if os.path.lexists(legacy) and not owned(legacy, 'hooks/context-zone.sh'):
-        raise ValueError(f'CONFLICT unrelated legacy hook: {legacy}')
-    if os.path.lexists(legacy) and not args.replace:
-        raise ValueError('Legacy hook cleanup needs --replace-links')
+    if parents_clear(legacy) and os.path.lexists(legacy):
+        if not owned(legacy, 'hooks/context-zone.sh'):
+            problems.append(f'CONFLICT unrelated legacy hook: {legacy}')
+        elif not args.replace:
+            problems.append(f'Legacy hook cleanup needs --replace-links: {legacy}')
     for path in scaffold:
-        check_parents(path)
-        if os.path.lexists(path) and (path.is_symlink() or not path.is_dir()):
-            raise ValueError(f'CONFLICT documentation path: {path}')
+        if parents_clear(path) and os.path.lexists(path) and (path.is_symlink() or not path.is_dir()):
+            problems.append(f'CONFLICT documentation path: {path}')
+    if problems:
+        raise ValueError(f'{len(problems)} problem(s); nothing changed:\n  ' + '\n  '.join(problems))
     for path, target in planned:
-        print(f'link    {path.relative_to(project)} -> {target}')
+        print(f'{"repair " if path in repairs else "link   "} {path.relative_to(project)} -> {target}')
     for path, _ in settings:
         print(f'merge   {path.relative_to(project)}')
     for path in scaffold:
@@ -423,7 +461,8 @@ def main():
                 if permissions is not None:
                     p.chmod(permissions)
             transaction.replace(path, write_settings)
-        if os.path.lexists(legacy):
+        pruned = os.path.lexists(legacy)
+        if pruned:
             transaction.replace(legacy, lambda: None)
         for path in scaffold:
             transaction.mkdir(path)
@@ -431,6 +470,11 @@ def main():
         transaction.rollback()
         raise
     transaction.commit()
+    if pruned:
+        try:
+            legacy.parent.rmdir()  # Only if the pruned hook left it empty.
+        except OSError:
+            pass
     print(f'Done: {len(planned)} links, {len(settings)} settings updates. Restart agents to reload.')
     if attention:
         print('Needs attention:\n' + '\n'.join('  - ' + message for message in attention))

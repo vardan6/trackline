@@ -9,6 +9,7 @@ import io
 import json
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -138,7 +139,43 @@ class InstallerTests(unittest.TestCase):
         self.install('--replace-links')
         self.assertFalse(codex.is_symlink())
         self.assertFalse(os.path.lexists(legacy))
+        self.assertFalse(legacy.parent.exists())
         self.assertEqual(source_settings.read_bytes(), original_source)
+
+    def test_dangling_links_from_removed_checkout_are_repaired(self):
+        moved = self.project.parent / 'old-trackline'
+        shutil.copytree(ROOT, moved, symlinks=True, ignore=shutil.ignore_patterns('.git', 'tests'))
+        self.install('--source', str(moved))
+        shutil.rmtree(moved)
+        with self.assertRaisesRegex(ValueError, 'needs --replace-links'):
+            self.install()
+        output = self.install('--replace-links')
+        self.assertIn('repair  AGENTS.md', output)
+        self.assertEqual((self.project / 'AGENTS.md').resolve(), ROOT / 'AGENTS.md')
+        self.assertTrue((self.project / '.claude/skills/next-slice/SKILL.md').is_file())
+
+    def test_every_conflict_is_reported_at_once(self):
+        (self.project / 'AGENTS.md').write_text('user router')
+        (self.project / 'CLAUDE.md').write_text('user notes')
+        (self.project / 'docs').mkdir()
+        (self.project / 'docs/adr').write_text('not a directory')
+        before = snapshot(self.project)
+        with self.assertRaises(ValueError) as caught:
+            self.install('--replace-links')
+        for name in ('AGENTS.md', 'CLAUDE.md', 'docs/adr'):
+            self.assertIn(str(self.project / name), str(caught.exception))
+        self.assertEqual(snapshot(self.project), before)
+
+    def test_duplicate_hook_removal_drops_only_emptied_groups(self):
+        hook = {'type': 'command', 'command': installer.BASH_COMMAND}
+        data = {'hooks': {'Stop': [{'hooks': [dict(hook)]}, {'hooks': [dict(hook)]}, {'hooks': []}]}}
+        stops = installer.merge(data)['hooks']['Stop']
+        self.assertEqual(stops, [{'hooks': [hook]}, {'hooks': []}])
+
+    def test_non_linux_unix_uses_ordinary_links(self):
+        with mock.patch.dict(os.environ, {'WSL_DISTRO_NAME': ''}), \
+             mock.patch.object(Path, 'read_text', side_effect=FileNotFoundError('/proc')):
+            self.assertFalse(installer.wsl_runtime())
 
     def test_failure_restores_links_settings_and_directories(self):
         self.install()
