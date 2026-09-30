@@ -905,10 +905,14 @@ contains its own copy: it **symlinks each skill and each shared file back into
 that common `trackline`**, so an edit made once in `trackline` is instantly
 live in every project that links it. The only things a project holds of its own
 are those symlinks plus the minimum per-tool registration each agent forces (and
-its own `docs/` content). There is no "Codex version" vs "Claude version" of
-anything: one `context-zone.sh` serves both, invoked by an identical command
-string. `install-workflow.sh` is simply the tool that creates and maintains those
-links.
+its own `docs/` content). Router and skills share one canonical source.
+Context hooks may use Bash and PowerShell launchers appropriate to the runtime;
+they must interpret equivalent token inputs and use the same thresholds and
+messages. Hook registration is project-owned JSON so unrelated settings and
+hooks are preserved. One Bash installation entry selects ordinary Linux links
+or Windows-native links for shared Windows/WSL projects; switching agents or
+runtimes requires no reinstall. `install-workflow.sh` creates and maintains the
+links and registration.
 
 **Harness hooks** (`hooks/README.md` owns the detail):
 
