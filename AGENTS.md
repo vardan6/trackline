@@ -36,8 +36,9 @@ vertical slice per cycle.
   about intent. On conflict a grilled-and-captured spec wins and the code is the
   bug; a spec reconstructed from a diff loses. Surface either and ask before
   changing a standing decision.
-- One canonical home per fact. Never create internals docs that mirror code;
-  keep status out of requirements and design.
+- One canonical home per fact, and it is in the repo: never agent or harness
+  memory, which other models and tools cannot read. Never create internals docs
+  that mirror code; keep status out of requirements and design.
 - This file is shared across projects. Project-specific rules live in
   `PROJECT.md` at the repo root; read it if present, and it wins on conflict.
 
