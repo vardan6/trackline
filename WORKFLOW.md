@@ -975,38 +975,48 @@ links and registration.
   transcript token count against the fixed thresholds in §6 (not the model
   window) and nudges: silent `<80k`, "consider `/session-close`" at `80k–99k`,
   "ask the user `/session-close` or `/handoff`" at `100k–119k`, "stop new code" at
-  `≥120k`. Overridable per project via `CONTEXT_{WARN,ASK,DUMB,FORCE}_TOKENS`. One
-  script serves both agents; both register it via the same command,
+  `≥120k`. Overridable per project via `CONTEXT_{WARN,ASK,DUMB,FORCE}_TOKENS`. Both
+  agents register the Bash launcher via the same command,
   `bash "$(git rev-parse --show-toplevel)/.agents/hooks/context-zone.sh"` — Claude
-  Code from `.claude/settings.json`, Codex from `.codex/hooks.json`. The
-  git-toplevel form resolves the project root from any subdirectory the hook is
-  launched in.
+  Code from `.claude/settings.json`, Codex from `.codex/hooks.json`. In
+  shared Windows/WSL projects, `.codex/hooks.json` also carries a
+  `commandWindows` entry that runs the equivalent PowerShell launcher
+  (`hooks/context-zone.ps1`) for native Windows Codex. The git-toplevel form
+  resolves the project root from any subdirectory the hook is launched in.
 - **Permission allowlist** — read-only Bash + read-MCP via
   `/fewer-permission-prompts`.
 - **MCP audit** — disable unused servers per project; each adds tool schemas to
   every turn.
 
-**Bootstrap a new project — `./install-workflow.sh <project>`.** One idempotent
-command wires everything; re-run it any time to reconcile a project (repair
-drifted or broken links) after the canonical set changes. It:
+**Bootstrap a project.** Run
+`bash /path/to/trackline/install-workflow.sh --replace-links <project>` from
+Linux or WSL. One idempotent command wires everything; rerun it any time to
+reconcile a project after the canonical set changes. It selects the link type
+automatically: ordinary links on Linux filesystems, Windows-native links for a
+Windows-drive project in WSL (which also needs a Windows-drive source). It:
 
-- links `AGENTS.md → trackline/AGENTS.md` and `CLAUDE.md → AGENTS.md`;
-- installs skills through a **funnel**: `.agents/skills/<s> → trackline/skills/<s>`
-  is the one real link, and `.claude/skills` + `.codex/skills` redirect into
-  `.agents/skills` (mirrors the user-scope layout; OpenCode reads `.agents/skills`
-  directly);
-- registers the context-zone hook for both agents (merges the Stop block into
-  `.claude/settings.json` without clobbering other keys; symlinks
-  `.codex/hooks.json`);
+- links `AGENTS.md → trackline/AGENTS.md` and `CLAUDE.md → trackline/AGENTS.md`;
+- links each skill directly to its source in every scope:
+  `.agents/skills/<s>`, `.claude/skills/<s>`, and `.codex/skills/<s>` each point
+  at `trackline/skills/<s>` (OpenCode reads `.agents/skills`);
+- links `.agents/hooks/context-zone.sh`, plus `context-zone.ps1` in Windows mode;
+- merges the Stop hook into `.claude/settings.json` and `.codex/hooks.json`
+  without clobbering other keys or hooks, adding `commandWindows` to the Codex
+  entry in Windows mode;
 - scaffolds `docs/{requirements,design,adr,reviews,research,archive}/`
   (create-if-missing);
 - leaves state files to the workflow — `/session-close` creates `activeContext.md`;
   you seed one unchecked step in `roadmap.md` to start.
 
-The skill lists and docs dirs are declared arrays at the top of the script, so the
-list of what to install changes freely while the mechanism stays fixed. Flags:
-`-n` preview, `-f` repair drifted links, `--with-external` pin the third-party
-skills per-project instead of relying on user scope.
+It requires Bash, Git, Python 3, and `jq`. The skill lists and docs dirs are
+declared tuples at the top of `hooks/install-workflow.py`, so what is installed
+changes freely while the mechanism stays fixed. It reports every conflict at
+once and writes nothing until all are clear; unrelated links and real files are
+never replaced. Flags: `-n`/`--dry-run` preview; `--replace-links` (`-f`)
+migrate earlier Trackline links (the old `.codex/hooks.json` link and skill
+funnels) and repair managed links left dangling by a moved checkout;
+`--source DIR` install from another checkout; `--with-external` pin the
+third-party skills per project instead of relying on user scope.
 
 **Third-party skills stay in user scope by default.** `grill-me`,
 `grill-with-docs`, and `handoff` are vendored from Matt Pocock and typically

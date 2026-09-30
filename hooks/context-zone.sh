@@ -14,6 +14,8 @@
 #   bash "$(git rev-parse --show-toplevel)/.agents/hooks/context-zone.sh"
 # where .agents/hooks/context-zone.sh -> this file. The git-toplevel form
 # resolves the project root from any subdirectory the hook is launched in.
+# Native Windows Codex runs context-zone.ps1 instead (via commandWindows);
+# keep inputs, thresholds, and messages equivalent in both.
 #
 # The hook reads the JSON payload Claude Code provides on stdin:
 #   { "session_id": "...", "transcript_path": "/path/to/session.jsonl", ... }

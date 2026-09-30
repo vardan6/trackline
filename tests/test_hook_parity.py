@@ -29,8 +29,18 @@ class HookParityTests(unittest.TestCase):
                 {'total_tokens': 0, 'usage': {'total_tokens': 90000}},
                 {'total_tokens': 'invalid'}, {'total_tokens': 110000, 'model_context_window': 0},
             ]
-            for override in ({}, {'CONTEXT_WARN_TOKENS': 'invalid', 'CONTEXT_REFERENCE_WINDOW': '0'}):
-                env = dict(os.environ, **override)
+            # WSL forwards variables to Windows processes only when WSLENV
+            # lists them; without this PowerShell silently uses its defaults.
+            names = ('CONTEXT_WARN_TOKENS', 'CONTEXT_ASK_TOKENS', 'CONTEXT_DUMB_TOKENS',
+                     'CONTEXT_FORCE_TOKENS', 'CONTEXT_REFERENCE_WINDOW')
+            wslenv = ':'.join(filter(None, [os.environ.get('WSLENV'), *names]))
+            overrides = ({}, {'CONTEXT_WARN_TOKENS': 'invalid', 'CONTEXT_REFERENCE_WINDOW': '0'},
+                         {'CONTEXT_WARN_TOKENS': '50000', 'CONTEXT_ASK_TOKENS': '60000',
+                          'CONTEXT_DUMB_TOKENS': '70000', 'CONTEXT_FORCE_TOKENS': '75000',
+                          'CONTEXT_REFERENCE_WINDOW': '150000'})
+            payloads += [{'total_tokens': 55000}, {'total_tokens': 65000}, {'total_tokens': 72000}]
+            for override in overrides:
+                env = dict(os.environ, WSLENV=wslenv, **override)
                 for payload in payloads:
                     with self.subTest(payload=payload, override=override):
                         bash_payload = dict(payload, transcript_path=str(transcript))
@@ -42,6 +52,13 @@ class HookParityTests(unittest.TestCase):
                                                           input=json.dumps(ps_payload, ensure_ascii=False), text=True, env=env)
                         self.assertEqual(json.loads(bash) if bash.strip() else None,
                                          json.loads(windows) if windows.strip() else None)
+            # The valid override must reach PowerShell, not merely match defaults.
+            env = dict(os.environ, WSLENV=wslenv, **overrides[2])
+            payload = json.dumps({'total_tokens': 55000, 'transcript_path': installer.winpath(transcript)})
+            windows = subprocess.check_output([ps, '-NoProfile', '-NonInteractive', '-ExecutionPolicy', 'Bypass', '-File',
+                                               installer.winpath(ROOT / 'hooks/context-zone.ps1')],
+                                              input=payload, text=True, env=env)
+            self.assertIn('consider /session-close', json.loads(windows)['systemMessage'])
             # Both intentionally require a transcript, even with a payload count.
             no_transcript = json.dumps({'total_tokens': 180000})
             for command in (['bash', str(ROOT / 'hooks/context-zone.sh')],

@@ -138,21 +138,34 @@ Windows-drive source and project may be on different drives; the installer
 checks native and WSL link readability before migration.
 
 Prerequisites: **Bash, Git, Python 3, and jq**. Windows sharing additionally
-requires WSL interoperability, Windows PowerShell, and Developer Mode or Windows
-symlink privilege. `sudo` in WSL does not grant Windows privileges. Native
-Windows Claude hooks require Git Bash and jq in that Windows Bash environment.
+requires WSL interoperability and Windows PowerShell. Native Windows Codex hooks
+need Git for Windows on the Windows PATH; native Windows Claude hooks need Git
+Bash with jq in that Windows Bash environment. The installer checks both and
+lists what is missing under "Needs attention".
+
+**Windows symlink privilege is mandatory for Windows-drive projects.** Enable
+**Developer Mode** in Windows Settings, or launch the WSL terminal **as
+Administrator**; `sudo` inside WSL does not grant Windows privileges. A dry run
+does not check this. The real run probes link creation first, so a failure
+such as "A required privilege is not held by the client" changes nothing: fix
+the privilege and rerun the same command.
 
 Options: `--dry-run` (`-n`) previews without writes; `--replace-links`
-(`--force`, `-f`) migrates recognized Trackline links while preserving unrelated
-links and real files; `--source DIR` uses another complete Trackline source;
-`--with-external` also installs optional third-party skills. Reinstalling does
-not duplicate hooks or rewrite unchanged JSON. Source and installed hook files
-must remain available. The old `install-workflow-winlinks.sh` name forwards to
-this same installer.
+(`--force`, `-f`) migrates recognized Trackline links, repairs managed links left
+dangling by a moved or deleted checkout, and preserves unrelated links and real
+files; `--source DIR` uses another complete Trackline source; `--with-external`
+also installs optional third-party skills. The installer lists every conflict
+at once and changes nothing until all are resolved. Reinstalling does not
+duplicate hooks or rewrite unchanged JSON. Installed router, skills, and hooks
+link into the source checkout, so keep it available. The old
+`install-workflow-winlinks.sh` name forwards to this same installer.
 
 Installation keeps backups during migration and restores links/settings if a
-later operation fails. Dry run does not probe Windows link privilege. Enable
-Developer Mode or launch an elevated WSL terminal if the actual probe fails.
+later operation fails.
+
+Run the installer's regression tests from this checkout with
+`python3 -m unittest discover -s tests -v`. To include real native Windows link
+and hook checks from WSL, set `TRACKLINE_WINDOWS_TESTS=1` first.
 
 Seed one unchecked step in `roadmap.md`:
 
