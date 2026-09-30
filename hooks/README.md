@@ -66,18 +66,26 @@ work and close first.
 
 ### Install (both tools — use the installer)
 
-`install-workflow.sh` wires this up for you: it creates the single in-project
-link `.agents/hooks/context-zone.sh -> trackline/hooks/context-zone.sh`,
-merges the Stop block into `.claude/settings.json`, and symlinks
-`.codex/hooks.json`. Both tools then run the **same** script via the **same**
-command string:
+`install-workflow.sh` registers the Bash Stop hook for Linux/WSL and adds
+an equivalent PowerShell launcher for native Windows Codex in a shared
+Windows-drive project. Hooks link to the canonical Trackline source; project
+JSON registration preserves other hooks and settings. Reinstallation does not
+duplicate registrations or rewrite unchanged settings.
+
+Bash command:
 
 ```sh
 bash "$(git rev-parse --show-toplevel)/.agents/hooks/context-zone.sh"
 ```
 
-The git-toplevel form resolves the project root from any subdirectory the hook
-is launched in — this is what makes it robust across both tools.
+The Windows command also resolves the Git root at runtime before invoking
+`.agents/hooks/context-zone.ps1`, so moving the project or launching from a
+subdirectory does not require rewriting registration.
+
+Native Windows Claude Code uses the Bash launcher and requires **Git Bash and
+jq in its Bash environment**. A WSL jq installation does not satisfy that
+Windows dependency. The installer reports this requirement; verify it in the
+shell Claude uses before relying on its hook.
 
 **Manual Claude Code:** merge the `hooks` block from `settings.snippet.json`
 into `.claude/settings.json` (project) or `~/.claude/settings.json` (global),

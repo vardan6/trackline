@@ -124,17 +124,35 @@ happen every time cannot depend on the model remembering.
 
 ## Quick start
 
-```sh
-./install-workflow.sh /path/to/your/project
+Run this from the target project's Git root. Replace the source checkout path
+with yours; the final `.` selects the current project:
+
+```bash
+bash /path/to/trackline/install-workflow.sh --replace-links .
 ```
 
-Idempotent — re-run any time to reconcile. It links `AGENTS.md` (and
-`CLAUDE.md` → `AGENTS.md`), wires the skills into `.agents/`, `.claude/`, and
-`.codex/`, registers the context-zone hook for both tools, and scaffolds the
-`docs/` tree. Flags: `-n` preview, `-f` repair links, `--with-external` pin
-third-party skills per-project. Git and `jq` are prerequisites; without `jq`,
-the installer leaves the Claude hook unregistered. See the
-[hook dependencies](hooks/README.md#dependencies) for setup details.
+One Bash entry automatically selects ordinary Linux links on native Linux or
+WSL Linux filesystems, and Windows-native links for Windows-drive projects in
+WSL. A WSL Linux-filesystem installation does not promise native Windows access.
+Windows-drive source and project may be on different drives; the installer
+checks native and WSL link readability before migration.
+
+Prerequisites: **Bash, Git, Python 3, and jq**. Windows sharing additionally
+requires WSL interoperability, Windows PowerShell, and Developer Mode or Windows
+symlink privilege. `sudo` in WSL does not grant Windows privileges. Native
+Windows Claude hooks require Git Bash and jq in that Windows Bash environment.
+
+Options: `--dry-run` (`-n`) previews without writes; `--replace-links`
+(`--force`, `-f`) migrates recognized Trackline links while preserving unrelated
+links and real files; `--source DIR` uses another complete Trackline source;
+`--with-external` also installs optional third-party skills. Reinstalling does
+not duplicate hooks or rewrite unchanged JSON. Source and installed hook files
+must remain available. The old `install-workflow-winlinks.sh` name forwards to
+this same installer.
+
+Installation keeps backups during migration and restores links/settings if a
+later operation fails. Dry run does not probe Windows link privilege. Enable
+Developer Mode or launch an elevated WSL terminal if the actual probe fails.
 
 Seed one unchecked step in `roadmap.md`:
 
