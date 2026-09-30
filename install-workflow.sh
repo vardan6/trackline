@@ -73,7 +73,16 @@ done
 TARGET=$(realpath "${TARGET:-.}")
 [[ -d "$TARGET" ]] || { echo "error: '$TARGET' is not a directory." >&2; exit 1; }
 
-if [[ ! -d "$TARGET/.git" ]]; then
+# The legacy installer creates Linux links. Never silently undo a shared
+# Windows/WSL installation, including when --force is used.
+if [[ -n "${WSL_DISTRO_NAME:-}" ]] || [[ "$(uname -r)" == *[Mm]icrosoft* ]]; then
+  if command -v wslpath >/dev/null && [[ "$(wslpath -w "$TARGET")" =~ ^[A-Za-z]:\\ ]]; then
+    echo 'error: use the unified Windows/WSL installer for a Windows-drive project; this legacy installer cannot preserve shared Windows discovery.' >&2
+    exit 1
+  fi
+fi
+
+if [[ "$(git -C "$TARGET" rev-parse --show-toplevel 2>/dev/null || true)" != "$TARGET" ]]; then
   printf "warning: '%s' is not a git repo root (the hook uses git rev-parse). Continue? [y/N] " "$TARGET" >&2
   read -r reply
   [[ "$reply" =~ ^[Yy]$ ]] || exit 1

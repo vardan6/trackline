@@ -110,6 +110,42 @@ third-party skills per-project. Git and `jq` are prerequisites; without `jq`,
 the installer leaves the Claude hook unregistered. See the
 [hook dependencies](hooks/README.md#dependencies) for setup details.
 
+### Windows-native links from WSL
+
+For the unified installer candidate in the prototype worktree, **Windows Developer Mode is mandatory for an unelevated install
+unless the process already has Windows symlink privilege**. In Windows Settings,
+search for **Developer Mode** and enable it before running the installer. As an
+alternative, launch your WSL terminal **as Administrator**. Running `sudo` inside
+WSL does not grant Windows symlink privilege.
+
+The Trackline source and target project must both be on Windows drives;
+absolute native links can span drives. The installer probes Windows and WSL
+link readability before migration.
+For the current prototype in this workflow-hub checkout, open a WSL terminal
+in the target project's Git root (for example, `remote-uxv`) and run:
+
+```bash
+bash /mnt/c/Users/vardana/Documents/Proj/workflow-hub/.worktrees/trackline-winlinks/install-workflow.sh \
+  --replace-links \
+  .
+```
+
+The final `.` installs into the current project. Add `--dry-run` to preview.
+The candidate requires Bash, Git, Python 3, and jq. The source worktree now
+contains the maintained skills and both hooks, so no `--source` override is
+needed. `install-workflow-winlinks.sh` remains a compatibility alias.
+`--replace-links` also supports migration from the old Trackline links; real
+files and directories are not replaced. These absolute paths are specific to
+this checkout: adjust them if you move it, and keep the prototype worktree
+available because the installed router, skills, and hooks link into it.
+
+Preview with `--dry-run`, then run without that flag; use `--replace-links` when
+migrating existing Trackline links. A dry run does not check symlink privilege.
+If installation reports “A required privilege is not held by the client,” enable
+Developer Mode or use an elevated terminal and rerun the same command. The
+installer checks link creation before changing managed links or hook settings,
+so this privilege-check failure leaves them unchanged.
+
 Seed one unchecked step in `roadmap.md`:
 
 ```md

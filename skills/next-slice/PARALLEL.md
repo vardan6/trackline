@@ -15,6 +15,7 @@ Fan-out plan — <n> Tracks
   Track B — ...
 Needs you: <n parked slices — the decisions these Tracks are not waiting for>
 Barriers: <Track — the parked slice it stops at, or "none">
+Placeholders: <Track — items still marked "split again when selected"; a Track stops there, or "none">
 Roadmap commit: <sha — the revision workers branch from> | UNCOMMITTED — stop
 Starting: <n agents, or "nothing — no implement instruction">
 ```
@@ -35,13 +36,14 @@ Branch names alone do not isolate concurrent agents; two agents in one checkout 
 
 `/next-slice` and `/session-close` each stop after one cycle by design, so neither can run a Track to its end. **This file owns the repetition**, and only under the implement instruction that started the fan-out:
 
-- Repeat one-slice cycles: pick the next unchecked slice **in this Track's order** → open every doc it cites, plus ADRs those link, one hop → implement → verify → tick the slice.
+- Repeat one-slice cycles: pick the next unchecked slice **in this Track's order** → confirm it is atomic → open every doc it cites, plus ADRs those link, one hop → implement → verify → tick the slice.
 - The fan-out implement instruction is the standing confirmation for slices inside this Track, and for nothing else. It does not authorize a slice from another Track, from `Needs you`, or from anywhere but the roadmap.
+- **A placeholder is not a slice.** An item still marked "split again when selected" (or otherwise flagged as needing a split) is parked planning, not atomic work. The worker never runs it whole and never re-splits it unattended; splitting is a planning decision for `/planning-capture` with the user. Fan-out incident 2026-09-08 (`progress.md`): two such items ran whole for ~146K and ~232K tokens.
 - The citation contract is unchanged and unweakened by running unattended. A cited link that resolves to nothing, or a behavior-changing slice claiming no doc governs it, stops the Track — it does not get waved through because no one is watching.
 
 Stop the Track and report at the first of:
 
-- a **Barrier** line, or a **HITL** slice reached in sequence — the remaining slices stay in place, unticked;
+- a **Barrier** line, a **HITL** slice, or an unsplit placeholder reached in sequence — the remaining slices stay in place, unticked;
 - the Track's slices are exhausted;
 - a verification fails, or confidence in a slice is low;
 - the context thresholds in `WORKFLOW.md` §6 are reached.

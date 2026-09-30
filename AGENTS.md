@@ -38,6 +38,8 @@ vertical slice per cycle.
   changing a standing decision.
 - One canonical home per fact. Never create internals docs that mirror code;
   keep status out of requirements and design.
+- This file is shared across projects. Project-specific rules live in
+  `PROJECT.md` at the repo root; read it if present, and it wins on conflict.
 
 ## Docs — cited links always; the rest on demand
 
@@ -54,8 +56,3 @@ vertical slice per cycle.
 - Fixing a reported defect → `docs/reviews/` (finding, analysis, agreed fix).
   Citable; `docs/research/` is not — capture it first.
 - Rare invariants, contracts, gotchas → `docs/implementation-notes.md`.
-
-## Non-obvious gotchas
-
-<!-- Project-specific freezes, hidden invariants, in-progress refactors.
-     If empty, leave empty. -->
