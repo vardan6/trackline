@@ -74,7 +74,8 @@ only when the user's wording directly conflicts with these defaults.
      outside the repo is input: preserve its original and write the reconciled
      packet at repo root. A packet alone never proves state files were updated.
 
-4. **Commit boundary:** never commit automatically. If the user requested a
+4. **Commit boundary:** never commit automatically (sole exception: the fan-out
+   dispatcher, `next-slice/PARALLEL.md` §Finish). If the user requested a
    commit or a substantial phase/checkpoint just completed, ask whether to
    commit and suggest a message. Do not make committing the next workflow step.
 

@@ -595,7 +595,8 @@ or any point where a roadmap section has accumulated independent slices.
 starts agents only on an explicit implement instruction. Because workers branch
 from a revision, the partition must be committed before fan-out — the dispatcher
 asks the user to commit it. Under the implement instruction the dispatcher
-commits only its own launch lines; it merges finished Tracks back into their
+commits its own launch lines before work starts, then, for each finished Track,
+the merge and the state-file update; it merges finished Tracks back into their
 base branch and removes their worktrees (`next-slice/PARALLEL.md` §Finish).
 
 ## 4. The state files and the docs tree
