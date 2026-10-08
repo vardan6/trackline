@@ -167,6 +167,14 @@ link into the source checkout, so keep it available. The old
 Installation keeps backups during migration and restores links/settings if a
 later operation fails.
 
+Project-specific rules go in an optional `PROJECT.md` at the project root; it
+wins over `AGENTS.md` on conflict, and the installer never writes it. If the
+project fans out parallel Tracks (`/next-slice all`), give it a
+`## Worktree setup` section: the commands that make a fresh worktree able to run
+the project's tests — dependency links such as `node_modules`, virtual
+environment paths, ignore entries. The dispatcher reinstalls Trackline into each
+new worktree, then runs that section there.
+
 Run the installer's regression tests from this checkout with
 `python3 -m unittest discover -s tests -v`. To include real native Windows link
 and hook checks from WSL, set `TRACKLINE_WINDOWS_TESTS=1` first.
@@ -223,10 +231,11 @@ happen every time cannot depend on the model remembering.
 | `/review-triage` | review | Validating findings and sorting them by risk, effort, and value. |
 | `/session-open` | any | Recovering orientation on an ambiguous resume. |
 | `/session-close` | any | Ending a step (STEP) or session (SESSION) and synchronizing live state. |
-| `/handoff` | any | Writing a standalone `handoff-*.md` packet for a tool or model that does not know this workflow. |
+| `/handoff` | any | Closing the session and writing a standalone `handoff-*.md` packet for a tool or model that does not know this workflow. |
 
-`grill-me`, `grill-with-docs`, and `handoff` are vendored from
-[Matt Pocock's skills](https://github.com/mattpocock/skills) under MIT — see
+`grill-me` and `grill-with-docs` are vendored from
+[Matt Pocock's skills](https://github.com/mattpocock/skills) under MIT and
+installed with `--with-external`; `handoff` began as a vendored copy — see
 [CREDITS.md](CREDITS.md).
 
 ## Project files

@@ -136,7 +136,7 @@ flowchart TD
 
     MERGE(["open PR → merge (§7)"]):::artifact
     HOOK["context-zone hook (§8)<br/>fires after every turn"]:::guard
-    HAND["/handoff (§3.11)<br/>writes: handoff-*.md — standalone packet<br/>for another tool/model"]:::skill
+    HAND["/handoff (§3.11)<br/>SESSION close, then writes: handoff-*.md —<br/>standalone packet for another tool/model"]:::skill
 
     START --> RS --> GR
     GR -- "plan defensible" --> PC
@@ -188,7 +188,7 @@ second copy.
 | commit (§7) | you — never the agent | the closed step or session | is this a state worth returning to? | a checkpoint in history, and a review scope for `/cross-review` | next slice / review / PR — optional each time, required before the PR |
 | `/cross-review` (§3.9) | other provider's strongest model | diff since last known-good commit + the docs | misimplementation, gaps, bugs, better options | findings file in `docs/reviews/` | `/review-triage` — always |
 | `/review-triage` on code (§3.9) | implementer | findings + the actual code | validate each; sort must-fix-now / before-phase / backlog / invalid | review items folded into `roadmap.md` | `/next-slice` for fixes; PR when clean |
-| `/handoff` (§3.11) | any cycle, interrupted | the live conversation | receiver does not know this workflow? | standalone, pointer-based handoff doc | the other tool's session |
+| `/handoff` (§3.11) | any cycle, interrupted | the live conversation | receiver does not know this workflow? | state files closed + standalone, pointer-based handoff doc | the other tool's session |
 | context-zone hook (§8) | guard — after every turn | transcript token count | fixed 80k / 100k / 120k / 180k thresholds | `systemMessage` nudge | escalates toward `/session-close (SESSION)` |
 
 ## 2. Operating principles
@@ -290,7 +290,8 @@ from infrastructure or database through the middle layers to UI/UX.
 durable docs.
 
 > Both skills are vendored from Matt Pocock's public agent-skills repo under the
-> MIT License so they travel with the workflow. See `CREDITS.md`.
+> MIT License so they travel with the workflow. See `CREDITS.md`. The installer
+> links them only with `--with-external` (§8).
 
 ### 3.3 `/planning-capture` — write the plan into durable docs
 
@@ -499,7 +500,10 @@ modes:
   touch requirements/design/ADR — if durable behavior, scope, or architecture
   changed it stops and tells you to run `/doc-update` first. An unplanned bug fix
   that altered documented behavior counts.
-- **SESSION mode** — ending the session. Does everything STEP does, plus applies a
+- **SESSION mode** — ending the session, mid-task or after several slices. It
+  reconciles the whole session by itself: STEP closes are optional and never a
+  prerequisite, and when they did run their history is not duplicated.
+  Unfinished work is preserved, never ticked. Does everything STEP does, plus applies a
   one-question **durable-change test**, expands `activeContext.md` with blockers,
   open questions, and discarded dead ends, and writes a `handoff-*.md` only if
   `activeContext.md` is not enough. A bare `/session-close` defaults to SESSION
@@ -533,12 +537,16 @@ before the Warn Zone approaches.
 
 ### 3.11 `/handoff` — cross-tool / cross-model transfer
 
-**What it does.** Compacts the current conversation into a standalone handoff
-document that a *different* tool or model — one that does not know this workflow —
-can pick up from. It references existing artifacts (PRDs, ADRs, commits, diffs) by
-path instead of restating them.
+**What it does.** Runs `/session-close` in SESSION mode with a handoff packet
+required: the state files are reconciled first, then a repository-root
+`handoff-*.md` carries the recipient's focus and the unfinished work, so a
+*different* tool or model — one that does not know this workflow — can pick up
+from it. The packet references existing artifacts (PRDs, ADRs, commits, diffs)
+by path instead of restating them. The skill only delegates; `/session-close`
+owns reconciliation and the packet template.
 
-**What it solves.** Transfer across the boundary `session-close` does not cover.
+**What it solves.** Transfer across the boundary a state-file close alone does
+not cover, without a second, separate close.
 
 **Comes after.** A decision to move the work to a non-Claude tool or a different
 model.
@@ -547,7 +555,8 @@ model.
 
 **`/handoff` vs `/session-close`.** Use `/session-close` by default — it is the
 workflow-native ending and writes the state files. Reach for `/handoff` only when
-the receiver is not another Claude session running this workflow.
+the receiver needs a standalone packet; it performs the close too, so never run
+both.
 
 ### 3.12 `/roadmap-split` — partition the roadmap into parallel Tracks
 
@@ -611,7 +620,7 @@ root; knowledge lives under `docs/`.
 |---|---|---|---|
 | `activeContext.md` | Cheap session-start snapshot: mode, phase/slice, one-line state, the exact next step, blockers. Kept tiny. | `/session-close` (and `/doc-update` for the next-step line) | `/session-open`, `/next-slice` at the start of every session |
 | `roadmap.md` | Checklist of phases and unchecked slices, AFK/HITL markers. Checklist-first, never a narrative diary. | `/planning-capture` (creates), `/session-close` (ticks) | every implementation step |
-| `progress.md` | Append-only log of finished steps, one dated bullet each. | `/session-close (STEP)` | history / orientation only |
+| `progress.md` | Append-only log of finished steps, one dated bullet each. | `/session-close` (either mode) | history / orientation only |
 
 `activeContext.md` and `roadmap.md` are the two files a resumed session opens
 from. If any of the three grows into a narrative document, that is workflow drift —
@@ -1053,19 +1062,17 @@ once and writes nothing until all are clear; unrelated links and real files are
 never replaced. Flags: `-n`/`--dry-run` preview; `--replace-links` (`-f`)
 migrate earlier Trackline links (the old `.codex/hooks.json` link and skill
 funnels) and repair managed links left dangling by a moved checkout;
-`--source DIR` install from another checkout; `--with-external` pin the
-third-party skills per project instead of relying on user scope.
+`--source DIR` install from another checkout; `--with-external` also link the
+two vendored third-party skills.
 
 ### Third-party skill scope
 
-`grill-me`,
-`grill-with-docs`, and `handoff` are vendored from Matt Pocock and typically
-already installed globally (`~/.agents/skills/`). Installing them per-project too
+`grill-me` and `grill-with-docs` are vendored from Matt Pocock and are often
+already installed globally (`~/.agents/skills/`). Installing them per project too
 would be a second copy — the anti-pattern this workflow exists to avoid — so the
-installer detects them in user scope and **skips** them, printing a notice.
-`--with-external` overrides this for a project that must pin its own copy.
-(Whether `/handoff` stays vendored or gets rewritten to the canonical skeleton
-is still open.)
+installer's default set (`SKILLS`) leaves them out; they are its `EXTERNAL` set,
+linked only when `--with-external` is passed. `/handoff` is no longer vendored:
+it is maintained here (§3.11) and installed by default.
 
 After bootstrap: audit MCP servers and disable unused ones; run `/session-open` to
 inspect state, or `/next-slice` to start coding.
@@ -1091,21 +1098,23 @@ runtime dependency and fallback behavior are owned by
 
 ## 9. Skill names and attribution
 
-The nine canonical skills live at `skills/<name>/SKILL.md` and are described step
-by step in §3. Three more are vendored from Matt Pocock (MIT — see `CREDITS.md`):
-`grill-me`, `grill-with-docs`, and `handoff`; they keep their upstream format
-rather than the five-section skeleton the canonical skills use.
+The ten maintained skills live at `skills/<name>/SKILL.md` and are described step
+by step in §3; they are the installer's default `SKILLS`. Two more are vendored
+from Matt Pocock (MIT — see `CREDITS.md`): `grill-me` and `grill-with-docs`; they
+keep their upstream format rather than the five-section skeleton. `handoff` began
+as a vendored copy and was replaced by a maintained skill that delegates to
+`/session-close`; its upstream origin stays credited.
 
 **External skills carry document contracts.** They expect files this workflow
 does not define; the list is in §4, *Documents this workflow does not define*.
 Consuming an external skill therefore adopts its document names as well as its
 behavior — check that list before assuming an unfamiliar file is drift.
 
-**The vendored copies are not the ones that run.** `install-workflow.sh` treats
-`grill-me`, `grill-with-docs` and `handoff` as `EXTERNAL_SKILLS` and skips them
-per project whenever user scope already provides them, which it normally does.
-So the pinned copies here are source and attribution, not the executed version,
-and upstream can change behavior and document contracts without touching this
+**The vendored copies are usually not the ones that run.** `install-workflow.sh`
+lists `grill-me` and `grill-with-docs` as `EXTERNAL` and links them only with
+`--with-external`. Without it, a project runs whatever user scope provides, so
+the pinned copies here are source and attribution, not the executed version, and
+upstream can change behavior and document contracts without touching this
 repository. Observed: upstream rewrote `grill-with-docs` from a self-contained
 skill with `CONTEXT-FORMAT.md` and `ADR-FORMAT.md` into a short delegator that
 calls a `domain-modeling` skill; the two format documents no longer ship. Verify
@@ -1113,7 +1122,8 @@ the installed version before relying on the description above.
 
 Two name clashes are worth keeping straight: `/triage` is issue triage (Linear /
 GitHub), **not** `/review-triage` (plan / code review); and `/handoff` is
-cross-tool transfer, **not** `/session-close` (the workflow-native ending).
+a SESSION close plus a transfer packet, **not** a substitute for `/session-close`
+when nobody else picks the work up.
 
 ## 10. Final operating principle
 

@@ -13,14 +13,15 @@ Source: [`mattpocock/skills`](https://github.com/mattpocock/skills) —
 |---------------------------|----------------------------------------|
 | `skills/grill-me/`        | `skills/productivity/grill-me`         |
 | `skills/grill-with-docs/` | `skills/engineering/grill-with-docs`   |
-| `skills/handoff/`         | `skills/productivity/handoff`          |
 
-These three are copied (vendored) rather than authored here. They are used in
-this workflow's planning phase (`grill-me`, `grill-with-docs`) and for
-cross-tool/model session transfer (`handoff`). The remaining skills in
-`skills/` — `session-open`, `planning-capture`, `plan-review`, `next-slice`,
-`doc-update`, `cross-review`, `review-triage`, `session-close` — are authored
-in this repository.
+These two are copied (vendored) rather than authored here and are used in this
+workflow's planning phase. `skills/handoff/` started as a vendored copy of
+upstream `skills/productivity/handoff`; it has since been replaced by a skill
+maintained here that runs `/session-close` and writes a transfer packet. It
+keeps the upstream name and argument hint, so its origin stays credited. The
+other skills in `skills/` — `session-open`, `planning-capture`, `plan-review`,
+`next-slice`, `roadmap-split`, `doc-update`, `cross-review`, `review-triage`,
+`session-close` — are authored in this repository.
 
 ## Notes
 
@@ -30,7 +31,7 @@ in this repository.
 - Vendored copies are pinned and may drift from upstream. To refresh, re-copy
   from [`mattpocock/skills`](https://github.com/mattpocock/skills) and keep this
   file and `skills/LICENSE-mattpocock` in sync.
-- **Pinning here does not pin what executes.** The installer skips these three
-  per project when user scope provides them, so the user-scope copy is normally
-  the one that runs and it tracks upstream. Upstream has already rewritten
+- **Pinning here does not pin what executes.** The installer links the two
+  vendored skills only with `--with-external`; otherwise the user-scope copy, if
+  any, is the one that runs, and it tracks upstream. Upstream has already rewritten
   `grill-with-docs`; see `WORKFLOW.md` §9.
