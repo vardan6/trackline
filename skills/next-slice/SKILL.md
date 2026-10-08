@@ -56,4 +56,4 @@ Confidence: high | medium | low
 - If confidence is low → ask user one specific question, then stop.
 - A cited link resolves to no file, its fragment matches zero or several headings, it points into `docs/research/`, or a behavior-changing slice claims no doc governs it → stop and report it; the roadmap line is not a fallback.
 - No candidate fits — too large, too ambiguous, or blocked by a dependency or HITL gate → stop; surface the required decision, or suggest `/planning-capture` to refine the roadmap.
-- After implementing the slice, do not chain into another slice automatically → `/session-close (STEP mode)`.
+- After implementing the slice → `/session-close (STEP mode)`. Propose a next slice only if it shares this slice's files and cited docs and context is below ~100k; otherwise end the session. Only a fan-out worker starts it unconfirmed.

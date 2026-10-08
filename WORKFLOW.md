@@ -594,7 +594,9 @@ or any point where a roadmap section has accumulated independent slices.
 **Comes before.** `/next-slice all`, which prints the fan-out plan always and
 starts agents only on an explicit implement instruction. Because workers branch
 from a revision, the partition must be committed before fan-out — the dispatcher
-asks; it does not commit.
+asks the user to commit it. Under the implement instruction the dispatcher
+commits only its own launch lines; it merges finished Tracks back into their
+base branch and removes their worktrees (`next-slice/PARALLEL.md` §Finish).
 
 ## 4. The state files and the docs tree
 
@@ -941,7 +943,8 @@ merge. This flow is young relative to the rest of the workflow and will keep
 evolving.
 
 Standing rules regardless of branch state: the user requests commits and pushes
-explicitly (agents never commit automatically), `/session-close` may *ask* about
+explicitly (agents never commit automatically; the one exception is a fan-out's
+implement instruction, scoped in `next-slice/PARALLEL.md`), `/session-close` may *ask* about
 a commit after a substantial checkpoint, and Git mechanics stay out of
 `AGENTS.md`.
 
