@@ -6,6 +6,36 @@ Trackline is a session-based workflow for building long-running projects with
 AI coding agents. Tested on **Claude Code and Codex**, refined against months of
 real work.
 
+## What it delivers
+
+Higher-quality, more accurate agent work with fewer tokens — a defined process
+for teams that want to control what coding agents cost without trading away
+what they produce.
+
+- **The developer stays on track** — in control of what the agent builds and
+  why, across weeks and months of sessions.
+- **Accuracy and quality go up** — context stays small and precise, inside the
+  model's reliable working range.
+- **Every session starts lean** — status, state, and plans are kept apart from
+  canonical specs, so the next task loads minimal, precise context instead of
+  re-deriving the project.
+- **Token spend goes down** — only what the current task needs is loaded;
+  procedures load on demand, never in every session.
+- **No wasted runs in degraded sessions** — sessions close at a defined token
+  budget, enforced by a hook rather than by the model remembering.
+- **Stale docs stop misleading the agent** — one source of truth per fact; no
+  duplicated or drifting documentation.
+- **Decisions are never re-derived** — every durable decision lands in a spec,
+  not in a lost conversation.
+- **Better first-time correctness** — work ships as small, independently
+  verifiable slices.
+- **Defects are caught early and cheaply** — a second model from another
+  provider reviews the plan before code and the code before merge.
+- **Git history becomes cheap, precise context** — disciplined commits and
+  branches are what the agent reads to orient itself.
+- **A repeatable, cost-controlled process** — repeated prompts become reusable
+  skills, and independent work can run in parallel agents without conflicts.
+
 ## The problem
 
 Vibe-coding works for a day-long task. Once a project runs longer than a
