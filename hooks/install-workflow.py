@@ -27,6 +27,23 @@ WINDOWS_COMMAND = ('powershell.exe -NoProfile -NonInteractive -ExecutionPolicy B
                    '& ([scriptblock]::Create([IO.File]::ReadAllText($hook, [Text.Encoding]::UTF8)))"')
 
 
+IGNORE_BEGIN = '# >>> trackline install-workflow (managed; do not edit) >>>'
+IGNORE_END = '# <<< trackline install-workflow <<<'
+
+
+def gitignore_text(path, entries):
+    """Return .gitignore content with the managed block holding old + new entries."""
+    old = path.read_text(encoding='utf-8') if path.exists() else ''
+    block = re.compile(rf'^{re.escape(IGNORE_BEGIN)}\n(.*?)^{re.escape(IGNORE_END)}\n?', re.S | re.M)
+    found = block.search(old)
+    # Union with a previous block so a run without --with-external keeps those entries.
+    merged = sorted(set(entries) | (set(found.group(1).split()) if found else set()))
+    managed = IGNORE_BEGIN + '\n' + '\n'.join(merged) + '\n' + IGNORE_END + '\n'
+    if found:
+        return old[:found.start()] + managed + old[found.end():]
+    return old + ('\n' if old and not old.endswith('\n') else '') + managed
+
+
 def run(*args):
     return subprocess.check_output(args, text=True).strip()
 
@@ -418,6 +435,11 @@ def main():
         print(f'{"repair " if path in repairs else "link   "} {path.relative_to(project)} -> {target}')
     for path, _ in settings:
         print(f'merge   {path.relative_to(project)}')
+    # Everything this installer links or merges is local tooling: keep it out of Git.
+    ignore_path = project / '.gitignore'
+    ignore_text = gitignore_text(ignore_path, ['/' + p.relative_to(project).as_posix()
+                                               for p in [l[0] for l in links] + settings_paths])
+    print('ignore  .gitignore')
     for path in scaffold:
         if not path.exists():
             print(f'mkdir   {path.relative_to(project)}')
@@ -461,6 +483,9 @@ def main():
                 if permissions is not None:
                     p.chmod(permissions)
             transaction.replace(path, write_settings)
+        if ignore_path.is_symlink() or (ignore_path.exists() and not ignore_path.is_file()):
+            raise ValueError(f'CONFLICT .gitignore is not a regular file: {ignore_path}')
+        transaction.replace(ignore_path, lambda: ignore_path.write_text(ignore_text, encoding='utf-8'))
         pruned = os.path.lexists(legacy)
         if pruned:
             transaction.replace(legacy, lambda: None)
