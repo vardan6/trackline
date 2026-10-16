@@ -11,6 +11,18 @@
           }
         ]
       }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$(git rev-parse --show-toplevel)/.agents/hooks/harness-guard.sh\"",
+            "timeout": 10,
+            "statusMessage": "Checking for nested agent harnesses"
+          }
+        ]
+      }
     ]
   }
 }

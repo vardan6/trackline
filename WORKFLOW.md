@@ -186,10 +186,11 @@ second copy.
 | `/session-close` STEP (§3.10) | implementer | the finished step | step really finished? durable behavior, scope, or architecture changed → `/doc-update` first | ticked `roadmap.md`, dated `progress.md`, refreshed `activeContext.md` | `/next-slice` — context light and same territory; SESSION close otherwise |
 | `/session-close` SESSION (§3.10) | any cycle | session state | doc-update table once — delegate to `/doc-update` if the diff is large or mixed; blockers, open questions, dead ends | state files (+ `handoff-*.md` only if needed) | next session's `/session-open` |
 | commit (§7) | you — never the agent | the closed step or session | is this a state worth returning to? | a checkpoint in history, and a review scope for `/cross-review` | next slice / review / PR — optional each time, required before the PR |
-| `/cross-review` (§3.9) | other provider's strongest model | diff since last known-good commit + the docs | misimplementation, gaps, bugs, better options | findings file in `docs/reviews/` | `/review-triage` — always |
+| `/cross-review` (§3.9) | other provider's strongest model (recommended), in a session you open | diff since last known-good commit + the docs | misimplementation, gaps, bugs, better options | findings file in `docs/reviews/` | `/review-triage` — always |
 | `/review-triage` on code (§3.9) | implementer | findings + the actual code | validate each; sort must-fix-now / before-phase / backlog / invalid | review items folded into `roadmap.md` | `/next-slice` for fixes; PR when clean |
 | `/handoff` (§3.11) | any cycle, interrupted | the live conversation | receiver does not know this workflow? | state files closed + standalone, pointer-based handoff doc | the other tool's session |
 | context-zone hook (§8) | guard — after every turn | transcript token count | fixed 80k / 100k / 120k / 180k thresholds | `systemMessage` nudge | escalates toward `/session-close (SESSION)` |
+| harness-guard hook (§8) | guard — before every tool call | the shell command | launches another agent harness (`claude`, `codex`, …)? | denied call + reason | the user opens the other provider's session |
 
 ## 2. Operating principles
 
@@ -338,7 +339,9 @@ cross-model **plan review** (§3.4) then runs as its own session.
 
 **What it does.** Hands the freshly captured plan to the strongest model of a
 *different* provider (e.g. Opus plans → the top GPT model reviews, or vice
-versa). Run `/plan-review` in the *reviewer's* session: it cross-validates the
+versa) — recommended, not required: a same-provider session warns and
+continues on the developer's confirmation. Run `/plan-review` in the
+*reviewer's* session, which the developer opens: it cross-validates the
 docs the plan touched against each other (requirements ↔ design ↔ ADRs ↔
 roadmap) — hunting gaps, missing items, incorrect or inconsistent logic, wrong
 assumptions, and terminology drift, and also proposing what could be done even
@@ -460,9 +463,12 @@ of it.
 
 **What it does.** This is two parts. First, the **review** itself: hand the
 finished slice or phase — often one complete slice sequence from the roadmap —
-to a second, independent, ideally stronger model — always different from the
-implementer — scoped to the diff since the last known-good commit. Run
-`/cross-review` in the *reviewer's* session: it reads the implementation
+to a second, independent, ideally stronger model — recommended from a
+different provider than the implementer — scoped to the diff since the last
+known-good commit. The developer opens the reviewer's session — agents never
+launch one (`hooks/harness-guard.sh`) — and a same-provider session warns and
+continues only on the developer's confirmation. Run `/cross-review` in the
+*reviewer's* session: it reads the implementation
 **against the documentation**, hunting
 misimplementation, missing implementation, bugs, gaps, incorrect logic, and
 things that could simply be done better, and writes findings into a Markdown
@@ -1029,6 +1035,11 @@ links and registration.
   `commandWindows` entry that runs the equivalent PowerShell launcher
   (`hooks/context-zone.ps1`) for native Windows Codex. The git-toplevel form
   resolves the project root from any subdirectory the hook is launched in.
+- **PreToolUse hook — harness-guard** (`hooks/harness-guard.sh`, `.ps1` for
+  native Windows Codex) denies shell commands that launch another coding agent
+  harness (`claude`, `codex`, `gemini`, …), which would bill the user's quota
+  for that tool. Cross-provider work runs in a session the user opens. Local
+  model runners are not affected. Registered the same way as context-zone.
 - **Permission allowlist** — read-only Bash + read-MCP via
   `/fewer-permission-prompts`.
 - **MCP audit** — disable unused servers per project; each adds tool schemas to
@@ -1046,10 +1057,11 @@ Windows-drive project in WSL (which also needs a Windows-drive source). It:
 - links each skill directly to its source in every scope:
   `.agents/skills/<s>`, `.claude/skills/<s>`, and `.codex/skills/<s>` each point
   at `trackline/skills/<s>` (OpenCode reads `.agents/skills`);
-- links `.agents/hooks/context-zone.sh`, plus `context-zone.ps1` in Windows mode;
-- merges the Stop hook into `.claude/settings.json` and `.codex/hooks.json`
+- links `.agents/hooks/{context-zone,harness-guard}.sh`, plus the `.ps1`
+  launchers in Windows mode;
+- merges the Stop and PreToolUse hooks into `.claude/settings.json` and `.codex/hooks.json`
   without clobbering other keys or hooks, adding `commandWindows` to the Codex
-  entry in Windows mode;
+  entries in Windows mode;
 - scaffolds `docs/{requirements,design,adr,reviews,research,archive}/`
   (create-if-missing);
 - leaves state files to the workflow — `/session-close` creates `activeContext.md`;

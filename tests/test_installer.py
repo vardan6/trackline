@@ -74,6 +74,11 @@ class InstallerTests(unittest.TestCase):
         self.assertEqual(data['large'], value['large'])
         self.assertEqual(data['hooks']['Stop'][0], value['hooks']['Stop'][0])
         self.assertTrue((self.project / '.codex/skills/roadmap-split/DEEP-SPLIT.md').is_file())
+        self.assertTrue((self.project / '.agents/hooks/harness-guard.sh').is_file())
+        for settings in ('.claude/settings.json', '.codex/hooks.json'):
+            guard = json.loads((self.project / settings).read_text())['hooks']['PreToolUse']
+            self.assertEqual([hook['command'] for group in guard for hook in group['hooks']],
+                             [installer.bash_command('harness-guard')])
         before = snapshot(self.project)
         self.install()
         self.assertEqual(snapshot(self.project), before)
@@ -245,6 +250,7 @@ class WindowsTests(unittest.TestCase):
         self.project.rename(moved)
         self.project = moved
         self.assertTrue((moved / '.agents/hooks/context-zone.ps1').is_file())
+        self.assertTrue((moved / '.agents/hooks/harness-guard.ps1').is_file())
         nested = moved / 'nested'
         nested.mkdir()
         transcript = moved / 'transcript.jsonl'

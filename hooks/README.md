@@ -3,6 +3,8 @@
 Auto-nudges that enforce the workflow's context-budget rule (smart / warn /
 dumb / force-compact zones) without you having to watch the `/context`
 indicator.
+`harness-guard.sh` blocks agents from launching other coding agent harnesses
+(see its section below).
 
 ## `context-zone.sh`
 
@@ -64,10 +66,43 @@ on the next turn. In the `ask` zone the agent confirms with you before
 closing. In the `dumb` and `force-compact` zones it should refuse new code
 work and close first.
 
+## `harness-guard.sh`
+
+A **PreToolUse hook**: it runs before every tool call and denies shell
+commands that launch another coding agent harness: `claude`, `codex`,
+`gemini`, `cursor-agent`, `aider`, `opencode`, `qwen`, `amp`, `crush`,
+`droid`, `copilot`. A nested harness bills the user's quota for that tool. On
+2026-10-14 Codex started `claude -p --effort max` for a `/cross-review` and
+used 77% of a 5-hour Claude window in 30 minutes. Cross-provider work runs in
+a session the user opens; the deny reason tells the agent to say so.
+
+- **Command position only.** A name counts when it starts a command segment
+  (after `;`, `&&`, `|`, `$(`, a backtick, or a newline) or follows a wrapper:
+  `bash -c`, `sh -lc`, `powershell -Command`, `timeout 30s`, `env X=1`,
+  `sudo`, `npx`/`bunx`/`npm exec`, `rtk proxy`. Paths, `.exe`, and npm package
+  names (`@anthropic-ai/claude-code`) reduce to the harness name. `rg claude`,
+  `which codex`, and `command -v claude` pass.
+- **Known false positive.** Splitting ignores quoting, so a quoted argument
+  with a separator before a harness name is denied
+  (`git commit -m "a; claude b"`). The reason tells the agent to rephrase.
+- **Tools.** Shell tools (`Bash`, `PowerShell`, Codex `exec_command`, `shell`)
+  are checked through `command` / `cmd`. For Codex code-mode `exec`, only the
+  `cmd` strings of its script are checked, in any quote form (`"…"`, `'…'`,
+  `` `…` ``). Edit and patch tools are never checked, so editing docs that
+  mention these commands works.
+- **Not covered.** Local model runners (`ollama`, `llama.cpp`, …) are not on
+  the list. There is no allow switch: to permit nesting, remove the
+  `PreToolUse` registration.
+- **Without jq** the hook still skips edit tools by `tool_name`, then scans
+  the raw payload with JSON quotes and punctuation as separators; it
+  over-matches rather than failing open. `harness-guard.ps1` is the native
+  Windows Codex equivalent; `tests/test_harness_guard.py` runs one case table
+  against both.
+
 ### Install (both tools — use the installer)
 
-`install-workflow.sh` registers the Bash Stop hook for Linux/WSL and adds
-an equivalent PowerShell launcher for native Windows Codex in a shared
+`install-workflow.sh` registers both Bash hooks for Linux/WSL and adds
+equivalent PowerShell launchers for native Windows Codex in a shared
 Windows-drive project. Hooks link to the canonical Trackline source; project
 JSON registration preserves other hooks and settings. Reinstallation does not
 duplicate registrations or rewrite unchanged settings.
@@ -93,8 +128,8 @@ then restart Claude Code.
 
 **Manual Codex:** merge the `hooks` block from `codex.hooks.json` into
 `<project>/.codex/hooks.json` (do not symlink it; the installer migrates such a
-link) and create the `.agents/hooks/context-zone.sh` link. Native Windows Codex
-needs a `commandWindows` entry for `context-zone.ps1` and Git for Windows on the
+link) and create the `.agents/hooks/context-zone.sh` and `harness-guard.sh` links. Native Windows Codex
+needs `commandWindows` entries for the `.ps1` launchers and Git for Windows on the
 Windows PATH; let the installer write it. Start Codex from anywhere
 in the git worktree; approve the project hook once if prompted.
 
@@ -138,5 +173,6 @@ API model-page number.
   context climbs.
 - `/handoff` is the cross-tool alternative the hook also names.
 
-The hook is **advisory**: it never blocks a tool call, it just makes sure
-the agent sees the context budget at the right moment.
+The context-zone hook is **advisory**: it never blocks a tool call, it just
+makes sure the agent sees the context budget at the right moment.
+harness-guard is the only hook that blocks.

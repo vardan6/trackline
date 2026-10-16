@@ -1,15 +1,14 @@
 ---
 name: plan-review
-description: Review captured plans using another provider’s strongest model.
+description: Review captured plans; best run by the developer in another provider’s session.
 ---
 
 # plan-review
 
-Cross-validate the captured plan docs. Findings file only; never edit the plan.
+Cross-validate the captured plan docs in the session the developer opened for it. Recommended: the strongest model from a provider *different* from the planner — the developer chooses the session; this skill never obtains one. Findings file only; never edit the plan.
 
 ## Not this skill
 
-- Running in the *same provider's* model as the planner → say so and stop; a same-model review is not a cross-review.
 - Reviewing implemented code → `/cross-review`.
 - Triaging an existing findings file → `/review-triage`.
 - The plan is still being discussed → `/grill-me`.
@@ -22,13 +21,14 @@ Cross-validate the captured plan docs. Findings file only; never edit the plan.
 
 ## Steps
 
-1. Read inputs. Identify what the plan commits to: behavior, architecture, sequencing, slice breakdown.
-2. Cross-validate the documents against each other: requirements ↔ design ↔ ADRs ↔ roadmap must tell one consistent story. Hunt contradictions, items present in one doc but missing from another, terminology drift, and misspelled names (files, functions, terms) that could misroute a future agent.
-3. Challenge the plan: missing requirements, gaps, wrong assumptions about existing code, hidden dependencies between slices, undersized or oversized slices, risky sequencing, incorrect logic, unstated tradeoffs, conflicts with existing ADRs.
-4. Propose improvements: what could be done even better — a simpler design, safer sequencing, an existing tool instead of a custom build. If clearly worth it, recommend adding it; if it conflicts with a recorded decision, flag the conflict instead of overriding it. Record these as `enhancement` findings, separate from defects.
-5. Verify every claim against the docs (and code, where the plan depends on it). Discard your own vague findings — every kept finding names the doc and the exact claim it disputes.
-6. Write findings to `docs/reviews/plan-review-<date>-<topic>.md` in the findings file format below.
-7. Print the Output. Do not edit the plan docs.
+1. Same provider as the planner (or unknown) → warn: a different provider's session is strongly recommended. Ask whether to continue here; continue only on the developer's confirmation, and record `same-provider review (confirmed)` in the findings header.
+2. Read inputs. Identify what the plan commits to: behavior, architecture, sequencing, slice breakdown.
+3. Cross-validate the documents against each other: requirements ↔ design ↔ ADRs ↔ roadmap must tell one consistent story. Hunt contradictions, items present in one doc but missing from another, terminology drift, and misspelled names (files, functions, terms) that could misroute a future agent.
+4. Challenge the plan: missing requirements, gaps, wrong assumptions about existing code, hidden dependencies between slices, undersized or oversized slices, risky sequencing, incorrect logic, unstated tradeoffs, conflicts with existing ADRs.
+5. Propose improvements: what could be done even better — a simpler design, safer sequencing, an existing tool instead of a custom build. If clearly worth it, recommend adding it; if it conflicts with a recorded decision, flag the conflict instead of overriding it. Record these as `enhancement` findings, separate from defects.
+6. Verify every claim against the docs (and code, where the plan depends on it). Discard your own vague findings — every kept finding names the doc and the exact claim it disputes.
+7. Write findings to `docs/reviews/plan-review-<date>-<topic>.md` in the findings file format below.
+8. Print the Output. Do not edit the plan docs.
 
 ## Findings file format
 
@@ -51,5 +51,6 @@ Next: original planner validates via /review-triage, revisits the plan, then com
 
 ## Stop conditions
 
+- Never launch another coding agent or harness (`claude`, `codex`, `gemini`, …) to get the reviewer; a different-provider review runs in a session the developer opens.
 - Never edit requirements / design / ADR / roadmap — findings only.
 - If the plan docs cannot be located → ask for paths, then stop.

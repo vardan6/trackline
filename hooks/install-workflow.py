@@ -18,13 +18,24 @@ SKILLS = ('cross-review', 'doc-update', 'handoff', 'next-slice', 'plan-review',
           'planning-capture', 'review-triage', 'roadmap-split', 'session-close', 'session-open')
 EXTERNAL = ('grill-me', 'grill-with-docs')
 DOCS = ('requirements', 'design', 'adr', 'reviews', 'research', 'archive')
-BASH_COMMAND = 'bash "$(git rev-parse --show-toplevel)/.agents/hooks/context-zone.sh"'
-WINDOWS_COMMAND = ('powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass '
-                   '-Command "[Console]::OutputEncoding = [Text.UTF8Encoding]::new($false); '
-                   '$root = git rev-parse --show-toplevel; '
-                   'if ($LASTEXITCODE -ne 0) { exit 1 }; '
-                   "$hook = Join-Path $root '.agents/hooks/context-zone.ps1'; "
-                   '& ([scriptblock]::Create([IO.File]::ReadAllText($hook, [Text.Encoding]::UTF8)))"')
+def bash_command(script):
+    return f'bash "$(git rev-parse --show-toplevel)/.agents/hooks/{script}.sh"'
+
+
+def windows_command(script):
+    return ('powershell.exe -NoProfile -NonInteractive -ExecutionPolicy Bypass '
+            '-Command "[Console]::OutputEncoding = [Text.UTF8Encoding]::new($false); '
+            '$root = git rev-parse --show-toplevel; '
+            'if ($LASTEXITCODE -ne 0) { exit 1 }; '
+            f"$hook = Join-Path $root '.agents/hooks/{script}.ps1'; "
+            '& ([scriptblock]::Create([IO.File]::ReadAllText($hook, [Text.Encoding]::UTF8)))"')
+
+
+# (event, script, timeout): context-zone nudges at Stop; harness-guard denies
+# nested agent harness launches before any tool runs.
+HOOKS = (('Stop', 'context-zone', 30), ('PreToolUse', 'harness-guard', 10))
+BASH_COMMAND = bash_command('context-zone')
+WINDOWS_COMMAND = windows_command('context-zone')
 
 
 def run(*args):
@@ -203,36 +214,38 @@ def merge(data, windows=False):
     hooks = result.setdefault('hooks', {})
     if not isinstance(hooks, dict):
         raise ValueError('hooks must be an object')
-    stops = hooks.setdefault('Stop', [])
-    if not isinstance(stops, list):
-        raise ValueError('hooks.Stop must be an array')
-    found = False
-    emptied = []
-    for group in stops:
-        if not isinstance(group, dict) or not isinstance(group.get('hooks', []), list):
-            raise ValueError('Stop groups must contain a hooks array')
-        kept = []
-        for hook in group.get('hooks', []):
-            if not isinstance(hook, dict):
-                raise ValueError('hook entries must be objects')
-            if hook.get('command') == BASH_COMMAND:
-                if found:
-                    continue
-                found = True
-                if windows:
-                    hook['commandWindows'] = WINDOWS_COMMAND
-                else:
-                    hook.pop('commandWindows', None)
-            kept.append(hook)
-        if group.get('hooks') and not kept:
-            emptied.append(group)
-        group['hooks'] = kept
-    stops[:] = [group for group in stops if not any(group is e for e in emptied)]
-    if not found:
-        hook = {'type': 'command', 'command': BASH_COMMAND, 'timeout': 30}
-        if windows:
-            hook['commandWindows'] = WINDOWS_COMMAND
-        stops.append({'hooks': [hook]})
+    for event, script, timeout in HOOKS:
+        groups = hooks.setdefault(event, [])
+        if not isinstance(groups, list):
+            raise ValueError(f'hooks.{event} must be an array')
+        command = bash_command(script)
+        found = False
+        emptied = []
+        for group in groups:
+            if not isinstance(group, dict) or not isinstance(group.get('hooks', []), list):
+                raise ValueError(f'{event} groups must contain a hooks array')
+            kept = []
+            for hook in group.get('hooks', []):
+                if not isinstance(hook, dict):
+                    raise ValueError('hook entries must be objects')
+                if hook.get('command') == command:
+                    if found:
+                        continue
+                    found = True
+                    if windows:
+                        hook['commandWindows'] = windows_command(script)
+                    else:
+                        hook.pop('commandWindows', None)
+                kept.append(hook)
+            if group.get('hooks') and not kept:
+                emptied.append(group)
+            group['hooks'] = kept
+        groups[:] = [group for group in groups if not any(group is e for e in emptied)]
+        if not found:
+            hook = {'type': 'command', 'command': command, 'timeout': timeout}
+            if windows:
+                hook['commandWindows'] = windows_command(script)
+            groups.append({'hooks': [hook]})
     return result
 
 
@@ -324,24 +337,26 @@ def main():
     if windows:
         git, claude = windows_hook_dependencies(powershell)
         if not git:
-            attention.append('Native Windows Codex: its PowerShell Stop hook runs git.exe; install Git for Windows and put it on the Windows PATH.')
+            attention.append('Native Windows Codex: its PowerShell hooks run git.exe; install Git for Windows and put it on the Windows PATH.')
             print('ATTENTION: ' + attention[-1])
         if claude:
             print('Native Windows Claude hook dependencies: Git Bash and jq found.')
         else:
-            attention.append('Native Windows Claude: install jq in Git Bash or set CLAUDE_CODE_GIT_BASH_PATH; verify dependencies before relying on its Stop hook.')
+            attention.append('Native Windows Claude: install jq in Git Bash or set CLAUDE_CODE_GIT_BASH_PATH; verify dependencies before relying on its hooks.')
             print('ATTENTION: ' + attention[-1])
     if not shutil.which('jq'):
-        raise ValueError('jq is required by the Bash Stop hook; install it before installation')
+        raise ValueError('jq is required by the Bash hooks; install it before installation')
     skills = SKILLS + (EXTERNAL if args.with_external else ())
     links = [(project / 'AGENTS.md', source / 'AGENTS.md', 'AGENTS.md'),
              (project / 'CLAUDE.md', source / 'AGENTS.md', 'AGENTS.md')]
     for skill in skills:
         for scope in ('.agents', '.claude', '.codex'):
             links.append((project / scope / 'skills' / skill, source / 'skills' / skill, f'skills/{skill}'))
-    links.append((project / '.agents/hooks/context-zone.sh', source / 'hooks/context-zone.sh', 'hooks/context-zone.sh'))
-    if windows:
-        links.append((project / '.agents/hooks/context-zone.ps1', source / 'hooks/context-zone.ps1', 'hooks/context-zone.ps1'))
+    for _, script, _ in HOOKS:
+        extensions = ('sh', 'ps1') if windows else ('sh',)
+        for extension in extensions:
+            relative = f'hooks/{script}.{extension}'
+            links.append((project / '.agents' / relative, source / relative, relative))
     settings_paths = [project / '.codex/hooks.json', project / '.claude/settings.json']
     legacy = project / '.codex/hooks/context-zone.sh'
     scaffold = [project / 'docs' / name for name in DOCS]

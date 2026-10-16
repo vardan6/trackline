@@ -39,6 +39,9 @@ vertical slice per cycle.
 - One canonical home per fact, and it is in the repo: never agent or harness
   memory, which other models and tools cannot read. Never create internals docs
   that mirror code; keep status out of requirements and design.
+- Never launch another coding agent harness (`claude`, `codex`, `gemini`, …):
+  it spends the user's paid quota. Work that needs another provider runs in a
+  session the user opens; `hooks/harness-guard.sh` blocks the call.
 - This file is shared across projects. Project-specific rules live in
   `PROJECT.md` at the repo root; read it if present, and it wins on conflict.
 
