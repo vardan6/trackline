@@ -40,7 +40,7 @@ Branch names alone do not isolate concurrent agents: two agents in one checkout 
 
 `/next-slice` and `/session-close` each stop after one cycle by design, so neither can run a Track to its end. **This file owns the repetition**, only under the implement instruction that started the fan-out. Tracks run side by side; workers within a Track run one after another in the same worktree.
 
-Worker cycle: take the next unchecked slice **in this Track's order** → confirm it is atomic → open every doc it cites, plus ADRs those link, one hop → implement → verify → tick → commit on the Track branch. Continue to the next slice only under the [SKILL.md](SKILL.md) stop condition (same files and cited docs, context below ~100k); otherwise report and exit, and the dispatcher launches a fresh worker for the next slice.
+Worker cycle: take the next unchecked slice **in this Track's order** → confirm it is atomic → open every doc it cites, plus ADRs those link, one hop → implement → verify → tick → commit on the Track branch. Continue to the next slice only under the [SKILL.md](SKILL.md) stop condition (same files and cited docs, context below ~100k); otherwise report and exit, and the dispatcher launches a fresh worker for the next slice. Past ~120k context mid-slice, finalise, never abort: finish, verify, tick and commit the current slice, report, and start no new slice. This ends the worker, not the Track.
 
 - The implement instruction confirms slices inside this Track and nothing else — not another Track's, not `Needs you`, nothing outside the roadmap.
 - **A placeholder is not a slice.** An item marked "split again when selected" (or otherwise flagged for a split) is parked planning. Never run it whole or re-split it unattended; splitting is for `/planning-capture` with the user. Fan-out incident 2026-09-08 (`progress.md`): two such items ran whole for ~146K and ~232K tokens.
@@ -50,10 +50,11 @@ Stop the Track and report at the first of:
 
 - a **Barrier** line, a **HITL** slice, or an unsplit placeholder reached in sequence — remaining slices stay in place, unticked;
 - the Track's slices are exhausted;
-- a verification fails, or confidence in a slice is low;
-- a slice is still unverified past ~120k context — it was not atomic.
+- a verification fails, or confidence in a slice is low.
 
-Keep the worker report short; the dispatcher's context grows with every report: stop reason, slices ticked, slices remaining and why, files changed, verification commands with pass/fail counts, open questions, and the state-file lines it would have written. Workers never re-partition, adopt another Track's work, or merge.
+Keep the worker report short; the dispatcher's context grows with every report: stop reason, slices ticked, slices remaining and why, any slice that ran past ~120k (it may not be atomic), files changed, verification commands with pass/fail counts, open questions, and the state-file lines it would have written. Workers never re-partition, adopt another Track's work, or merge.
+
+**Dispatcher context** has no threshold of its own; follow the context-zone hook. At the first new-work point — launching a worker or Track, or starting a merge — once in the hook's ask zone (~100k) or later, ask the user: continue, hand off (recommended: `/handoff` records each Track's state, worktree and branch), or stop launching and report. From ~120k, recommend the handoff more strongly and name the merge as the risky step. Never interrupt a running worker; none of these thresholds is a hard stop.
 
 ## Finish — merge-back and cleanup
 
