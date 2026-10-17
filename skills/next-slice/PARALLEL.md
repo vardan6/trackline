@@ -54,7 +54,7 @@ Stop the Track and report at the first of:
 
 Keep the worker report short; the dispatcher's context grows with every report: stop reason, slices ticked, slices remaining and why, any slice that ran past ~120k (it may not be atomic), files changed, verification commands with pass/fail counts, open questions, and the state-file lines it would have written. Workers never re-partition, adopt another Track's work, or merge.
 
-**Dispatcher context** has no threshold of its own; follow the context-zone hook. At the first new-work point — launching a worker or Track, or starting a merge — once in the hook's ask zone (~100k) or later, ask the user: continue, hand off (recommended: `/handoff` records each Track's state, worktree and branch), or stop launching and report. From ~120k, recommend the handoff more strongly and name the merge as the risky step. Never interrupt a running worker; none of these thresholds is a hard stop.
+**Dispatcher context:** follow the context-zone hook. At the first new-work point — launching a worker or Track, or starting a merge — once in the hook's ask zone (~100k) or later, ask the user: continue, hand off (recommended: `/handoff` records each Track's state, worktree and branch), or stop launching and report. From ~120k, recommend the handoff more strongly and name the merge as the risky step. Never interrupt a running worker.
 
 ## Finish — merge-back and cleanup
 
