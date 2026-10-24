@@ -61,7 +61,7 @@ Example (concrete rows, not a template to copy verbatim):
 | 2 | No rate limit on reset endpoint | high | low | med | backlog | high risk but low value now; revisit before launch |
 | 3 | Duplicated email-format check in two handlers | low | low | low | invalid | cosmetic; not worth the churn |
 
-Plan review: then one coverage row per recommendation; `Landed in` is a doc location, `deferred`, or `rejected: <reason>`.
+Plan review: then one coverage row per recommendation, numbered `<finding><letter>`; `Landed in` is a doc location, `deferred`, or `rejected: <reason>`.
 
 | # | Recommendation | Landed in |
 |---|----------------|-----------|
