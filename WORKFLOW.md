@@ -178,7 +178,7 @@ second copy.
 | `/grill-me` · `/grill-with-docs` (§3.2) | planner, strongest model | research summaries, selected project files, a large prompt | can you defend every branch? is the work sliced vertically? | agreed decisions (`-with-docs`: glossary + inline ADRs) | `/planning-capture` — when the plan is defensible |
 | `/planning-capture` (§3.3) | same planning session | grilling output | one home per fact; breaks the work into vertical slices; AFK/HITL per slice | `docs/requirements\|design\|adr/`, vertically sliced `roadmap.md` | `/session-close`, then commit — always |
 | `/plan-review` (§3.4) | other provider's strongest model, own session | the captured docs | gaps, contradictions, wrong assumptions, terminology drift | findings table (effort/risk/value) in `docs/reviews/` | `/review-triage` — always |
-| `/review-triage` on the plan (§3.4, §3.9) | planner | findings file + the docs | validate / clarify / justify each finding | revised plan docs | `/session-close`, then commit; implementation opens fresh |
+| `/review-triage` on the plan (§3.4, §3.9) | planner | findings file + the docs | validate / clarify / justify each finding; map every recommendation to where it landed | revised plan docs + coverage table | `/session-close`, then commit; implementation opens fresh |
 | `/session-open` (§3.5) | optional — ambiguous resume only, usually skipped | `activeContext.md`, `roadmap.md` (handoff only if unclear) | which mode? what single next action? | declared mode + named next action | that action — usually `/next-slice`; skipped for direct tasks |
 | `/next-slice` (§3.6) | implementer | state, recent git, cited requirement/design sections + linked ADRs, relevant code | citations resolve exactly once; smallest meaningful, dependency-free, verifiable slice | one proposed slice | implement — after your confirmation |
 | implement + verify (§3.7) | implementer | the confirmed slice | test / manual check / inspectable diff passes | working, verified change | `/doc-update` if durable behavior changed; else `/session-close (STEP)` |
@@ -348,7 +348,10 @@ assumptions, and terminology drift, and also proposing what could be done even
 better — then writes its findings into a Markdown file under `docs/reviews/`.
 The original planning agent then reviews the review (`/review-triage`) —
 validates, clarifies, or justifies each finding; in practice it agrees with
-nearly all of them — and revisits the plan accordingly. Each finding carries
+nearly all of them — and revisits the plan accordingly. It then splits each
+accepted finding into its concrete recommendations and shows where each one
+landed in the plan, or why it was rejected: a finding accepted whole tends to
+lose the sub-points in its details, and implementation reads only the plan. Each finding carries
 three ratings — **effort, risk, value** — which cleanly decide what gets fixed
 and when; usually everything does. The findings file is one table: the finding
 description first, the ratings in the adjacent columns, so triage can reuse
