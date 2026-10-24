@@ -5,7 +5,7 @@ description: Validate and prioritize findings from plan or code reviews.
 
 # review-triage
 
-Sort review findings, route accepted ones to durable docs, implement only must-fix-now.
+Sort review findings and route accepted ones; code reviews implement only must-fix-now, plan reviews revise the plan.
 
 ## Not this skill
 
@@ -15,8 +15,8 @@ Sort review findings, route accepted ones to durable docs, implement only must-f
 
 ## Inputs (read order)
 
-1. Concrete review findings from a file, pasted review, or conversation; the delivery format does not determine eligibility.
-2. Relevant code paths cited in the findings.
+1. Concrete review findings from a file, pasted review, or conversation; the delivery format does not determine eligibility. Read each finding's Details with its row.
+2. Code paths cited in the findings — for a plan review, only where a finding concerns existing behavior.
 3. Relevant requirement / design / ADR — only if a finding disputes them.
 4. `activeContext.md` and `roadmap.md`.
 
@@ -28,10 +28,11 @@ Sort review findings, route accepted ones to durable docs, implement only must-f
    - `should_fix_before_phase_complete` → valid issue but not blocking the current slice.
    - `backlog` → useful improvement, not needed this phase.
    - `invalid_or_not_worth_doing` → incorrect, already handled, too costly for value, out of scope.
-3. Validate every finding against code, not only docs. Reject vague findings without concrete risk. Reuse the review table's `Risk` / `Value` / `Effort` ratings where they hold; adjust with a one-line reason when they don't.
-4. Route accepted findings not fixed now into `roadmap.md` as slices, each citing this review file + the finding's heading. Restoring intended behavior needs no other citation; *changing* it goes through `/doc-update` after the fix.
-5. Print the Output.
-6. If the user asked to fix, implement only `must_fix_now` items. Stop.
+3. Validate every finding: a code-review finding against code, not only docs; a plan-review finding against the plan docs, plus code where it concerns existing behavior. Reject vague findings without concrete risk. Reuse the review table's `Risk` / `Value` / `Effort` ratings where they hold; adjust with a one-line reason when they don't.
+4. Code review: route accepted findings not fixed now into `roadmap.md` as slices, each citing this review file + the finding's heading. Restoring intended behavior needs no other citation; *changing* it goes through `/doc-update` after the fix.
+5. Plan review: revise the disputed docs for every accepted finding (`backlog` → the project's deferred-work doc; without one it stays in the review as `deferred`). Map every recommendation in a finding's row and Details — behavior, test, ordering, bound, owner — to the doc location now carrying it, or reject it in one line; revise until none is unmapped, since implementation reads the plan, not the review. Add a checked `Plan review and triage, HITL` roadmap item linking the review.
+6. Print the Output.
+7. Code review: if the user asked to fix, implement only `must_fix_now` items. Stop.
 
 ## Output
 
@@ -60,6 +61,12 @@ Example (concrete rows, not a template to copy verbatim):
 | 2 | No rate limit on reset endpoint | high | low | med | backlog | high risk but low value now; revisit before launch |
 | 3 | Duplicated email-format check in two handlers | low | low | low | invalid | cosmetic; not worth the churn |
 
+Plan review: then one coverage row per recommendation, numbered `<finding><letter>`; `Landed in` is a doc location, `deferred`, or `rejected: <reason>`.
+
+| # | Recommendation | Landed in |
+|---|----------------|-----------|
+| 1a | Stale telemetry never follows a broker event | `design/api.md` §Async Work; roadmap AR2a |
+
 Then the action summary:
 
 ```
@@ -69,5 +76,6 @@ Docs impact: <which docs the accepted findings will affect, or "none">
 
 ## Stop conditions
 
-- After printing Output, do not implement non-must-fix items unless the user explicitly asks.
+- Code review: after printing Output, do not implement non-must-fix items unless the user explicitly asks.
+- Plan review: never print Output while a recommendation is unmapped; accepting a finding is not a mapping.
 - If no must-fix items → suggest `/session-close (STEP mode)` or `/session-close` and stop.
