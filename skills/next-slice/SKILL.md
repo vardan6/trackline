@@ -21,7 +21,7 @@ description: Select the next implementation slice; dispatch existing Tracks for 
 ## Steps
 
 1. Establish implementation mode: an explicit `/next-slice` sets it from minimal state; otherwise confirm it from input 1, and stop if it does not hold.
-2. Identify candidate implementation slices from the current roadmap item.
+2. Identify candidate implementation slices from the current roadmap item. Candidates come only from `roadmap.md`: a backlog, future-plans, or ideas document is read-only context, never a slice source, however ready, small, or file-disjoint an entry looks.
    - `all` or `parallel` in the invocation → read [PARALLEL.md](PARALLEL.md) and follow it instead of steps 3–6.
    - On a `track-<letter>/` branch, candidates come only from that Track. Never pick a slice from another Track or from `Needs you`, however well it fits — crossing Tracks destroys the isolation the partition bought and is the failure that voids the feature.
    - A Track's **Barrier** line ends its candidate list: the slices below it wait on the parked slice it names.
@@ -35,7 +35,7 @@ description: Select the next implementation slice; dispatch existing Tracks for 
    - easy to verify (test, manual check, or command)
    - tiebreak: prefer autonomous work, then whatever unblocks roadmap progress
 4. Before implementing, open every doc the slice cites, plus ADRs those pages link, one hop. Fragment link means that section; bare link means the whole file. However self-sufficient the roadmap line looks, it is a pointer, not a substitute. Citable: `requirements/` · `design/` · `adr/` · `reviews/` — never `research/`, capture it first. Accept `no doc governs: <reason>` only when nothing durable is at stake (maintenance, refactor, content-only), or the doc or decision is the slice's own output.
-5. Print the Output. Wait for user confirmation, then implement.
+5. Print the Output. Wait for user confirmation, then implement. Nothing is implemented that was not printed in an Output block and confirmed; fan-out workers keep their Track exemption ([PARALLEL.md](PARALLEL.md)).
 6. Code is truth about present behavior; durable docs are truth about intent. Surface conflicts — a captured spec wins over code, a spec reconstructed from a diff does not.
 
 ## Output
@@ -55,5 +55,5 @@ Confidence: high | medium | low
 
 - If confidence is low → ask user one specific question, then stop.
 - A cited link resolves to no file, its fragment matches zero or several headings, it points into `docs/research/`, or a behavior-changing slice claims no doc governs it → stop and report it; the roadmap line is not a fallback.
-- No candidate fits — too large, too ambiguous, or blocked by a dependency or HITL gate → stop; surface the required decision, or suggest `/planning-capture` to refine the roadmap.
+- No candidate fits — nothing runnable in `roadmap.md`, too large, too ambiguous, or blocked by a dependency or HITL gate → report and stop; never substitute a slice from another document. Surface the required decision, or suggest `/planning-capture` to refine the roadmap or move backlog into it.
 - After implementing the slice → `/session-close (STEP mode)`. Propose a next slice only if it shares this slice's files and cited docs and context is below ~100k; otherwise end the session. Only a fan-out worker starts it unconfirmed.
