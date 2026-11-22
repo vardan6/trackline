@@ -271,11 +271,14 @@ project files) and usually a large typed or dictated prompt.
 
 **Research during grilling.** The agent questions the developer until both
 share a clear understanding of the plan. Grilling can surface strategic,
-architectural, and implementation questions that need more evidence. Check a
-small gap with a focused web search in the session while it is still in the
-smart context zone. Take broader questions into a separate research round and
-bring back a concise Markdown summary. Use the strongest model available that
-fits the project's complexity and context needs.
+architectural, and implementation questions that need more evidence. Monitor
+context as you go (see §6). Check small gaps in-session while there is headroom.
+Take broader questions into a separate research round and bring back a concise
+Markdown summary. If headroom is already low, defer even small lookups and
+resume in a fresh session. Use `/session-close` in SESSION mode to save the state
+or `/handoff` when you need a transfer packet. Prefer this restart to compaction.
+Use the strongest model available that fits the project's complexity and
+context needs.
 
 **What they solve.** Planning is not done when the agent understands the task —
 it is done when you can defend the task and its boundaries. Grilling is how you
