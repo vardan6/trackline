@@ -227,23 +227,21 @@ the order a project uses them.
 
 ### 3.1 Research (pre-step — often off the coding agent)
 
-**What it does.** Gathers the raw thinking a plan needs: exploratory discussion,
-tradeoff clarification, deep research. This frequently happens *outside* the
-coding agent — a conversation in ChatGPT, often on the phone during normal daily
-activity, sometimes several minutes of dictated context. Several iterations are
-normal — a voice chat in transport, another at home, a desk session with the
-coding agent itself — and each iteration is captured as its own Markdown file
-under `docs/research/`. Relevant pre-existing material (docs inherited from
-older projects, manually collected references) is placed alongside those files,
-so the grilling step that follows can be fed the whole set.
+**What it does.** Explore the problem and its tradeoffs over as many rounds as
+needed. Use a phone or computer and any suitable AI tool, including a local or
+cloud coding session. Start with what you have: a problem statement, initial
+questions, Markdown files, other documents, or material from earlier projects.
+Ask the agent to clarify the problem, double-check claims, and search the web for
+missing details, best practices, and existing solutions. Brainstorm alternatives
+and compare how well they fit the project.
 
-**What it solves.** Keeps large, noisy exploration out of the coding session,
-where it would burn context budget. The input itself varies in size — sometimes a
-short prompt, but frequently large documents, files, or transcripts you do not
-want to read in full. The deliverable is a compact **Markdown summary** that
-distills them, not the raw material — the summary is the bridge into coding
-context, and the grilling and capture steps below are what turn that bulk into
-something you and the agent do not have to re-read.
+**What it produces.** Build one concise Markdown summary per research topic
+under `docs/research/`. If the research happened elsewhere, ask for a downloadable
+Markdown file and bring it into the project. Capture the problem, the current
+best solution or options, key findings and sources, and open questions. When
+several rounds revisit a point, keep its latest sound formulation. Save relevant
+reference material alongside the summaries. Bring the summaries for the relevant
+topics into grilling so the coding session can work from the distilled findings.
 
 **Comes after.** A new idea, feature, or phase that is too big to start coding
 directly.
@@ -270,6 +268,14 @@ project files) and usually a large typed or dictated prompt.
 - `/grill-with-docs` — additionally challenges the plan against the project's
   existing domain language, sharpens fuzzy terms, and updates a glossary
   (`CONTEXT.md`) and ADRs inline as decisions crystallize.
+
+**Research during grilling.** The agent questions the developer until both
+share a clear understanding of the plan. Grilling can surface strategic,
+architectural, and implementation questions that need more evidence. Check a
+small gap with a focused web search in the session while it is still in the
+smart context zone. Take broader questions into a separate research round and
+bring back a concise Markdown summary. Use the strongest model available that
+fits the project's complexity and context needs.
 
 **What they solve.** Planning is not done when the agent understands the task —
 it is done when you can defend the task and its boundaries. Grilling is how you
