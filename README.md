@@ -161,8 +161,7 @@ files; `--source DIR` uses another complete Trackline source; `--with-external`
 also installs optional third-party skills. The installer lists every conflict
 at once and changes nothing until all are resolved. Reinstalling does not
 duplicate hooks or rewrite unchanged JSON. Installed router, skills, and hooks
-link into the source checkout, so keep it available. The old
-`install-workflow-winlinks.sh` name forwards to this same installer.
+link into the source checkout, so keep it available.
 
 Installation keeps backups during migration and restores links/settings if a
 later operation fails.
