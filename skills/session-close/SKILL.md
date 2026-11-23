@@ -50,10 +50,11 @@ only when the user's wording directly conflicts with these defaults.
      - open questions
      - "discarded as noise" — failed hypotheses or dead ends likely to be retried this session
    - **Planning-capture check:** when planning, grilling, or research remains
-     uncaptured, run `/planning-capture` if authorized. Otherwise treat the
-     uncaptured rationale as missing continuation context in the handoff test and
-     report durable capture as pending. Incomplete planning must not prevent saving
-     session state.
+     uncaptured, run `/planning-capture` if authorized. Capture settled outcomes
+     and keep unresolved decisions open. If capture is unauthorized or stops
+     with a question, continue the close. Record the next question or lookup in
+     `activeContext.md`, use the handoff test for any missing rationale, and
+     report remaining durable capture as pending.
    - **Handoff test:** put state-shaped information in its canonical home first:
      unfinished slices, ordering, and dependencies in `roadmap.md`; the exact next
      action and blockers in `activeContext.md`; completed outcomes in `progress.md`;
